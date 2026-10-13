@@ -4,12 +4,13 @@
 일정 기준: 오늘 10/12(월) → 기능 동결 10/25 → 제출 10/26~30
 
 ## Step 0. 프로젝트 초기화 (10/12~13)
-- [ ] Next.js(App Router, TypeScript, Tailwind) 프로젝트 생성
-- [ ] `.gitignore`에 `.env.local`, `data/raw/` 포함 확인, `.env.example` 작성
-- [ ] Vitest 설치, 샘플 테스트 1개 통과
-- [ ] `git init`, 첫 커밋, GitHub 연결
-- [ ] Vercel에 연결해 빈 화면 배포, URL 확인
+- [x] Next.js(App Router, TypeScript, Tailwind) 프로젝트 생성
+- [x] `.gitignore`에 `.env.local`, `data/raw/` 포함 확인, `.env.example` 작성
+- [x] Vitest 설치, 샘플 테스트 1개 통과
+- [x] `git init`, 첫 커밋, GitHub 연결
+- [x] Vercel에 연결해 빈 화면 배포, URL 확인
 - 확인: `npm run dev`, `npm test`, 배포 URL 접속
+- 결과: 배포 URL https://ai-challenge-ivory.vercel.app/ (기본 Next.js 화면 확인)
 
 ## Step 1. LLM 인터페이스와 mock (10/13)
 - [ ] `src/lib/llm/types.ts`: `generate`, `generateJson`, `embed` 인터페이스
