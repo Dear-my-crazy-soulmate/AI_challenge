@@ -21,14 +21,18 @@ INSTALL_HINT = (
 )
 
 
-def extract_pages(pdf: Path) -> list[str]:
-    """Return page texts (index 0 = page 1) using `pdftotext -layout`."""
+def extract_pages(pdf: Path, mode: str = "-layout") -> list[str]:
+    """Return page texts (index 0 = page 1) using `pdftotext <mode>`.
+
+    "-layout" keeps the visual layout (used for page detection); "-raw" keeps
+    reading order, which is what the course-table parser needs.
+    """
     exe = shutil.which("pdftotext")
     if exe is None:
         raise RuntimeError(INSTALL_HINT)
     # -enc UTF-8 is required: the Windows default encoding garbles Korean.
     proc = subprocess.run(
-        [exe, "-layout", "-enc", "UTF-8", str(pdf), "-"],
+        [exe, mode, "-enc", "UTF-8", str(pdf), "-"],
         capture_output=True,
         check=False,
     )
@@ -51,25 +55,34 @@ def ingest(dept: str) -> Path:
     if not pdf.exists():
         raise FileNotFoundError(f"PDF not found: {pdf}")
     pages = extract_pages(pdf)
+    raw_pages = extract_pages(pdf, "-raw")
+    if len(raw_pages) != len(pages):
+        raise RuntimeError(f"{pdf.name}: layout/raw page counts differ")
     out = WORK_DIR / f"{dept}.pages.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "dept": dept,
         "source_pdf": pdf.relative_to(ROOT).as_posix(),
         "n_pages": len(pages),
-        "pages": [{"page": i + 1, "text": t} for i, t in enumerate(pages)],
+        "pages": [
+            {"page": i + 1, "text": t, "raw": r}
+            for i, (t, r) in enumerate(zip(pages, raw_pages))
+        ],
     }
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
     return out
 
 
-def load_pages(dept: str) -> list[str]:
-    """Page texts from the ingest output (index 0 = page 1)."""
+def load_pages(dept: str, field: str = "text") -> list[str]:
+    """Page texts from the ingest output (index 0 = page 1).
+
+    field: "text" (layout) or "raw" (reading order).
+    """
     path = WORK_DIR / f"{dept}.pages.json"
     if not path.exists():
         raise FileNotFoundError(f"{path} not found. Run ingest.py first.")
     data = json.loads(path.read_text(encoding="utf-8"))
-    return [p["text"] for p in data["pages"]]
+    return [p[field] for p in data["pages"]]
 
 
 def main(argv: list[str]) -> int:

@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "pipeline"))
 
 from detect import EXPECTED, detect_roles, is_grad_structure, is_microdegree, squash  # noqa: E402
 from ingest import extract_pages  # noqa: E402
+from parse_table import ParseTableError, parse_dept, parse_page  # noqa: E402
 from paths import RAW_DIR  # noqa: E402
 
 
@@ -67,6 +68,57 @@ class DetectOnRealPdfTest(unittest.TestCase):
     def test_missing_pdf_raises_instead_of_failing_silently(self):
         with self.assertRaises(Exception):
             extract_pages(RAW_DIR / "존재하지않는학과.pdf")
+
+
+class ParseTableRulesTest(unittest.TestCase):
+    HEADER = "헤더 쓰레기 CSE000 9\n"  # the first row of a page is ignored on purpose
+
+    def test_wrapped_name_is_joined_and_category_words_removed(self):
+        raw = "44\n모바일/웹서비스\n프로그래밍\nCSE450 3 3 4 ◯\n5 전공\n필수\n자료구조 CSE204 3 2 2 2 ◯"
+        rows = parse_page(self.HEADER + raw, page=8)
+        self.assertEqual([r["name"] for r in rows[1:]], ["모바일/웹서비스프로그래밍", "자료구조"])
+        self.assertEqual([r["credits"] for r in rows[1:]], [3, 3])
+
+    def test_vertical_one_character_name_is_joined(self):
+        raw = "x CSE001 3\n58 몰\n입\n심\n화\nAI3103 3 3"
+        self.assertEqual(parse_page(raw, 1)[1]["name"], "몰입심화")
+
+    def test_zero_credit_course_is_kept_as_zero(self):
+        rows = parse_page("x CSE001 3\n9 졸업논문(인공지능) AI4003 0 4 ◯", 1)
+        self.assertEqual(rows[1]["credits"], 0)
+
+    def test_missing_credits_raises(self):
+        with self.assertRaises(ParseTableError):
+            parse_page("x CSE001 3\n9 졸업논문 AI4003", 1)
+
+
+class ParseTableOnRealPdfTest(unittest.TestCase):
+    EXPECTED_ROWS = {"인공지능학과": 67, "철학과": 45}
+
+    def setUp(self):
+        from paths import WORK_DIR
+
+        for dept in self.EXPECTED_ROWS:
+            if not (WORK_DIR / f"{dept}.pages.json").exists():
+                self.skipTest("run ingest.py first (needs data/raw PDFs)")
+
+    def test_row_counts_and_special_credits(self):
+        for dept, n in self.EXPECTED_ROWS.items():
+            with self.subTest(dept=dept):
+                rows = parse_dept(dept)
+                self.assertEqual(len(rows), n)
+                self.assertEqual([r["row"] for r in rows], list(range(1, n + 1)))
+        ai = {r["code"]: r for r in parse_dept("인공지능학과")}
+        ph = {r["code"]: r for r in parse_dept("철학과")}
+        self.assertEqual(ai["CSE438"]["credits"], 2)
+        self.assertEqual(ai["AI4003"]["credits"], 0)
+        self.assertEqual(ph["HUMAN1001"]["credits"], 1)
+        self.assertEqual(ph["PHIL4004"]["credits"], 0)
+
+    def test_split_names_in_real_table(self):
+        names = {r["code"]: r["name"] for r in parse_dept("인공지능학과")}
+        self.assertEqual(names["CSE450"], "모바일/웹서비스프로그래밍")
+        self.assertEqual(names["AI3103"], "몰입심화학습(AI데이터·클라우드디자인)")
 
 
 if __name__ == "__main__":
