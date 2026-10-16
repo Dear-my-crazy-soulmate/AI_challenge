@@ -79,11 +79,10 @@ def parse_page(raw: str, page: int) -> list[dict]:
     return rows
 
 
-def parse_dept(dept: str) -> list[dict]:
-    pages_raw = load_pages(dept, "raw")
-    table_pages = detect_roles(load_pages(dept))["course_table"]
+def parse_rows(label: str, pages_raw: list[str], table_pages: list[int], check_duplicates: bool = True) -> list[dict]:
+    """Raw page texts + course_table page numbers -> verified rows (pure)."""
     if not table_pages:
-        raise ParseTableError(f"{dept}: no course_table page detected")
+        raise ParseTableError(f"{label}: no course_table page detected")
     rows: list[dict] = []
     for page in table_pages:
         rows.extend(parse_page(pages_raw[page - 1], page))
@@ -95,17 +94,27 @@ def parse_dept(dept: str) -> list[dict]:
         # A row number printed near the row must agree with its position.
         if numbers and i not in numbers:
             raise ParseTableError(
-                f"{dept}: row {i} ({row['name']}) but the table prints {sorted(numbers)}"
+                f"{label}: row {i} ({row['name']}) but the table prints {sorted(numbers)}"
             )
     if all_numbers and max(all_numbers) != len(rows):
         raise ParseTableError(
-            f"{dept}: parsed {len(rows)} rows but the table's last row number is {max(all_numbers)}"
+            f"{label}: parsed {len(rows)} rows but the table's last row number is {max(all_numbers)}"
         )
-    codes = [r["code"] for r in rows]
-    dup = sorted({c for c in codes if codes.count(c) > 1})
-    if dup:
-        raise ParseTableError(f"{dept}: duplicate course codes {dup}")
+    if check_duplicates:
+        dup = duplicate_codes(rows)
+        if dup:
+            raise ParseTableError(f"{label}: duplicate course codes {dup}")
     return rows
+
+
+def duplicate_codes(rows: list[dict]) -> list[str]:
+    codes = [r["code"] for r in rows]
+    return sorted({c for c in codes if codes.count(c) > 1})
+
+
+def parse_dept(dept: str) -> list[dict]:
+    table_pages = detect_roles(load_pages(dept))["course_table"]
+    return parse_rows(dept, load_pages(dept, "raw"), table_pages)
 
 
 def main(argv: list[str]) -> int:
