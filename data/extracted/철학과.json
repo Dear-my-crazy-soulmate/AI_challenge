@@ -1,0 +1,425 @@
+{
+  "dept": "철학과",
+  "college": "문과대학",
+  "source_pdf": "data/raw/철학과.pdf",
+  "source_url": "TODO",
+  "as_of": "TODO",
+  "graduation_credits": 120,
+  "table_pages": [
+    1,
+    2
+  ],
+  "requirements": [
+    {
+      "kind": "single",
+      "name": "철학과",
+      "total_credits": 64,
+      "stated": {
+        "기초": 6,
+        "필수": 6,
+        "선택": 52,
+        "계": 64,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "courses": [
+            "소크라테스",
+            "유가철학"
+          ],
+          "page": 7,
+          "evidence": "소크라테스 PHIL1038 3 3 0 0 0 1 ○ ○ ○",
+          "pool_rows": [
+            4,
+            5
+          ],
+          "declared_credits": 6,
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학"
+        },
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "courses": [
+            "졸업논문(철학)",
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "page": 7,
+          "evidence": "졸업논문(철학) PHIL4004 0 0 0 0 0 4 ○ ○ ○",
+          "pool_rows": [
+            1,
+            3
+          ],
+          "declared_credits": 6,
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학",
+          "note": "졸업논문(철학)은 0학점이라 2과목이 6학점이다."
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 52,
+          "courses": [],
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "pool_rows": [
+            6,
+            42
+          ],
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학",
+          "note": "별표1 6~42행(37과목)이 전공선택 풀이다. 43~45행(전공선택 교직)은 제외한다."
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-thesis-enroll",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": null,
+          "text": "졸업하는 학기에 졸업논문 교과목을 수강신청한 뒤 졸업논문을 작성해야 한다(단일·다전공).",
+          "evidence": "제10조(졸업논문) ① 철학과를 단일전공 또는 다전공으로 이수하는 학생은 졸업하는 학기에 졸업논문 교과목을 수강신청"
+        },
+        {
+          "id": "phil-career-course",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": "문과대학 소속 학생",
+          "text": "문과대학 소속 학생은 졸업요건으로 '인문학과진로탐색' 교과목을 이수해야 한다.",
+          "evidence": "문과대학 소속 학생은 졸업 요건으로 ‘인문학과진로탐색’ 교과목을 수강하여 학점을 취득하여야 한다."
+        },
+        {
+          "id": "phil-english-3",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": null,
+          "text": "영어강의 전공과목 3과목 이상(편입생은 1과목)을 이수해야 한다.",
+          "evidence": "제11조(영어강의 의무 이수) ① 전공과목 3과목(단, 편입생은 1과목) 이상 이수를 해야 한다."
+        }
+      ]
+    },
+    {
+      "kind": "double",
+      "name": "철학과",
+      "total_credits": 39,
+      "stated": {
+        "기초": 6,
+        "필수": 6,
+        "선택": 27,
+        "계": 39,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "courses": [
+            "소크라테스",
+            "유가철학"
+          ],
+          "page": 7,
+          "evidence": "소크라테스 PHIL1038 3 3 0 0 0 1 ○ ○ ○",
+          "pool_rows": [
+            4,
+            5
+          ],
+          "declared_credits": 6,
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39"
+        },
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "courses": [
+            "졸업논문(철학)",
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "page": 7,
+          "evidence": "졸업논문(철학) PHIL4004 0 0 0 0 0 4 ○ ○ ○",
+          "pool_rows": [
+            1,
+            3
+          ],
+          "declared_credits": 6,
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39",
+          "note": "졸업논문(철학)은 0학점이라 2과목이 6학점이다."
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 27,
+          "courses": [],
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "pool_rows": [
+            6,
+            42
+          ],
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39",
+          "note": "별표1 6~42행(37과목)이 전공선택 풀이다. 43~45행(전공선택 교직)은 제외한다."
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-thesis-enroll",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": null,
+          "text": "졸업하는 학기에 졸업논문 교과목을 수강신청한 뒤 졸업논문을 작성해야 한다(단일·다전공).",
+          "evidence": "제10조(졸업논문) ① 철학과를 단일전공 또는 다전공으로 이수하는 학생은 졸업하는 학기에 졸업논문 교과목을 수강신청"
+        },
+        {
+          "id": "phil-career-course",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": "문과대학 소속 학생",
+          "text": "문과대학 소속 학생은 졸업요건으로 '인문학과진로탐색' 교과목을 이수해야 한다.",
+          "evidence": "문과대학 소속 학생은 졸업 요건으로 ‘인문학과진로탐색’ 교과목을 수강하여 학점을 취득하여야 한다."
+        },
+        {
+          "id": "phil-english-3",
+          "page": 4,
+          "status": "ambiguous",
+          "why": "다전공 학생(타학과 학생이 철학을 다전공으로 이수)에게도 적용되는지 원문에 명시되어 있지 않다.",
+          "applies_if": null,
+          "text": "영어강의 전공과목 3과목 이상(편입생은 1과목)을 이수해야 한다.",
+          "evidence": "제11조(영어강의 의무 이수) ① 전공과목 3과목(단, 편입생은 1과목) 이상 이수를 해야 한다."
+        }
+      ]
+    },
+    {
+      "kind": "minor",
+      "name": "철학과",
+      "total_credits": 21,
+      "stated": {
+        "필수": 6,
+        "선택": 15,
+        "계": 21,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "courses": [
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "page": 7,
+          "evidence": "논리와 사고 PHIL1035 3 3 0 0 0 1 ○ ○ ○",
+          "pool_rows": [
+            2,
+            3
+          ],
+          "declared_credits": 6,
+          "credit_page": 4,
+          "credit_evidence": "제6조(부전공이수학점) ① 철학을 부전공과정으로 이수하고자 하는 자는 모든 전공필수 6학점을 포함하여 전공학점",
+          "note": "전공필수 3과목 중 졸업논문(철학)은 제10조에 따라 단일·다전공에만 해당하므로 제외한다(PLAN.md 확인 사실)."
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 15,
+          "courses": [],
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "credit_page": 4,
+          "credit_evidence": "제6조(부전공이수학점) ① 철학을 부전공과정으로 이수하고자 하는 자는 모든 전공필수 6학점을 포함하여 전공학점",
+          "note": "TODO: 부전공 선택 과목의 범위는 별표1의 '부전공' 열 표시로 판단해야 하나 아직 구조화하지 않았다(풀 미정)."
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-minor-not-major",
+          "page": 4,
+          "status": "applies",
+          "why": "",
+          "applies_if": null,
+          "text": "부전공은 전공이수과정으로 인정하지 않으며, 이수자는 학위증에 기재한다.",
+          "evidence": "② 부전공과정은 전공이수과정으로 인정하지 않으며, 이수자에 대해서는 학위증에 기재한다."
+        }
+      ]
+    },
+    {
+      "kind": "microdegree",
+      "name": "문명과 철학",
+      "total_credits": 12,
+      "groups": [
+        {
+          "category": "마이크로디그리",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 12,
+          "courses": [
+            "소크라테스",
+            "유가철학",
+            "불교개론",
+            "종교철학"
+          ],
+          "coded": [
+            {
+              "code": "PHIL1038",
+              "name": "소크라테스",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2040",
+              "name": "유가철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2001",
+              "name": "불교개론",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4053",
+              "name": "종교철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 19,
+          "evidence": "1 문과대 철학과 PHIL1038 소크라테스 3",
+          "credit_page": 19,
+          "credit_evidence": "문명-철학 마이크오디그리 과정을 이수하고자 하는 학생은 아래에서 제시한 4과목 12학점을",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "kind": "microdegree",
+      "name": "과학과 철학",
+      "total_credits": 12,
+      "groups": [
+        {
+          "category": "마이크로디그리",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 12,
+          "courses": [
+            "과학철학",
+            "인지과학",
+            "심리철학",
+            "의철학"
+          ],
+          "coded": [
+            {
+              "code": "PHIL3009",
+              "name": "과학철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL0000",
+              "name": "인지과학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4002",
+              "name": "심리철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3055",
+              "name": "의철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 20,
+          "evidence": "1 문과대 철학과 PHIL3009 과학철학 3",
+          "credit_page": 20,
+          "credit_evidence": "과학-철학 마이크오디그리 과정을 이수하고자 하는 학생은 아래에서 제시한 4과목 12학점을",
+          "note": "원문 불일치: PHIL0000(인지과학), PHIL4002(심리철학)는 별표1의 PHIL3059, PHIL4022와 학수번호가 다르다."
+        }
+      ]
+    },
+    {
+      "kind": "microdegree",
+      "name": "인지과학",
+      "total_credits": 9,
+      "groups": [
+        {
+          "category": "마이크로디그리",
+          "sub": "",
+          "rule": "choose_n",
+          "required_credits": 9,
+          "courses": [
+            "인지과학",
+            "인간행동의이해",
+            "심리언어학이해",
+            "영어소리와인지"
+          ],
+          "coded": [
+            {
+              "code": "PHIL3059",
+              "name": "인지과학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3058",
+              "name": "인간행동의이해",
+              "credits": 3
+            },
+            {
+              "code": "ENGLI3016",
+              "name": "심리언어학이해",
+              "credits": 3
+            },
+            {
+              "code": "ENGLI4017",
+              "name": "영어소리와인지",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 21,
+          "evidence": "1 철학과 PHIL3059-00 인지과학 3",
+          "credit_page": 21,
+          "credit_evidence": "편성된 4개의 교과목 중 3개 교과목 이수 필요 (총 9학점)",
+          "note": "원문 학수번호는 'PHIL3059-00'처럼 분반 접미사(-00)가 붙어 있다. ENGLI 과목은 영어영문학과 소속이라 철학과 별표1에 없다.",
+          "choose_n": 3
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "트랙(철학-문학, 철학-사학)은 단일전공 전용이라 제외했다.",
+    "별표1 행 구성: 1~3 전공필수, 4~5 전공기초, 6~42 전공선택(37과목), 43~45 전공선택(교직).",
+    "원문 불일치: 2쪽 요약표의 전공선택 '37과목 111학점'은 별표1 합계 109학점(HUMAN1001이 1학점)과 다르다.",
+    "원문 불일치: 2쪽 요약표의 전공필수 '2과목'은 별표1의 3과목(졸업논문 0학점 포함)과 다르다.",
+    "원문 불일치: 과학과 철학 마이크로디그리의 학수번호 일부가 별표1과 다르다 → 검증 단계에서 needs_review가 되어야 한다.",
+    "다전공 표(전공과목 편성표)가 없는 서식이다. 규정은 시행세칙 조문과 기본구조표에만 있다.",
+    "source_url, as_of는 사람이 확인해야 한다(TODO)."
+  ]
+}
