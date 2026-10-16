@@ -1,0 +1,899 @@
+{
+  "dept": "철학과",
+  "college": "문과대학",
+  "source_pdf": "data/raw/철학과.pdf",
+  "source_url": "TODO",
+  "as_of": "TODO",
+  "graduation_credits": 120,
+  "table_pages": [
+    1,
+    2
+  ],
+  "notes": [
+    "트랙(철학-문학, 철학-사학)은 단일전공 전용이라 제외했다.",
+    "별표1 행 구성: 1~3 전공필수, 4~5 전공기초, 6~42 전공선택(37과목), 43~45 전공선택(교직).",
+    "원문 불일치: 2쪽 요약표의 전공선택 '37과목 111학점'은 별표1 합계 109학점(HUMAN1001이 1학점)과 다르다.",
+    "원문 불일치: 2쪽 요약표의 전공필수 '2과목'은 별표1의 3과목(졸업논문 0학점 포함)과 다르다.",
+    "원문 불일치: 과학과 철학 마이크로디그리의 학수번호 일부가 별표1과 다르다 → 검증 단계에서 needs_review가 되어야 한다.",
+    "다전공 표(전공과목 편성표)가 없는 서식이다. 규정은 시행세칙 조문과 기본구조표에만 있다.",
+    "source_url, as_of는 사람이 확인해야 한다(TODO)."
+  ],
+  "requirements": [
+    {
+      "kind": "single",
+      "name": "철학과",
+      "total_credits": 64,
+      "stated": {
+        "기초": 6,
+        "필수": 6,
+        "선택": 52,
+        "계": 64,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "소크라테스",
+            "유가철학"
+          ],
+          "pool_rows": [
+            4,
+            5
+          ],
+          "coded": [
+            {
+              "code": "PHIL1038",
+              "name": "소크라테스",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2040",
+              "name": "유가철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": 6,
+          "page": 7,
+          "evidence": "소크라테스 PHIL1038 3 3 0 0 0 1 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "졸업논문(철학)",
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "pool_rows": [
+            1,
+            3
+          ],
+          "coded": [
+            {
+              "code": "PHIL4004",
+              "name": "졸업논문(철학)",
+              "credits": 0
+            },
+            {
+              "code": "PHIL1035",
+              "name": "논리와 사고",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3036",
+              "name": "이야기와 철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": 6,
+          "page": 7,
+          "evidence": "졸업논문(철학) PHIL4004 0 0 0 0 0 4 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학",
+          "note": "졸업논문(철학)은 0학점이라 2과목이 6학점이다.",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 52,
+          "choose_n": null,
+          "courses": [],
+          "pool_rows": [
+            6,
+            42
+          ],
+          "coded": [
+            {
+              "code": "HUMAN1001",
+              "name": "인문학과 진로탐색",
+              "credits": 1
+            },
+            {
+              "code": "PHIL2001",
+              "name": "불교개론",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2042",
+              "name": "도가철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2007",
+              "name": "희랍철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2003",
+              "name": "인식론: 감각과 지각",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3002",
+              "name": "윤리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2044",
+              "name": "학습과 기억",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2039",
+              "name": "독일철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2020",
+              "name": "송명성리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2043",
+              "name": "삶과 죽음의 철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3028",
+              "name": "정치철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2045",
+              "name": "서양근대철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2011",
+              "name": "분석철학의 기초적 문제들",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2030",
+              "name": "프랑스철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3056",
+              "name": "실천윤리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3058",
+              "name": "인간 행동의 이해",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3033",
+              "name": "현대프랑스철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3059",
+              "name": "인지과학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3044",
+              "name": "조선성리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3009",
+              "name": "과학철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3045",
+              "name": "그리스-로마 철학강독",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3046",
+              "name": "자유지상주의",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3047",
+              "name": "독일미학과 낭만주의",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3048",
+              "name": "니체와 키에르케고르",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3060",
+              "name": "동양철학특강",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3013",
+              "name": "대승불교",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3049",
+              "name": "캡스톤디자인(철학)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3055",
+              "name": "의철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4022",
+              "name": "심리철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3052",
+              "name": "독립심화학습1(철학과)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3053",
+              "name": "독립심화학습2(철학과)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4023",
+              "name": "언어철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3051",
+              "name": "현대분석철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4053",
+              "name": "종교철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4049",
+              "name": "실학사상연구",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4054",
+              "name": "언어와 마음",
+              "credits": 3
+            },
+            {
+              "code": "HUMAN0001",
+              "name": "문과대학 공동강의",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": null,
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "1) 단일전공과정: 철학과 학생으로서 단일전공자는 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 64학",
+          "note": "별표1 6~42행(37과목)이 전공선택 풀이다. 43~45행(전공선택 교직)은 제외한다.",
+          "unresolved": []
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-thesis-enroll",
+          "text": "졸업하는 학기에 졸업논문 교과목을 수강신청한 뒤 졸업논문을 작성해야 한다(단일·다전공).",
+          "page": 4,
+          "evidence": "제10조(졸업논문) ① 철학과를 단일전공 또는 다전공으로 이수하는 학생은 졸업하는 학기에 졸업논문 교과목을 수강신청",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "phil-career-course",
+          "text": "문과대학 소속 학생은 졸업요건으로 '인문학과진로탐색' 교과목을 이수해야 한다.",
+          "page": 4,
+          "evidence": "문과대학 소속 학생은 졸업 요건으로 ‘인문학과진로탐색’ 교과목을 수강하여 학점을 취득하여야 한다.",
+          "applies_if": "문과대학 소속 학생",
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "phil-english-3",
+          "text": "영어강의 전공과목 3과목 이상(편입생은 1과목)을 이수해야 한다.",
+          "page": 4,
+          "evidence": "제11조(영어강의 의무 이수) ① 전공과목 3과목(단, 편입생은 1과목) 이상 이수를 해야 한다.",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        }
+      ],
+      "status": "auto_pass",
+      "issues": []
+    },
+    {
+      "kind": "double",
+      "name": "철학과",
+      "total_credits": 39,
+      "stated": {
+        "기초": 6,
+        "필수": 6,
+        "선택": 27,
+        "계": 39,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "소크라테스",
+            "유가철학"
+          ],
+          "pool_rows": [
+            4,
+            5
+          ],
+          "coded": [
+            {
+              "code": "PHIL1038",
+              "name": "소크라테스",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2040",
+              "name": "유가철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": 6,
+          "page": 7,
+          "evidence": "소크라테스 PHIL1038 3 3 0 0 0 1 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "졸업논문(철학)",
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "pool_rows": [
+            1,
+            3
+          ],
+          "coded": [
+            {
+              "code": "PHIL4004",
+              "name": "졸업논문(철학)",
+              "credits": 0
+            },
+            {
+              "code": "PHIL1035",
+              "name": "논리와 사고",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3036",
+              "name": "이야기와 철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": 6,
+          "page": 7,
+          "evidence": "졸업논문(철학) PHIL4004 0 0 0 0 0 4 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39",
+          "note": "졸업논문(철학)은 0학점이라 2과목이 6학점이다.",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 27,
+          "choose_n": null,
+          "courses": [],
+          "pool_rows": [
+            6,
+            42
+          ],
+          "coded": [
+            {
+              "code": "HUMAN1001",
+              "name": "인문학과 진로탐색",
+              "credits": 1
+            },
+            {
+              "code": "PHIL2001",
+              "name": "불교개론",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2042",
+              "name": "도가철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2007",
+              "name": "희랍철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2003",
+              "name": "인식론: 감각과 지각",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3002",
+              "name": "윤리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2044",
+              "name": "학습과 기억",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2039",
+              "name": "독일철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2020",
+              "name": "송명성리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2043",
+              "name": "삶과 죽음의 철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3028",
+              "name": "정치철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2045",
+              "name": "서양근대철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2011",
+              "name": "분석철학의 기초적 문제들",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2030",
+              "name": "프랑스철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3056",
+              "name": "실천윤리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3058",
+              "name": "인간 행동의 이해",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3033",
+              "name": "현대프랑스철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3059",
+              "name": "인지과학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3044",
+              "name": "조선성리학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3009",
+              "name": "과학철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3045",
+              "name": "그리스-로마 철학강독",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3046",
+              "name": "자유지상주의",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3047",
+              "name": "독일미학과 낭만주의",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3048",
+              "name": "니체와 키에르케고르",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3060",
+              "name": "동양철학특강",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3013",
+              "name": "대승불교",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3049",
+              "name": "캡스톤디자인(철학)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3055",
+              "name": "의철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4022",
+              "name": "심리철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3052",
+              "name": "독립심화학습1(철학과)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3053",
+              "name": "독립심화학습2(철학과)",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4023",
+              "name": "언어철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3051",
+              "name": "현대분석철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4053",
+              "name": "종교철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4049",
+              "name": "실학사상연구",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4054",
+              "name": "언어와 마음",
+              "credits": 3
+            },
+            {
+              "code": "HUMAN0001",
+              "name": "문과대학 공동강의",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": null,
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "credit_page": 3,
+          "credit_evidence": "으로 이수하는 학생은 최소전공인정학점제에 의거 전공필수 6학점과 전공기초 6학점을 포함하여 전공학점 39",
+          "note": "별표1 6~42행(37과목)이 전공선택 풀이다. 43~45행(전공선택 교직)은 제외한다.",
+          "unresolved": []
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-thesis-enroll",
+          "text": "졸업하는 학기에 졸업논문 교과목을 수강신청한 뒤 졸업논문을 작성해야 한다(단일·다전공).",
+          "page": 4,
+          "evidence": "제10조(졸업논문) ① 철학과를 단일전공 또는 다전공으로 이수하는 학생은 졸업하는 학기에 졸업논문 교과목을 수강신청",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "phil-career-course",
+          "text": "문과대학 소속 학생은 졸업요건으로 '인문학과진로탐색' 교과목을 이수해야 한다.",
+          "page": 4,
+          "evidence": "문과대학 소속 학생은 졸업 요건으로 ‘인문학과진로탐색’ 교과목을 수강하여 학점을 취득하여야 한다.",
+          "applies_if": "문과대학 소속 학생",
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "phil-english-3",
+          "text": "영어강의 전공과목 3과목 이상(편입생은 1과목)을 이수해야 한다.",
+          "page": 4,
+          "evidence": "제11조(영어강의 의무 이수) ① 전공과목 3과목(단, 편입생은 1과목) 이상 이수를 해야 한다.",
+          "applies_if": null,
+          "status": "ambiguous",
+          "why": "다전공 학생(타학과 학생이 철학을 다전공으로 이수)에게도 적용되는지 원문에 명시되어 있지 않다."
+        }
+      ],
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "AMBIGUOUS_RULE",
+          "where": "",
+          "msg": "phil-english-3: 다전공 학생(타학과 학생이 철학을 다전공으로 이수)에게도 적용되는지 원문에 명시되어 있지 않다."
+        }
+      ]
+    },
+    {
+      "kind": "minor",
+      "name": "철학과",
+      "total_credits": 21,
+      "stated": {
+        "기초": null,
+        "필수": 6,
+        "선택": 15,
+        "계": 21,
+        "page": 1,
+        "evidence": "일반 120 6 6 52 64 0 6 6 27 39 6 15 21"
+      },
+      "groups": [
+        {
+          "category": "전공필수",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "논리와 사고",
+            "이야기와 철학"
+          ],
+          "pool_rows": [
+            2,
+            3
+          ],
+          "coded": [
+            {
+              "code": "PHIL1035",
+              "name": "논리와 사고",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3036",
+              "name": "이야기와 철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": null,
+          "declared_credits": 6,
+          "page": 7,
+          "evidence": "논리와 사고 PHIL1035 3 3 0 0 0 1 ○ ○ ○",
+          "credit_page": 4,
+          "credit_evidence": "제6조(부전공이수학점) ① 철학을 부전공과정으로 이수하고자 하는 자는 모든 전공필수 6학점을 포함하여 전공학점",
+          "note": "전공필수 3과목 중 졸업논문(철학)은 제10조에 따라 단일·다전공에만 해당하므로 제외한다(PLAN.md 확인 사실).",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "",
+          "rule": "choose_credits",
+          "required_credits": 15,
+          "choose_n": null,
+          "courses": [],
+          "pool_rows": null,
+          "coded": [],
+          "declared_count": null,
+          "declared_credits": null,
+          "page": 7,
+          "evidence": "인문학과 진로탐색 HUMAN1001 1 1 0 0 0 1 ○ ○ ○",
+          "credit_page": 4,
+          "credit_evidence": "제6조(부전공이수학점) ① 철학을 부전공과정으로 이수하고자 하는 자는 모든 전공필수 6학점을 포함하여 전공학점",
+          "note": "TODO: 부전공 선택 과목의 범위는 별표1의 '부전공' 열 표시로 판단해야 하나 아직 구조화하지 않았다(풀 미정).",
+          "unresolved": []
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "phil-minor-not-major",
+          "text": "부전공은 전공이수과정으로 인정하지 않으며, 이수자는 학위증에 기재한다.",
+          "page": 4,
+          "evidence": "② 부전공과정은 전공이수과정으로 인정하지 않으며, 이수자에 대해서는 학위증에 기재한다.",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        }
+      ],
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "POOL_UNKNOWN",
+          "where": "전공선택",
+          "msg": "no course list or pool_rows; cannot list candidates"
+        }
+      ]
+    },
+    {
+      "kind": "microdegree",
+      "name": "문명과 철학",
+      "total_credits": 12,
+      "stated": null,
+      "groups": [
+        {
+          "category": "마이크로디그리",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 12,
+          "choose_n": null,
+          "courses": [
+            "소크라테스",
+            "유가철학",
+            "불교개론",
+            "종교철학"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "PHIL1038",
+              "name": "소크라테스",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2040",
+              "name": "유가철학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL2001",
+              "name": "불교개론",
+              "credits": 3
+            },
+            {
+              "code": "PHIL4053",
+              "name": "종교철학",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 19,
+          "evidence": "1 문과대 철학과 PHIL1038 소크라테스 3",
+          "credit_page": 19,
+          "credit_evidence": "문명-철학 마이크오디그리 과정을 이수하고자 하는 학생은 아래에서 제시한 4과목 12학점을",
+          "note": "",
+          "unresolved": []
+        }
+      ],
+      "extra_rules": [],
+      "status": "auto_pass",
+      "issues": []
+    },
+    {
+      "kind": "microdegree",
+      "name": "인지과학",
+      "total_credits": 9,
+      "stated": null,
+      "groups": [
+        {
+          "category": "마이크로디그리",
+          "sub": "",
+          "rule": "choose_n",
+          "required_credits": 9,
+          "choose_n": 3,
+          "courses": [
+            "인지과학",
+            "인간행동의이해",
+            "심리언어학이해",
+            "영어소리와인지"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "PHIL3059",
+              "name": "인지과학",
+              "credits": 3
+            },
+            {
+              "code": "PHIL3058",
+              "name": "인간행동의이해",
+              "credits": 3
+            },
+            {
+              "code": "ENGLI3016",
+              "name": "심리언어학이해",
+              "credits": 3
+            },
+            {
+              "code": "ENGLI4017",
+              "name": "영어소리와인지",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 21,
+          "evidence": "1 철학과 PHIL3059-00 인지과학 3",
+          "credit_page": 21,
+          "credit_evidence": "편성된 4개의 교과목 중 3개 교과목 이수 필요 (총 9학점)",
+          "note": "원문 학수번호는 'PHIL3059-00'처럼 분반 접미사(-00)가 붙어 있다. ENGLI 과목은 영어영문학과 소속이라 철학과 별표1에 없다.",
+          "unresolved": []
+        }
+      ],
+      "extra_rules": [],
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "EXTERNAL_COURSE",
+          "where": "마이크로디그리",
+          "msg": "ENGLI3016 '심리언어학이해' belongs to another department; not checkable against this 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "EXTERNAL_COURSE",
+          "where": "마이크로디그리",
+          "msg": "ENGLI4017 '영어소리와인지' belongs to another department; not checkable against this 별표1"
+        }
+      ]
+    }
+  ]
+}

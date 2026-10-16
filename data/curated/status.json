@@ -1,0 +1,140 @@
+{
+  "인공지능학과": {
+    "single/인공지능학과": {
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/AI선택",
+          "msg": "'컴퓨터비전(CSE)' ~ '컴퓨터비젼' (CSE441) similarity 0.80"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'창업현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'단기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'장기현장실습' not found in 별표1"
+        }
+      ]
+    },
+    "double/인공지능학과": {
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/SW선택",
+          "msg": "'메타버스데이터처리(CSE)' ~ '메타버스테이터처리' (CSE430) similarity 0.89"
+        },
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/AI선택",
+          "msg": "'컴퓨터비전(CSE)' ~ '컴퓨터비젼' (CSE441) similarity 0.80"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'창업현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'단기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'장기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "AMBIGUOUS_RULE",
+          "where": "",
+          "msg": "ai-industry-9: 제9조③은 다전공과정 학생에게도 산학필수를 요구하지만, 다전공 요건(선택 9학점 등) 안에서 어떻게 충족하는지 원문에 명시되어 있지 않다."
+        }
+      ]
+    }
+  },
+  "철학과": {
+    "single/철학과": {
+      "status": "auto_pass",
+      "issues": []
+    },
+    "double/철학과": {
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "AMBIGUOUS_RULE",
+          "where": "",
+          "msg": "phil-english-3: 다전공 학생(타학과 학생이 철학을 다전공으로 이수)에게도 적용되는지 원문에 명시되어 있지 않다."
+        }
+      ]
+    },
+    "minor/철학과": {
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "POOL_UNKNOWN",
+          "where": "전공선택",
+          "msg": "no course list or pool_rows; cannot list candidates"
+        }
+      ]
+    },
+    "microdegree/문명과 철학": {
+      "status": "auto_pass",
+      "issues": []
+    },
+    "microdegree/과학과 철학": {
+      "status": "needs_review",
+      "issues": [
+        {
+          "level": "error",
+          "code": "CODE_NAME_MISMATCH",
+          "where": "마이크로디그리",
+          "msg": "'인지과학' has code PHIL0000 here but PHIL3059 in 별표1"
+        },
+        {
+          "level": "error",
+          "code": "CODE_NAME_MISMATCH",
+          "where": "마이크로디그리",
+          "msg": "'심리철학' has code PHIL4002 here but PHIL4022 in 별표1"
+        }
+      ]
+    },
+    "microdegree/인지과학": {
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "EXTERNAL_COURSE",
+          "where": "마이크로디그리",
+          "msg": "ENGLI3016 '심리언어학이해' belongs to another department; not checkable against this 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "EXTERNAL_COURSE",
+          "where": "마이크로디그리",
+          "msg": "ENGLI4017 '영어소리와인지' belongs to another department; not checkable against this 별표1"
+        }
+      ]
+    }
+  }
+}

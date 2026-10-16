@@ -1,0 +1,1136 @@
+{
+  "dept": "인공지능학과",
+  "college": "소프트웨어융합대학",
+  "source_pdf": "data/raw/인공지능학과.pdf",
+  "source_url": "TODO",
+  "as_of": "TODO",
+  "graduation_credits": 130,
+  "table_pages": [
+    2,
+    4
+  ],
+  "notes": [
+    "부전공 학점 기준은 원문에 없다(pending). 마이크로디그리(24~31쪽)는 이번 범위 밖이다.",
+    "원문 표기 오류: 별표1의 '메타버스테이터처리'(CSE430)와 '컴퓨터비젼'(CSE441)은 편성표 표기와 다르다(FUZZY 경고 예상).",
+    "창업현장실습·단기현장실습·장기현장실습은 별표1에 학수번호와 학점이 없다(UNRESOLVED 경고 예상).",
+    "단일전공 편성표는 '메타버스테이터처리', 다전공 편성표는 '메타버스데이터처리'로 표기가 서로 다르다.",
+    "source_url, as_of는 사람이 확인해야 한다(TODO)."
+  ],
+  "requirements": [
+    {
+      "kind": "single",
+      "name": "인공지능학과",
+      "total_credits": 81,
+      "stated": {
+        "기초": 12,
+        "필수": 42,
+        "선택": 27,
+        "계": 81,
+        "page": 2,
+        "evidence": "인공지능학과 130 12 42 27 81 6 12 30 9 51 -"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 12,
+          "choose_n": null,
+          "courses": [
+            "선형대수",
+            "미분적분학",
+            "인공지능수학",
+            "확률및랜덤변수(EE)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "AMTH1004",
+              "name": "선형대수",
+              "credits": 3
+            },
+            {
+              "code": "AMTH1009",
+              "name": "미분적분학",
+              "credits": 3
+            },
+            {
+              "code": "AI1003",
+              "name": "인공지능수학",
+              "credits": 3
+            },
+            {
+              "code": "EE211",
+              "name": "확률및랜덤변수",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 4,
+          "evidence": "선형대수, 미분적분학, 인공지능수학, 확률및랜덤변수(EE) 4",
+          "credit_page": 5,
+          "credit_evidence": "제9조(졸업이수요건) ① 단일전공과정 : 인공지능학과 학생으로서 단일전공자는 전공기초 12학점, 전공필수 42학점, 전공",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "SW필수",
+          "rule": "all",
+          "required_credits": 21,
+          "choose_n": null,
+          "courses": [
+            "웹/파이선프로그래밍(SWCON)",
+            "객체지향프로그래밍(CSE)",
+            "자료구조(CSE)",
+            "운영체제(CSE)",
+            "알고리즘(CSE)",
+            "캡스톤디자인(CSE)",
+            "졸업프로젝트(CSE)",
+            "졸업논문(인공지능)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "SWCON104",
+              "name": "웹/파이선프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE103",
+              "name": "객체지향프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE204",
+              "name": "자료구조",
+              "credits": 3
+            },
+            {
+              "code": "CSE301",
+              "name": "운영체제",
+              "credits": 3
+            },
+            {
+              "code": "CSE304",
+              "name": "알고리즘",
+              "credits": 3
+            },
+            {
+              "code": "CSE406",
+              "name": "캡스톤디자인",
+              "credits": 3
+            },
+            {
+              "code": "CSE405",
+              "name": "졸업프로젝트",
+              "credits": 3
+            },
+            {
+              "code": "AI4003",
+              "name": "졸업논문(인공지능)",
+              "credits": 0
+            }
+          ],
+          "declared_count": 8,
+          "declared_credits": 21,
+          "page": 4,
+          "evidence": "웹/파이선프로그래밍(SWCON), 객체지향프로그래밍(CSE), 자료구조(CSE), 운영체제(CSE),",
+          "credit_page": 5,
+          "credit_evidence": "선택 27학점 이상 이수하여야 한다. 전공필수에서는 SW필수에서 21학점, AI필수에서 21학점 이상을 포함하여야 하며, 전",
+          "note": "졸업논문(인공지능)은 0학점이라 7과목이 21학점이다.",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "AI필수",
+          "rule": "all",
+          "required_credits": 21,
+          "choose_n": null,
+          "courses": [
+            "인공지능개론",
+            "인공지능프로그래밍",
+            "딥러닝(CSE)",
+            "실전기계학습(CSE)",
+            "기계학습(SWCON)",
+            "인공지능과윤리",
+            "고급딥러닝"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "AI1001",
+              "name": "인공지능개론",
+              "credits": 3
+            },
+            {
+              "code": "AI1002",
+              "name": "인공지능프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE331",
+              "name": "딥러닝",
+              "credits": 3
+            },
+            {
+              "code": "CSE340",
+              "name": "실전기계학습",
+              "credits": 3
+            },
+            {
+              "code": "SWCON253",
+              "name": "기계학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3002",
+              "name": "인공지능과윤리",
+              "credits": 3
+            },
+            {
+              "code": "AI3001",
+              "name": "고급딥러닝",
+              "credits": 3
+            }
+          ],
+          "declared_count": 7,
+          "declared_credits": 21,
+          "page": 4,
+          "evidence": "인공지능개론, 인공지능프로그래밍, 딥러닝(CSE), 실전기계학습(CSE), 기계학습(SWCON),",
+          "credit_page": 5,
+          "credit_evidence": "선택 27학점 이상 이수하여야 한다. 전공필수에서는 SW필수에서 21학점, AI필수에서 21학점 이상을 포함하여야 하며, 전",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "SW선택",
+          "rule": "choose_credits",
+          "required_credits": 9,
+          "choose_n": null,
+          "courses": [
+            "이산구조(CSE)",
+            "디자인적사고(SWCON)",
+            "데이터베이스(CSE)",
+            "컴퓨터구조(CSE)",
+            "컴파일러(CSE)",
+            "메타버스시스템(CSE)",
+            "소프트웨어공학(CSE)",
+            "메타버스테이터처리(CSE)",
+            "빅데이터프로그래밍(CSE)",
+            "최신기술콜로키움1(CSE)",
+            "AI네트워킹(CSE)",
+            "모바일/웹서비스프로그래밍(CSE)",
+            "응용데이터분석(SWCON)",
+            "데이터분석입문(SWCON)",
+            "영상분석과패턴인식(SWCON)",
+            "마이크로서비스프로그래밍(SWCON)",
+            "최신기술콜로키움2(SWCON)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "CSE201",
+              "name": "이산구조",
+              "credits": 3
+            },
+            {
+              "code": "SWCON103",
+              "name": "디자인적사고",
+              "credits": 3
+            },
+            {
+              "code": "CSE305",
+              "name": "데이터베이스",
+              "credits": 3
+            },
+            {
+              "code": "CSE203",
+              "name": "컴퓨터구조",
+              "credits": 3
+            },
+            {
+              "code": "CSE322",
+              "name": "컴파일러",
+              "credits": 3
+            },
+            {
+              "code": "CSE324",
+              "name": "메타버스시스템",
+              "credits": 3
+            },
+            {
+              "code": "CSE327",
+              "name": "소프트웨어공학",
+              "credits": 3
+            },
+            {
+              "code": "CSE430",
+              "name": "메타버스테이터처리",
+              "credits": 3
+            },
+            {
+              "code": "CSE434",
+              "name": "빅데이터프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE438",
+              "name": "최신기술콜로키움1",
+              "credits": 2
+            },
+            {
+              "code": "CSE443",
+              "name": "AI네트워킹",
+              "credits": 3
+            },
+            {
+              "code": "CSE450",
+              "name": "모바일/웹서비스프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON372",
+              "name": "응용데이터분석",
+              "credits": 3
+            },
+            {
+              "code": "SWCON256",
+              "name": "데이터분석입문",
+              "credits": 3
+            },
+            {
+              "code": "SWCON494",
+              "name": "영상분석과패턴인식",
+              "credits": 3
+            },
+            {
+              "code": "SWCON221",
+              "name": "마이크로서비스프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON302",
+              "name": "최신기술콜로키움2",
+              "credits": 2
+            }
+          ],
+          "declared_count": 17,
+          "declared_credits": 9,
+          "page": 4,
+          "evidence": "이산구조(CSE), 디자인적사고(SWCON), 데이터베이스(CSE), 컴퓨터구조(CSE), 컴파일러(CSE),",
+          "credit_page": 5,
+          "credit_evidence": "공선택에서는 SW선택 9학점, AI선택 18학점 이상을 포함하여야 한다.",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "AI선택",
+          "rule": "choose_credits",
+          "required_credits": 18,
+          "choose_n": null,
+          "courses": [
+            "UI/UX프로그래밍(CSE)",
+            "영상처리(CSE)",
+            "컴퓨터그래픽스(CSE)",
+            "인간-컴퓨터상호작용(CSE)",
+            "컴퓨터비전(CSE)",
+            "로봇프로그래밍(SWCON)",
+            "자연언어처리(SWCON)",
+            "인공지능과게임프로그래밍(SWCON)",
+            "강화학습(SWCON)",
+            "자연언어학습",
+            "빅데이터마이닝",
+            "정보검색",
+            "설명및신뢰가능한AI",
+            "블록체인(CSE)",
+            "창업현장실습",
+            "단기현장실습",
+            "장기현장실습",
+            "SW스타트업비즈니스(CSE)",
+            "SW스타트업프로젝트(CSE)",
+            "독립심화학습(인공지능)1",
+            "독립심화학습(인공지능)2",
+            "몰입심화학습(AI로봇)",
+            "몰입심화학습(AI아트테크)",
+            "몰입심화학습(AI팩토리)",
+            "몰입심화학습(AI데이터·클라우드 디자인)",
+            "몰입심화학습(온디바이스AI)",
+            "몰입심화학습(지능형데이터)",
+            "몰입심화학습(AI헬스케어)",
+            "몰입심화학습(피지컬AI)",
+            "몰입심화학습(딥엑스)",
+            "몰입심화학습(알체라)",
+            "몰입심화학습(카카오헬스케어)",
+            "몰입심화학습(캡스톤실습)",
+            "몰입심화학습(SK인텔릭스)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "CSE224",
+              "name": "UI/UX프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE426",
+              "name": "영상처리",
+              "credits": 3
+            },
+            {
+              "code": "CSE428",
+              "name": "컴퓨터그래픽스",
+              "credits": 3
+            },
+            {
+              "code": "CSE431",
+              "name": "인간-컴퓨터상호작용",
+              "credits": 3
+            },
+            {
+              "code": "CSE441",
+              "name": "컴퓨터비젼",
+              "credits": 3
+            },
+            {
+              "code": "SWCON331",
+              "name": "로봇프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON493",
+              "name": "자연언어처리",
+              "credits": 3
+            },
+            {
+              "code": "SWCON491",
+              "name": "인공지능과게임프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON495",
+              "name": "강화학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3003",
+              "name": "자연언어학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3004",
+              "name": "빅데이터마이닝",
+              "credits": 3
+            },
+            {
+              "code": "AI3005",
+              "name": "정보검색",
+              "credits": 3
+            },
+            {
+              "code": "AI3008",
+              "name": "설명및신뢰가능한AI",
+              "credits": 3
+            },
+            {
+              "code": "CSE442",
+              "name": "블록체인",
+              "credits": 3
+            },
+            {
+              "code": "CSE330",
+              "name": "SW스타트업비즈니스",
+              "credits": 3
+            },
+            {
+              "code": "CSE334",
+              "name": "SW스타트업프로젝트",
+              "credits": 3
+            },
+            {
+              "code": "AI4006",
+              "name": "독립심화학습(인공지능)1",
+              "credits": 3
+            },
+            {
+              "code": "AI4007",
+              "name": "독립심화학습(인공지능)2",
+              "credits": 3
+            },
+            {
+              "code": "AI3100",
+              "name": "몰입심화학습(AI로봇)",
+              "credits": 3
+            },
+            {
+              "code": "AI3101",
+              "name": "몰입심화학습(AI아트테크)",
+              "credits": 3
+            },
+            {
+              "code": "AI3102",
+              "name": "몰입심화학습(AI팩토리)",
+              "credits": 3
+            },
+            {
+              "code": "AI3103",
+              "name": "몰입심화학습(AI데이터·클라우드디자인)",
+              "credits": 3
+            },
+            {
+              "code": "AI3104",
+              "name": "몰입심화학습(온디바이스AI)",
+              "credits": 3
+            },
+            {
+              "code": "AI3105",
+              "name": "몰입심화학습(지능형데이터)",
+              "credits": 3
+            },
+            {
+              "code": "AI3106",
+              "name": "몰입심화학습(AI헬스케어)",
+              "credits": 3
+            },
+            {
+              "code": "AI3107",
+              "name": "몰입심화학습(피지컬AI)",
+              "credits": 3
+            },
+            {
+              "code": "AI4009",
+              "name": "몰입심화학습(딥엑스)",
+              "credits": 3
+            },
+            {
+              "code": "AI4010",
+              "name": "몰입심화학습(알체라)",
+              "credits": 3
+            },
+            {
+              "code": "AI4011",
+              "name": "몰입심화학습(카카오헬스케어)",
+              "credits": 3
+            },
+            {
+              "code": "AI4012",
+              "name": "몰입심화학습(캡스톤실습)",
+              "credits": 3
+            },
+            {
+              "code": "AI4013",
+              "name": "몰입심화학습(SK인텔릭스)",
+              "credits": 3
+            }
+          ],
+          "declared_count": 34,
+          "declared_credits": 18,
+          "page": 4,
+          "evidence": "UI/UX프로그래밍(CSE), 영상처리(CSE), 컴퓨터그래픽스(CSE), 인간-컴퓨터상호작용(CSE),",
+          "credit_page": 5,
+          "credit_evidence": "공선택에서는 SW선택 9학점, AI선택 18학점 이상을 포함하여야 한다.",
+          "note": "원문 '단기현장실습/장기현장실습'은 2과목으로 센다(과목수 34). '몰입심화학습(AI데이터·클라우드 디자인)'은 원문에서 줄바꿈으로 나뉘어 있다.",
+          "unresolved": [
+            "창업현장실습",
+            "단기현장실습",
+            "장기현장실습"
+          ]
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "ai-industry-9",
+          "text": "산학필수 9학점 이상: 단기현장실습/장기현장실습, 빅데이터프로그래밍, 모바일/웹서비스프로그래밍, 최신기술콜로키움1·2, 캡스톤디자인, 졸업프로젝트, 블록체인(CSE), 창업현장실습 중 이수",
+          "page": 5,
+          "evidence": "제6조(산학필수 이수) 단기현장실습/장기현장실습을 포함하여 빅데이터프로그래밍, 모바일/웹서비스프로그래밍, 최신기술콜",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "ai-thesis-enroll",
+          "text": "'졸업논문(인공지능)'을 반드시 수강신청해야 한다(졸업프로젝트 이수로 졸업논문 합격 인정).",
+          "page": 2,
+          "evidence": "컴퓨터공학과의 ‘졸업프로젝트’를 이수하는 것으로 경희대학교 졸업을 위한 “졸업논문” 합격으로 인정한다. 단, “졸업",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        },
+        {
+          "id": "ai-need-second-track",
+          "text": "졸업하려면 본전공 외에 다전공, 부전공, 마이크로디그리(본전공 주관 제외) 중 1개 이상을 이수해야 한다.",
+          "page": 2,
+          "evidence": "졸업을 위해서는 본전공 외에 1)다전공, 2)부전공, 3)마이크로디그리(본전공 주관의 마이크로디그리는 제외) 중 1개 이상을 필수로 이수해야 함",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        }
+      ],
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/AI선택",
+          "msg": "'컴퓨터비전(CSE)' ~ '컴퓨터비젼' (CSE441) similarity 0.80"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'창업현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'단기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'장기현장실습' not found in 별표1"
+        }
+      ]
+    },
+    {
+      "kind": "double",
+      "name": "인공지능학과",
+      "total_credits": 51,
+      "stated": {
+        "기초": 12,
+        "필수": 30,
+        "선택": 9,
+        "계": 51,
+        "page": 2,
+        "evidence": "인공지능학과 130 12 42 27 81 6 12 30 9 51 -"
+      },
+      "groups": [
+        {
+          "category": "전공기초",
+          "sub": "",
+          "rule": "all",
+          "required_credits": 12,
+          "choose_n": null,
+          "courses": [
+            "선형대수",
+            "확률및랜덤변수(EE)",
+            "미분적분학",
+            "인공지능수학"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "AMTH1004",
+              "name": "선형대수",
+              "credits": 3
+            },
+            {
+              "code": "EE211",
+              "name": "확률및랜덤변수",
+              "credits": 3
+            },
+            {
+              "code": "AMTH1009",
+              "name": "미분적분학",
+              "credits": 3
+            },
+            {
+              "code": "AI1003",
+              "name": "인공지능수학",
+              "credits": 3
+            }
+          ],
+          "declared_count": 4,
+          "declared_credits": 12,
+          "page": 4,
+          "evidence": "선형대수, 확률및랜덤변수(EE), 미분적분학, 인공지능수학 4",
+          "credit_page": 5,
+          "credit_evidence": "공과정으로 이수하는 학생은 전공기초 12학점, 전공필수 30학점, 전공선택 9학점 이상 이수하여야 한다. 전공필수에",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "SW필수",
+          "rule": "all",
+          "required_credits": 12,
+          "choose_n": null,
+          "courses": [
+            "자료구조(CSE)",
+            "알고리즘(CSE)",
+            "캡스톤디자인(CSE)",
+            "졸업프로젝트(CSE)",
+            "졸업논문(인공지능)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "CSE204",
+              "name": "자료구조",
+              "credits": 3
+            },
+            {
+              "code": "CSE304",
+              "name": "알고리즘",
+              "credits": 3
+            },
+            {
+              "code": "CSE406",
+              "name": "캡스톤디자인",
+              "credits": 3
+            },
+            {
+              "code": "CSE405",
+              "name": "졸업프로젝트",
+              "credits": 3
+            },
+            {
+              "code": "AI4003",
+              "name": "졸업논문(인공지능)",
+              "credits": 0
+            }
+          ],
+          "declared_count": 5,
+          "declared_credits": 12,
+          "page": 4,
+          "evidence": "자료구조(CSE), 알고리즘(CSE), 캡스톤디자인(CSE), 졸업프로젝트(CSE), 졸업논문(인공지능) 5",
+          "credit_page": 5,
+          "credit_evidence": "서는 SW필수 12학점, AI필수 18학점 이상을 포함하여야 하며, 전공선택에는 SW선택 3학점, AI선택 6학점 이상을 포함",
+          "note": "졸업논문(인공지능)은 0학점이라 4과목이 12학점이다.",
+          "unresolved": []
+        },
+        {
+          "category": "전공필수",
+          "sub": "AI필수",
+          "rule": "all",
+          "required_credits": 18,
+          "choose_n": null,
+          "courses": [
+            "인공지능프로그래밍",
+            "기계학습(SWCON)",
+            "딥러닝(CSE)",
+            "실전기계학습(CSE)",
+            "고급딥러닝",
+            "인공지능과윤리"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "AI1002",
+              "name": "인공지능프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON253",
+              "name": "기계학습",
+              "credits": 3
+            },
+            {
+              "code": "CSE331",
+              "name": "딥러닝",
+              "credits": 3
+            },
+            {
+              "code": "CSE340",
+              "name": "실전기계학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3001",
+              "name": "고급딥러닝",
+              "credits": 3
+            },
+            {
+              "code": "AI3002",
+              "name": "인공지능과윤리",
+              "credits": 3
+            }
+          ],
+          "declared_count": 6,
+          "declared_credits": 18,
+          "page": 4,
+          "evidence": "인공지능프로그래밍, 기계학습(SWCON), 딥러닝(CSE), 실전기계학습(CSE), 고급딥러닝,",
+          "credit_page": 5,
+          "credit_evidence": "서는 SW필수 12학점, AI필수 18학점 이상을 포함하여야 하며, 전공선택에는 SW선택 3학점, AI선택 6학점 이상을 포함",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "SW선택",
+          "rule": "choose_credits",
+          "required_credits": 3,
+          "choose_n": null,
+          "courses": [
+            "이산구조(CSE)",
+            "데이터베이스(CSE)",
+            "컴퓨터구조(CSE)",
+            "컴파일러(CSE)",
+            "메타버스시스템(CSE)",
+            "소프트웨어공학(CSE)",
+            "메타버스데이터처리(CSE)",
+            "빅데이터프로그래밍(CSE)",
+            "최신기술콜로키움1(CSE)",
+            "AI네트워킹(CSE)",
+            "모바일/웹서비스프로그래밍(CSE)",
+            "마이크로서비스프로그래밍(SWCON)",
+            "최신기술콜로키움2(SWCON)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "CSE201",
+              "name": "이산구조",
+              "credits": 3
+            },
+            {
+              "code": "CSE305",
+              "name": "데이터베이스",
+              "credits": 3
+            },
+            {
+              "code": "CSE203",
+              "name": "컴퓨터구조",
+              "credits": 3
+            },
+            {
+              "code": "CSE322",
+              "name": "컴파일러",
+              "credits": 3
+            },
+            {
+              "code": "CSE324",
+              "name": "메타버스시스템",
+              "credits": 3
+            },
+            {
+              "code": "CSE327",
+              "name": "소프트웨어공학",
+              "credits": 3
+            },
+            {
+              "code": "CSE430",
+              "name": "메타버스테이터처리",
+              "credits": 3
+            },
+            {
+              "code": "CSE434",
+              "name": "빅데이터프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE438",
+              "name": "최신기술콜로키움1",
+              "credits": 2
+            },
+            {
+              "code": "CSE443",
+              "name": "AI네트워킹",
+              "credits": 3
+            },
+            {
+              "code": "CSE450",
+              "name": "모바일/웹서비스프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON221",
+              "name": "마이크로서비스프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON302",
+              "name": "최신기술콜로키움2",
+              "credits": 2
+            }
+          ],
+          "declared_count": 13,
+          "declared_credits": 3,
+          "page": 4,
+          "evidence": "이산구조(CSE), 데이터베이스(CSE), 컴퓨터구조(CSE), 컴파일러(CSE), 메타버스시스템(CSE),",
+          "credit_page": 5,
+          "credit_evidence": "서는 SW필수 12학점, AI필수 18학점 이상을 포함하여야 하며, 전공선택에는 SW선택 3학점, AI선택 6학점 이상을 포함",
+          "note": "",
+          "unresolved": []
+        },
+        {
+          "category": "전공선택",
+          "sub": "AI선택",
+          "rule": "choose_credits",
+          "required_credits": 6,
+          "choose_n": null,
+          "courses": [
+            "UI/UX프로그래밍(CSE)",
+            "영상처리(CSE)",
+            "컴퓨터그래픽스(CSE)",
+            "인간-컴퓨터상호작용(CSE)",
+            "컴퓨터비전(CSE)",
+            "로봇프로그래밍(SWCON)",
+            "자연언어처리(SWCON)",
+            "인공지능과게임프로그래밍(SWCON)",
+            "강화학습(SWCON)",
+            "자연언어학습",
+            "빅데이터마이닝",
+            "정보검색",
+            "설명및신뢰가능한AI",
+            "블록체인(CSE)",
+            "창업현장실습",
+            "단기현장실습",
+            "장기현장실습",
+            "SW스타트업비즈니스(CSE)",
+            "SW스타트업프로젝트(CSE)",
+            "독립심화학습(인공지능)1",
+            "독립심화학습(인공지능)2",
+            "몰입심화학습(AI로봇)",
+            "몰입심화학습(AI아트테크)",
+            "몰입심화학습(AI팩토리)",
+            "몰입심화학습(AI데이터·클라우드 디자인)",
+            "몰입심화학습(온디바이스AI)",
+            "몰입심화학습(지능형데이터)",
+            "몰입심화학습(AI헬스케어)",
+            "몰입심화학습(피지컬AI)",
+            "몰입심화학습(딥엑스)",
+            "몰입심화학습(알체라)",
+            "몰입심화학습(카카오헬스케어)",
+            "몰입심화학습(캡스톤실습)",
+            "몰입심화학습(SK인텔릭스)"
+          ],
+          "pool_rows": null,
+          "coded": [
+            {
+              "code": "CSE224",
+              "name": "UI/UX프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "CSE426",
+              "name": "영상처리",
+              "credits": 3
+            },
+            {
+              "code": "CSE428",
+              "name": "컴퓨터그래픽스",
+              "credits": 3
+            },
+            {
+              "code": "CSE431",
+              "name": "인간-컴퓨터상호작용",
+              "credits": 3
+            },
+            {
+              "code": "CSE441",
+              "name": "컴퓨터비젼",
+              "credits": 3
+            },
+            {
+              "code": "SWCON331",
+              "name": "로봇프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON493",
+              "name": "자연언어처리",
+              "credits": 3
+            },
+            {
+              "code": "SWCON491",
+              "name": "인공지능과게임프로그래밍",
+              "credits": 3
+            },
+            {
+              "code": "SWCON495",
+              "name": "강화학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3003",
+              "name": "자연언어학습",
+              "credits": 3
+            },
+            {
+              "code": "AI3004",
+              "name": "빅데이터마이닝",
+              "credits": 3
+            },
+            {
+              "code": "AI3005",
+              "name": "정보검색",
+              "credits": 3
+            },
+            {
+              "code": "AI3008",
+              "name": "설명및신뢰가능한AI",
+              "credits": 3
+            },
+            {
+              "code": "CSE442",
+              "name": "블록체인",
+              "credits": 3
+            },
+            {
+              "code": "CSE330",
+              "name": "SW스타트업비즈니스",
+              "credits": 3
+            },
+            {
+              "code": "CSE334",
+              "name": "SW스타트업프로젝트",
+              "credits": 3
+            },
+            {
+              "code": "AI4006",
+              "name": "독립심화학습(인공지능)1",
+              "credits": 3
+            },
+            {
+              "code": "AI4007",
+              "name": "독립심화학습(인공지능)2",
+              "credits": 3
+            },
+            {
+              "code": "AI3100",
+              "name": "몰입심화학습(AI로봇)",
+              "credits": 3
+            },
+            {
+              "code": "AI3101",
+              "name": "몰입심화학습(AI아트테크)",
+              "credits": 3
+            },
+            {
+              "code": "AI3102",
+              "name": "몰입심화학습(AI팩토리)",
+              "credits": 3
+            },
+            {
+              "code": "AI3103",
+              "name": "몰입심화학습(AI데이터·클라우드디자인)",
+              "credits": 3
+            },
+            {
+              "code": "AI3104",
+              "name": "몰입심화학습(온디바이스AI)",
+              "credits": 3
+            },
+            {
+              "code": "AI3105",
+              "name": "몰입심화학습(지능형데이터)",
+              "credits": 3
+            },
+            {
+              "code": "AI3106",
+              "name": "몰입심화학습(AI헬스케어)",
+              "credits": 3
+            },
+            {
+              "code": "AI3107",
+              "name": "몰입심화학습(피지컬AI)",
+              "credits": 3
+            },
+            {
+              "code": "AI4009",
+              "name": "몰입심화학습(딥엑스)",
+              "credits": 3
+            },
+            {
+              "code": "AI4010",
+              "name": "몰입심화학습(알체라)",
+              "credits": 3
+            },
+            {
+              "code": "AI4011",
+              "name": "몰입심화학습(카카오헬스케어)",
+              "credits": 3
+            },
+            {
+              "code": "AI4012",
+              "name": "몰입심화학습(캡스톤실습)",
+              "credits": 3
+            },
+            {
+              "code": "AI4013",
+              "name": "몰입심화학습(SK인텔릭스)",
+              "credits": 3
+            }
+          ],
+          "declared_count": 34,
+          "declared_credits": 6,
+          "page": 4,
+          "evidence": "UI/UX프로그래밍(CSE), 영상처리(CSE), 컴퓨터그래픽스(CSE), 인간-컴퓨터상호작용(CSE),",
+          "credit_page": 5,
+          "credit_evidence": "서는 SW필수 12학점, AI필수 18학점 이상을 포함하여야 하며, 전공선택에는 SW선택 3학점, AI선택 6학점 이상을 포함",
+          "note": "원문 '단기현장실습/장기현장실습'은 2과목으로 센다(과목수 34). '몰입심화학습(AI데이터·클라우드 디자인)'은 원문에서 줄바꿈으로 나뉘어 있다.",
+          "unresolved": [
+            "창업현장실습",
+            "단기현장실습",
+            "장기현장실습"
+          ]
+        }
+      ],
+      "extra_rules": [
+        {
+          "id": "ai-industry-9",
+          "text": "산학필수 9학점 이상: 단기현장실습/장기현장실습, 빅데이터프로그래밍, 모바일/웹서비스프로그래밍, 최신기술콜로키움1·2, 캡스톤디자인, 졸업프로젝트, 블록체인(CSE), 창업현장실습 중 이수",
+          "page": 5,
+          "evidence": "제6조(산학필수 이수) 단기현장실습/장기현장실습을 포함하여 빅데이터프로그래밍, 모바일/웹서비스프로그래밍, 최신기술콜",
+          "applies_if": null,
+          "status": "ambiguous",
+          "why": "제9조③은 다전공과정 학생에게도 산학필수를 요구하지만, 다전공 요건(선택 9학점 등) 안에서 어떻게 충족하는지 원문에 명시되어 있지 않다."
+        },
+        {
+          "id": "ai-thesis-enroll",
+          "text": "'졸업논문(인공지능)'을 반드시 수강신청해야 한다(졸업프로젝트 이수로 졸업논문 합격 인정).",
+          "page": 2,
+          "evidence": "컴퓨터공학과의 ‘졸업프로젝트’를 이수하는 것으로 경희대학교 졸업을 위한 “졸업논문” 합격으로 인정한다. 단, “졸업",
+          "applies_if": null,
+          "status": "applies",
+          "why": ""
+        }
+      ],
+      "status": "auto_pass",
+      "issues": [
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/SW선택",
+          "msg": "'메타버스데이터처리(CSE)' ~ '메타버스테이터처리' (CSE430) similarity 0.89"
+        },
+        {
+          "level": "warn",
+          "code": "FUZZY_MATCH",
+          "where": "전공선택/AI선택",
+          "msg": "'컴퓨터비전(CSE)' ~ '컴퓨터비젼' (CSE441) similarity 0.80"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'창업현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'단기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "UNRESOLVED_COURSE",
+          "where": "전공선택/AI선택",
+          "msg": "'장기현장실습' not found in 별표1"
+        },
+        {
+          "level": "warn",
+          "code": "AMBIGUOUS_RULE",
+          "where": "",
+          "msg": "ai-industry-9: 제9조③은 다전공과정 학생에게도 산학필수를 요구하지만, 다전공 요건(선택 9학점 등) 안에서 어떻게 충족하는지 원문에 명시되어 있지 않다."
+        }
+      ]
+    }
+  ]
+}
