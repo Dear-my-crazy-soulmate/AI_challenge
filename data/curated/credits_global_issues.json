@@ -1,0 +1,684 @@
+{
+  "기계공학": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "기계공학/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "지능로봇공학": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "지능로봇공학/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "항공우주모빌리티": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "항공우주모빌리티/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "산업경영공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "산업경영공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "원자력공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "원자력공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "화학공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "화학공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "신소재공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "신소재공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "사회기반시스템공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "사회기반시스템공학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "사회기반시스템공학과/minor",
+      "msg": "선택 is null, read as 0"
+    }
+  ],
+  "건축공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "건축공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "환경학및환경공학과 (환경학)": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "환경학및환경공학과 (환경학)/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "환경학및환경공학과 (환경공학)": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "환경학및환경공학과 (환경공학)/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "건축학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "건축학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "DOUBLE_EQ_SINGLE",
+      "where": "건축학과",
+      "msg": "double equals single (117)"
+    },
+    {
+      "level": "warn",
+      "code": "UNUSUAL_MINOR_TOTAL",
+      "where": "건축학과",
+      "msg": "minor 30 (usual 21)"
+    }
+  ],
+  "전자공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "전자공학과/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "전자공학과/minor",
+      "msg": "{'기초': 3, '필수': 9, '선택': 12} sums to 24, 계 is 21"
+    }
+  ],
+  "반도체공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "반도체공학과/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "반도체공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "생체의공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "생체의공학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "UNUSUAL_MINOR_TOTAL",
+      "where": "생체의공학과",
+      "msg": "minor 24 (usual 21)"
+    }
+  ],
+  "컴퓨터공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "컴퓨터공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "소프트웨어융합학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "소프트웨어융합학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "응용수학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "응용수학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "응용물리학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "응용물리학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "응용물리학과/minor",
+      "msg": "선택 is null, read as 0"
+    }
+  ],
+  "응용화학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "응용화학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "우주과학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "우주과학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "스마트팜과학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스마트팜과학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "식물·환경신소재공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "식물·환경신소재공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "식품생명공학과": [
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "식품생명공학과/minor",
+      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+    }
+  ],
+  "원예생명공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "원예생명공학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "유전생명공학과": [
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "유전생명공학과/minor",
+      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+    }
+  ],
+  "한방생명공학과": [
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "한방생명공학과/minor",
+      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+    }
+  ],
+  "융합바이오·신소재공학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "융합바이오·신소재공학과/minor",
+      "msg": "선택 is null, read as 0"
+    }
+  ],
+  "국제학과": [
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "국제학과/minor",
+      "msg": "{'기초': 3, '필수': 6, '선택': 15} sums to 24, 계 is 21"
+    }
+  ],
+  "아시아학과": [
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "아시아학과/minor",
+      "msg": "{'기초': 3, '필수': 12, '선택': 9} sums to 24, 계 is 21"
+    }
+  ],
+  "프랑스어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "프랑스어학과/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "프랑스어학과/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "프랑스어학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "스페인어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스페인어학과/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스페인어학과/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스페인어학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "러시아어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "러시아어학과/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "러시아어학과/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "러시아어학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "중국어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "중국어학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "일본어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "일본어학과/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "일본어학과/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "일본어학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "한국어학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "한국어학과/single",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "한국어학과/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "한국어학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "한국어학과/minor",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "영미어문전공": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미어문전공/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미어문전공/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미어문전공/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "영미문화전공": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미문화전공/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미문화전공/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "영미문화전공/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "산업디자인학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "산업디자인학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "시각디자인학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "시각디자인학과/single",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "시각디자인학과/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "시각디자인학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "시각디자인학과/minor",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "환경조경디자인학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "환경조경디자인학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "의류디자인학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "의류디자인학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "디지털콘텐츠학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "디지털콘텐츠학과/single",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "디지털콘텐츠학과/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "디지털콘텐츠학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "디지털콘텐츠학과/minor",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "도예학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "도예학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "연극영화학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "연극영화학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "포스트모던음악학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "포스트모던음악학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "UNUSUAL_MINOR_TOTAL",
+      "where": "포스트모던음악학과",
+      "msg": "minor 33 (usual 21)"
+    }
+  ],
+  "체육학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "체육학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "스포츠의학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스포츠의학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "골프산업학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "골프산업학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "스포츠지도학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "스포츠지도학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "UNUSUAL_MINOR_TOTAL",
+      "where": "스포츠지도학과",
+      "msg": "minor 24 (usual 21)"
+    }
+  ],
+  "태권도학과": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "태권도학과/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "글로벌엔지니어링": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "글로벌엔지니어링/single",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "글로벌엔지니어링/double",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "4D아트": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "4D아트/double",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "아트&테크놀로지": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "아트&테크놀로지/double",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "K-퍼포밍아트": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "K-퍼포밍아트/single",
+      "msg": "필수 is null, read as 0"
+    }
+  ],
+  "실감미디어": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "실감미디어/double",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "실감미디어/double",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "실감미디어/minor",
+      "msg": "필수 is null, read as 0"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "실감미디어/minor",
+      "msg": "선택 is null, read as 0"
+    },
+    {
+      "level": "error",
+      "code": "MISSING_TOTAL",
+      "where": "실감미디어/minor",
+      "msg": "계 is null"
+    }
+  ],
+  "첨단바이오신소재": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "첨단바이오신소재/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "첨단종자푸드테크": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "첨단종자푸드테크/minor",
+      "msg": "기초 is null, read as 0"
+    }
+  ],
+  "웨어러블디자인테크놀로지": [
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "웨어러블디자인테크놀로지/double",
+      "msg": "필수 is null, read as 0"
+    }
+  ]
+}
