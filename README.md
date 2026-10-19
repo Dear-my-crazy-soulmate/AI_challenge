@@ -3,7 +3,7 @@
 2026학번부터 다전공·부전공·마이크로디그리(MD)가 졸업요건이 되면서, 신입생이 **정보를 찾고, 전공을 체험하고, 경험자 후기를 확인해 결정**할 수 있도록 돕는 웹 서비스입니다.
 2026 KHU AI Challenge 출품작이며, 부문은 AI 문제해결 솔루션입니다(팀 확정 필요).
 
-> 상태: 초기 세팅 전. 코드는 아직 없습니다. 진행 순서는 [PLAN.md](./PLAN.md)를 따릅니다.
+> 상태: 기능 1의 "본전공 + 다전공/부전공 → 필요 학점과 과목" 화면(`/onboarding`)이 동작합니다(국제캠퍼스 2026학년도 기준). 진행 순서는 [PLAN.md](./PLAN.md)를 따릅니다.
 
 ## 세 가지 기능
 
@@ -69,14 +69,74 @@ LLM은 ChatKHU를 우선 사용합니다. API 연동 방식은 확인 중이므�
 
 ## 시작하기
 
-아직 프로젝트가 초기화되지 않았습니다. PLAN.md의 Step 0을 완료한 뒤 아래 명령어를 사용합니다.
+### 1. 앱 실행 (화면만 볼 때)
+
+필요한 것: Git, Node.js(LTS). Python 가상환경은 필요 없습니다. 앱이 쓰는 데이터(`data/curated/`)는 저장소에 들어 있습니다.
 
 ```bash
+git clone https://github.com/Dear-my-crazy-soulmate/AI_challenge.git
+cd AI_challenge
 npm install
-cp .env.example .env.local   # 값은 팀 비공개 채널에서 받아 채우기
-npm run dev                  # http://localhost:3000
-npm test
+npm run dev     # 터미널에 Local / Network 주소가 나옵니다
+npm test        # Vitest 테스트
 ```
+
+브라우저에서 **http://localhost:3000/onboarding** 을 엽니다. 홈(`/`)은 아직 Next.js 기본 화면이라 `next.svg`, `vercel.svg` 404 로그가 보여도 정상입니다.
+
+### 2. 팀원과 함께 확인하는 방법
+
+| 방법 | 언제 | 주소 |
+|---|---|---|
+| A. 각자 실행 | 코드를 같이 고치며 확인할 때 (권장) | 각자 PC의 `http://localhost:3000/onboarding` |
+| B. 내 PC 서버를 같이 보기 | 같은 Wi-Fi에서 바로 보여 줄 때 | 서버 켠 사람의 `Network` 주소 + `/onboarding` |
+| C. 배포 주소 | 다른 장소에서 보거나 시연할 때 | https://ai-challenge-ivory.vercel.app/onboarding (main에 push된 내용) |
+
+**A. 각자 실행**: 위 1번을 각자 하고, 변경은 `git pull`로 받습니다.
+
+**B. 같은 네트워크에서 한 사람의 서버를 같이 보기**
+
+1. 서버를 켠 사람의 터미널에 나온 `Network: http://192.168.x.x:3000` 주소를 팀원에게 공유합니다(주소는 PC·Wi-Fi마다 다릅니다).
+2. 팀원은 그 주소 뒤에 `/onboarding` 을 붙여 엽니다.
+3. Windows 방화벽 창이 뜨면 **개인 네트워크**에서 Node.js 허용을 선택합니다. 학교·공용 Wi-Fi는 기기 간 접속이 막혀 있을 수 있어서, 그때는 A나 C를 씁니다.
+4. 터미널에 `Blocked cross-origin request to Next.js dev resource /_next/hmr from "192.168.x.x"` 경고가 나오면: 페이지는 열리지만 코드 수정이 화면에 자동 반영(HMR)되지 않습니다. 필요하면 `next.config.ts`에 그 주소를 추가하고 서버를 다시 켭니다. 주소는 PC마다 달라서 저장소에는 커밋하지 않습니다.
+
+   ```ts
+   const nextConfig: NextConfig = {
+     allowedDevOrigins: ["192.168.x.x"], // 터미널 경고에 나온 주소
+     // ...기존 설정
+   };
+   ```
+
+**C. 배포 주소**: Vercel에 연결된 `main`의 최신 내용입니다. push 후 반영되는 데 몇 분 걸릴 수 있습니다.
+
+**같이 확인할 시나리오** (`/onboarding`)
+
+1. 본전공 `컴퓨터공학과` → 다전공 → `소프트웨어융합학과`: 합계 102학점, 두 전공 모두 "학점 검증 완료", 기초·필수 과목 목록이 나오는지
+2. 본전공 `체육학과` → 다전공 → `응용수학과`: "일부 선택 이수"와 "아래 과목 중 선택", 학과 규정 원문이 보이는지
+3. 본전공 `컴퓨터공학과` → 부전공 → `전자공학과`: 검증 미통과 안내가 나오는지
+4. 본전공 `체육학과` → 다전공 → `인공지능학과`: 학점은 나오고 과목은 "과목 정보 없음"으로 나오는지
+
+화면이 이상하면 주소, 선택한 조합, 화면 캡처를 함께 공유합니다.
+
+### 3. 데이터 파이프라인 실행 (데이터를 다시 만들 때만)
+
+교육과정 PDF에서 `data/curated/`를 다시 만드는 Python 스크립트입니다. Windows에서는 `pdftotext`가 들어 있는 **Git Bash**에서 실행합니다(macOS: `brew install poppler`).
+
+```bash
+python -m venv .venv
+.venv/Scripts/python -m pip install -r requirements.txt     # macOS/Linux: .venv/bin/python
+```
+
+원본 PDF는 저장소에 없습니다(`data/raw/`는 git 제외). 팀 채널에서 `2026경희대 교육과정.pdf`를 받아 `data/raw/`에 넣은 뒤 실행합니다.
+
+```bash
+.venv/Scripts/python -I scripts/pipeline/overview.py                       # 학점 개요 검증
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py        # 책을 학과별로 분리
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py    # 과목 데이터 생성
+PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py     # 파이프라인 테스트
+```
+
+`(.venv)` 활성화는 필요 없습니다. 위처럼 `.venv/Scripts/python`을 직접 쓰면 됩니다. 앱(`npm run dev`)은 가상환경과 관계없이 실행됩니다.
 
 ## Claude Code로 개발하기
 
