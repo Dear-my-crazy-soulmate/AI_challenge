@@ -21,11 +21,13 @@ INSTALL_HINT = (
 )
 
 
-def extract_pages(pdf: Path, mode: str = "-layout") -> list[str]:
+def extract_pages(pdf: Path, mode: str = "-layout", errors: str = "strict") -> list[str]:
     """Return page texts (index 0 = page 1) using `pdftotext <mode>`.
 
     "-layout" keeps the visual layout (used for page detection); "-raw" keeps
     reading order, which is what the course-table parser needs.
+    errors="replace" turns undecodable bytes into U+FFFD; callers that use it
+    must report the affected pages.
     """
     exe = shutil.which("pdftotext")
     if exe is None:
@@ -41,7 +43,7 @@ def extract_pages(pdf: Path, mode: str = "-layout") -> list[str]:
             f"pdftotext failed for {pdf.name} (exit {proc.returncode}): "
             f"{proc.stderr.decode('utf-8', 'replace').strip()}"
         )
-    text = proc.stdout.decode("utf-8")
+    text = proc.stdout.decode("utf-8", errors)
     pages = text.split("\f")
     if pages and pages[-1].strip() == "":
         pages.pop()  # pdftotext ends the output with a trailing form feed
