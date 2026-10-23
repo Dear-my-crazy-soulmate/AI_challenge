@@ -83,7 +83,7 @@ export interface CoursePlanOk {
 
 export type CoursePlanResult = CoursePlanOk | CreditUnavailable;
 
-function programCourses(dept: string, kind: ProgramKind, data: CourseData): ProgramCourses {
+export function programCourses(dept: string, kind: ProgramKind, data: CourseData): ProgramCourses {
   const d = data.depts[dept];
   const p = d?.programs[kind];
   if (!d || !p) {

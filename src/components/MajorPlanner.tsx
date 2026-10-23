@@ -7,8 +7,16 @@ import { listCreditOptions } from "@/lib/rules/credits";
 import type { CreditData, CreditKind, ProgramKind } from "@/lib/rules/credits";
 import { prohibitedReason } from "@/lib/rules/majorRules";
 import type { MajorRules } from "@/lib/rules/majorRules";
+import type { Microdegree, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
 
 const KIND_LABEL: Record<ProgramKind, string> = { single: "단일전공", double: "다전공", minor: "부전공" };
+type Mode = CreditKind | "microdegree";
+const MODE_LABEL: Record<Mode, string> = { double: "다전공", minor: "부전공", microdegree: "마이크로디그리" };
+const MD_STATUS: Record<Microdegree["status"], { label: string; tone: string }> = {
+  verified: { label: "학점 검증 완료", tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
+  choose: { label: "일부 선택 이수", tone: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
+  check: { label: "학과 확인 필요", tone: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
+};
 const STATUS: Record<ProgramCourses["status"], { label: string; tone: string }> = {
   verified: { label: "학점 검증 완료", tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
   choose: { label: "일부 선택 이수", tone: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
@@ -169,7 +177,91 @@ function MicrodegreeRules({ rules }: { rules: MajorRules }) {
   );
 }
 
-export default function MajorPlanner({ data, rules }: { data: CreditData; rules: MajorRules }) {
+function MicrodegreeResult({ r }: { r: Extract<MicrodegreePlanResult, { available: true }> }) {
+  const md = r.microdegree;
+  const s = MD_STATUS[md.status];
+  const also = new Set(r.alsoInPrimary.map((c) => c.code));
+  const ruleText =
+    md.required_credits === null
+      ? "필요 학점 확인 필요"
+      : md.rule === "all"
+        ? `${md.required_credits}학점 · 모두 이수`
+        : md.rule === "choose"
+          ? `${md.required_credits}학점 · 아래 과목 중 선택`
+          : `${md.required_credits}학점 · 과목 목록과 학점이 맞지 않아 확인 필요`;
+  return (
+    <div className="flex flex-col gap-4">
+      <section className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
+        <p className="text-lg font-semibold">
+          {r.primary.dept} 단일전공 <span className="tabular-nums">{r.primaryCredits}</span>학점 + {md.name}{" "}
+          <span className="tabular-nums">{md.required_credits ?? "?"}</span>학점
+        </p>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          마이크로디그리는 전공이 아니어서 본전공은 단일전공 기준으로 이수합니다. 마이크로디그리 과목은 전공·교양 학점으로도
+          함께 인정됩니다.
+        </p>
+      </section>
+      <section className="flex flex-col gap-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold">
+            {md.name} {md.english && <span className="text-sm font-normal text-zinc-500">{md.english}</span>}
+          </h3>
+          <span className={`rounded-full px-2 py-0.5 text-xs ${s.tone}`}>{s.label}</span>
+        </div>
+        <p className="text-sm">
+          운영 학과: {md.depts.join(", ")} · <span className="text-zinc-600 dark:text-zinc-400">{ruleText}</span>
+        </p>
+        <ul className="grid gap-1 sm:grid-cols-2">
+          {md.courses.map((c) => (
+            <li key={c.code} className="flex justify-between gap-2 rounded bg-zinc-50 px-2 py-1 text-sm dark:bg-zinc-900">
+              <span>
+                {c.name} <span className="text-xs text-zinc-500">{c.code}</span>
+                {also.has(c.code) && (
+                  <span className="ml-1 rounded bg-emerald-100 px-1 text-xs text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                    본전공에도 있음
+                  </span>
+                )}
+              </span>
+              <span className="tabular-nums text-zinc-600 dark:text-zinc-400">{c.credits}학점</span>
+            </li>
+          ))}
+        </ul>
+        {md.choice_note && <p className="text-xs text-zinc-500">{md.choice_note}</p>}
+        {md.problems.length > 0 && (
+          <ul className="list-disc pl-5 text-xs text-amber-700 dark:text-amber-400">
+            {md.problems.map((x, i) => (
+              <li key={i}>{x}</li>
+            ))}
+          </ul>
+        )}
+        <p className="text-xs text-zinc-500">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
+      </section>
+      <section className="flex flex-col gap-2 rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+        <h3 className="text-base font-semibold">마이크로디그리 규칙</h3>
+        <ul className="list-disc pl-5 text-zinc-600 dark:text-zinc-400">
+          {r.rules.map((n) => (
+            <li key={n.id}>
+              {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <p className="text-xs text-zinc-500">
+        출처: {r.source.pdf} ({r.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.
+      </p>
+    </div>
+  );
+}
+
+export default function MajorPlanner({
+  data,
+  rules,
+  microdegrees,
+}: {
+  data: CreditData;
+  rules: MajorRules;
+  microdegrees: Microdegree[];
+}) {
   const byCollege = useMemo(() => {
     const map = new Map<string, string[]>();
     for (const d of data.depts) {
@@ -180,14 +272,15 @@ export default function MajorPlanner({ data, rules }: { data: CreditData; rules:
   }, [data]);
 
   const [primary, setPrimary] = useState("");
-  const [kind, setKind] = useState<CreditKind>("double");
+  const [kind, setKind] = useState<Mode>("double");
   const [second, setSecond] = useState("");
   const [result, setResult] = useState<CoursePlanResult | null>(null);
+  const [mdResult, setMdResult] = useState<MicrodegreePlanResult | null>(null);
   const [error, setError] = useState("");
 
   const options = useMemo(
     () =>
-      primary
+      primary && kind !== "microdegree"
         ? listCreditOptions(primary, data).filter((o) => o.kind === kind && !prohibitedReason(primary, o.dept, rules))
         : [],
     [primary, kind, data, rules],
@@ -203,25 +296,34 @@ export default function MajorPlanner({ data, rules }: { data: CreditData; rules:
   useEffect(() => {
     if (!primary || !second) return;
     const controller = new AbortController();
-    const q = new URLSearchParams({ primary, second, kind });
-    fetch(`/api/plan?${q}`, { signal: controller.signal })
+    const isMd = kind === "microdegree";
+    const q = new URLSearchParams(isMd ? { primary, id: second } : { primary, second, kind });
+    fetch(`/api/${isMd ? "microdegree" : "plan"}?${q}`, { signal: controller.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json() as Promise<CoursePlanResult>;
+        return r.json() as Promise<CoursePlanResult | MicrodegreePlanResult>;
       })
       .then((r) => {
-        setResult(r);
+        if (isMd) {
+          setMdResult(r as MicrodegreePlanResult);
+          setResult(null);
+        } else {
+          setResult(r as CoursePlanResult);
+          setMdResult(null);
+        }
         setError("");
       })
       .catch((e: unknown) => {
         if (controller.signal.aborted) return;
         setResult(null);
+        setMdResult(null);
         setError(`결과를 불러오지 못했습니다 (${e instanceof Error ? e.message : String(e)}). 다시 시도해 주세요.`);
       });
     return () => controller.abort();
   }, [primary, second, kind]);
 
-  const shown = primary && second ? result : null;
+  const shown = primary && second && kind !== "microdegree" ? result : null;
+  const mdShown = primary && second && kind === "microdegree" ? mdResult : null;
 
   return (
     <div className="mt-6 flex flex-col gap-6">
@@ -248,8 +350,8 @@ export default function MajorPlanner({ data, rules }: { data: CreditData; rules:
             ))}
           </select>
         </label>
-        <div className="flex gap-1" role="radiogroup" aria-label="이수 형태">
-          {(["double", "minor"] as const).map((k) => (
+        <div className="flex flex-wrap gap-1" role="radiogroup" aria-label="이수 형태">
+          {(["double", "minor", "microdegree"] as const).map((k) => (
             <button
               key={k}
               role="radio"
@@ -258,37 +360,57 @@ export default function MajorPlanner({ data, rules }: { data: CreditData; rules:
                 setKind(k);
                 setSecond("");
               }}
-              className={`rounded-full px-3 py-2 text-sm ${
+              className={`whitespace-nowrap rounded-full px-3 py-2 text-sm ${
                 kind === k ? "bg-foreground text-background" : "border border-zinc-300 dark:border-zinc-700"
               }`}
             >
-              {KIND_LABEL[k]}
+              {MODE_LABEL[k]}
             </button>
           ))}
         </div>
         <label className="flex flex-col gap-2 text-sm font-medium">
-          희망 {KIND_LABEL[kind]}
+          희망 {MODE_LABEL[kind]}
           <select
             className={selectClass}
             value={second}
             disabled={!primary}
             onChange={(e) => setSecond(e.target.value)}
           >
-            <option value="">{primary ? `${options.length}개 중 선택` : "본전공을 먼저 고르세요"}</option>
-            {optionsByCollege.map(([college, names]) => (
-              <optgroup key={college} label={college}>
-                {names.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
+            {kind === "microdegree" ? (
+              <>
+                <option value="">{primary ? `${microdegrees.length}개 중 선택` : "본전공을 먼저 고르세요"}</option>
+                {microdegrees.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({m.depts.join("·")}, {m.required_credits ?? "?"}학점)
                   </option>
                 ))}
-              </optgroup>
-            ))}
+              </>
+            ) : (
+              <>
+                <option value="">{primary ? `${options.length}개 중 선택` : "본전공을 먼저 고르세요"}</option>
+                {optionsByCollege.map(([college, names]) => (
+                  <optgroup key={college} label={college}>
+                    {names.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </>
+            )}
           </select>
         </label>
       </div>
 
       {error && <p className="rounded-md border border-red-300 bg-red-50 p-3 text-sm dark:border-red-800 dark:bg-red-950">{error}</p>}
+
+      {mdShown && !mdShown.available && (
+        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950">
+          {mdShown.message}
+        </p>
+      )}
+      {mdShown && mdShown.available && <MicrodegreeResult r={mdShown} />}
 
       {shown && !shown.available && (
         <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950">
