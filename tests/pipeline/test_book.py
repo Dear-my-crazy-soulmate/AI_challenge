@@ -17,9 +17,11 @@ sys.path.insert(0, str(ROOT / "scripts" / "pipeline"))
 
 from book import parse_toc, section_name, split_sections  # noqa: E402
 from catalog import parse_catalog, table_pages  # noqa: E402
+from microdegrees import line_course, required_credits, split_name  # noqa: E402
 from programs import make_groups, mentioned  # noqa: E402
 
 COURSES = ROOT / "data" / "curated" / "2026" / "courses.json"
+MICRODEGREES = ROOT / "data" / "curated" / "2026" / "microdegrees.json"
 SECTIONS = ROOT / "data" / "work" / "2026" / "sections.json"
 
 TOC = """목차
@@ -126,6 +128,45 @@ class ProgramTests(unittest.TestCase):
     def test_longest_name_wins(self):
         found = mentioned("전공선택: 고급딥러닝, 자료구조", self.CAT)
         self.assertEqual(sorted(r["code"] for r in found), ["B1", "C2"])
+
+
+class MicrodegreeTests(unittest.TestCase):
+    def test_split_name(self):
+        self.assertEqual(split_name("빅데이터 분석(Bigdata Analysis)"), ("빅데이터 분석", "Bigdata Analysis"))
+        self.assertEqual(split_name("메타버스"), ("메타버스", ""))
+
+    def test_required_credits_phrases(self):
+        self.assertEqual(required_credits("4. 실감미디어펀더멘털 마이크로디그리 이수학점 : 12학점"), 12)
+        self.assertEqual(required_credits("중 총 9학점 이상을 이수하여야 한다."), 9)
+        self.assertEqual(required_credits("총 12학점을 이수하여야 한다."), 12)
+        self.assertEqual(required_credits("4과목 중 선택 (총 9학점)"), 9)
+        self.assertIsNone(required_credits("학점 안내 없음"))
+
+    def test_line_course(self):
+        self.assertEqual(line_course("IS2507", "국제대학 국제학과 IS2507 Understanding Cooperation 3"), ("Understanding Cooperation", 3))
+        self.assertEqual(line_course("GEE1954", "후마니타스칼리지 GEE1954"), (None, None))
+
+
+@unittest.skipUnless(MICRODEGREES.exists(), "run microdegrees.py first")
+class RealMicrodegreeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.mds = json.loads(MICRODEGREES.read_text(encoding="utf-8"))["microdegrees"]
+
+    def test_all_found(self):
+        self.assertEqual(len(self.mds), 60)
+
+    def test_cs_bigdata(self):
+        md = next(m for m in self.mds if m["dept"] == "컴퓨터공학과" and m["name"] == "빅데이터 분석")
+        self.assertEqual([c["code"] for c in md["courses"]], ["CSE434", "AI3004", "SWCON425"])
+        self.assertEqual((md["required_credits"], md["rule"], md["status"]), (9, "all", "verified"))
+
+    def test_choose_from_more(self):
+        md = next(m for m in self.mds if m["dept"] == "연극영화학과" and m["name"] == "크리에이티브 퍼포먼스")
+        self.assertEqual((md["required_credits"], md["course_credits"], md["rule"]), (9, 12, "choose"))
+
+    def test_checks_do_not_regress(self):
+        self.assertLessEqual(sum(1 for m in self.mds if m["status"] == "check"), 7)
 
 
 @unittest.skipUnless(COURSES.exists() and SECTIONS.exists(), "run book.py and programs.py first")

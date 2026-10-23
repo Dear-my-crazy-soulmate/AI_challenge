@@ -133,6 +133,7 @@ python -m venv .venv
 .venv/Scripts/python -I scripts/pipeline/overview.py                       # 학점 개요 검증
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py        # 책을 학과별로 분리
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py    # 과목 데이터 생성
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/microdegrees.py  # 마이크로디그리 과목 데이터 생성
 PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py     # 파이프라인 테스트
 ```
 

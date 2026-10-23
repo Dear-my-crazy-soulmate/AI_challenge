@@ -19,8 +19,9 @@ from ingest import load_pages  # noqa: E402
 from paths import WORK_DIR, use_utf8_stdout  # noqa: E402
 
 CODE = re.compile(r"(?<![A-Za-z0-9])([A-Z]{2,6}\d{3,5}[A-Z]?)(?![A-Za-z0-9])")
-TABLE_START = re.compile(r"\[별표\s*1\]")
-TABLE_END = re.compile(r"\[별표\s*[2-9]\]")
+# "[별표1]", or track tables "[별표1-1]", "[별표1-2]" (연극영화학과) that continue each other.
+TABLE_START = re.compile(r"\[별표\s*1(?:-\d+)?\]")
+TABLE_END = re.compile(r"\[별표\s*[2-9]\d*(?:-\d+)?\]")
 CATEGORY = {"기초": "전공기초", "필수": "전공필수", "선택": "전공선택"}
 # Words of the 이수구분 column that can end up in front of a name.
 NOISE = re.compile(r"^(\d+\s+)*(전공\s*(기초|필수|선택)?|기초|필수|선택|\((Basic|Required|Elective)\))\s*")

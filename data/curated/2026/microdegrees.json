@@ -1,0 +1,2428 @@
+{
+ "year": 2026,
+ "source_pdf": "data/raw/2026경희대 교육과정.pdf",
+ "as_of": "2026학년도 교육과정",
+ "microdegrees": [
+  {
+   "name": "첨단패키징",
+   "english": "Advanced Packaging",
+   "dept": "반도체공학과",
+   "page": 370,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "MEC321",
+     "name": "열전달",
+     "credits": 3,
+     "offered_by": "기계공학"
+    },
+    {
+     "code": "MEC312",
+     "name": "반도체소재및멤스",
+     "credits": 3,
+     "offered_by": "기계공학"
+    },
+    {
+     "code": "SE4005",
+     "name": "패키징분석및설계",
+     "credits": 3,
+     "offered_by": "인공지능반도체"
+    },
+    {
+     "code": "EE204",
+     "name": "전자기학2",
+     "credits": 3,
+     "offered_by": "전자공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "양자반도체",
+   "english": "Quantum Semiconductor",
+   "dept": "반도체공학과",
+   "page": 372,
+   "required_credits": 12,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "APHY3612",
+     "name": "양자컴퓨팅",
+     "credits": 3,
+     "offered_by": "응용물리학과"
+    },
+    {
+     "code": "APHY4609",
+     "name": "양자정보하드웨어",
+     "credits": 3,
+     "offered_by": "응용물리학과"
+    },
+    {
+     "code": "SE3002",
+     "name": "반도체현대물리학",
+     "credits": 3,
+     "offered_by": "인공지능반도체"
+    },
+    {
+     "code": "EE496",
+     "name": "반도체집적회로",
+     "credits": 3,
+     "offered_by": "인공지능반도체"
+    },
+    {
+     "code": "EE325",
+     "name": "초고주파공학",
+     "credits": 3,
+     "offered_by": "전자공학과"
+    }
+   ],
+   "course_credits": 15,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "의료인공지능(Medical AI(Medical Artificial Intelligence))",
+   "english": "",
+   "dept": "생체의공학과",
+   "page": 390,
+   "required_credits": 18,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "BME320",
+     "name": "공학인을위한기초의학",
+     "credits": 3,
+     "offered_by": "생체의공학과"
+    },
+    {
+     "code": "AI1001",
+     "name": "인공지능개론",
+     "credits": 3,
+     "offered_by": null
+    },
+    {
+     "code": "BME422",
+     "name": "의료인공지능프로그래밍",
+     "credits": 3,
+     "offered_by": "생체의공학과"
+    },
+    {
+     "code": "BME424",
+     "name": "멀티모달머신러닝개론",
+     "credits": 3,
+     "offered_by": "생체의공학과"
+    },
+    {
+     "code": "BME425",
+     "name": "멀티모달의료영상처리",
+     "credits": 3,
+     "offered_by": "생체의공학과"
+    },
+    {
+     "code": "PREME2031",
+     "name": "의료AI프로젝트",
+     "credits": 3,
+     "offered_by": null
+    }
+   ],
+   "course_credits": 18,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "빅데이터 분석",
+   "english": "Bigdata Analysis",
+   "dept": "컴퓨터공학과",
+   "page": 423,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "CSE434",
+     "name": "빅데이터프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "AI3004",
+     "name": "빅데이터마이닝",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON425",
+     "name": "데이터사이언스및시각화",
+     "credits": 3,
+     "offered_by": "소프트웨어융합학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "메타버스",
+   "english": "Metaverse",
+   "dept": "컴퓨터공학과",
+   "page": 424,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "CSE324",
+     "name": "메타버스시스템",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "CSE430",
+     "name": "메타버스테이터처리",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON311",
+     "name": "게임그래픽프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "인공지능 이론",
+   "english": "Artificial Intelligence Theory",
+   "dept": "인공지능학과",
+   "page": 450,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "AI1002",
+     "name": "인공지능프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON253",
+     "name": "기계학습",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "CSE331",
+     "name": "딥러닝",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "인공지능 실전",
+   "english": "Artificial Intelligence Practical",
+   "dept": "인공지능학과",
+   "page": 451,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "CSE340",
+     "name": "실전기계학습",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "AI3001",
+     "name": "고급딥러닝",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON493",
+     "name": "자연언어처리",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "디자인 소프트웨어",
+   "english": "Design Software",
+   "dept": "소프트웨어융합학과",
+   "page": 503,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SWCON103",
+     "name": "디자인적사고",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON370",
+     "name": "풀스택서비스프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON492",
+     "name": "풀스택서비스네트워킹",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON371",
+     "name": "디자인프로그래밍",
+     "credits": 3,
+     "offered_by": "소프트웨어융합학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "table total read as 9 (layout), listed courses add up to 12"
+   ]
+  },
+  {
+   "name": "로봇 소프트웨어",
+   "english": "Robot Software",
+   "dept": "소프트웨어융합학과",
+   "page": 504,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "SWCON331",
+     "name": "로봇프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON366",
+     "name": "3D데이터처리",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON494",
+     "name": "영상분석과패턴인식",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": "표에 '택3' 표시가 있습니다",
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "양자반도체",
+   "english": "Quantum Semiconductor",
+   "dept": "응용물리학과",
+   "page": 560,
+   "required_credits": 12,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "APHY3612",
+     "name": "양자컴퓨팅",
+     "credits": 3,
+     "offered_by": "응용물리학과"
+    },
+    {
+     "code": "APHY4609",
+     "name": "양자정보하드웨어",
+     "credits": 3,
+     "offered_by": "응용물리학과"
+    },
+    {
+     "code": "SE3002",
+     "name": "반도체현대물리학",
+     "credits": 3,
+     "offered_by": "인공지능반도체"
+    },
+    {
+     "code": "EE496",
+     "name": "반도체집적회로",
+     "credits": 3,
+     "offered_by": "인공지능반도체"
+    },
+    {
+     "code": "EE325",
+     "name": "초고주파공학",
+     "credits": 3,
+     "offered_by": "전자공학과"
+    }
+   ],
+   "course_credits": 15,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "우주경영",
+   "english": "Space Business",
+   "dept": "우주과학과",
+   "page": 602,
+   "required_credits": 3,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SPACE101",
+     "name": "천문학",
+     "credits": 3,
+     "offered_by": "우주과학과"
+    },
+    {
+     "code": "SPACE234",
+     "name": "우주관측및실습",
+     "credits": 3,
+     "offered_by": "우주과학과"
+    },
+    {
+     "code": "MGMT4030",
+     "name": "캡스톤디자인(경영학)",
+     "credits": 3,
+     "offered_by": null
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "디지털스마트팜",
+   "english": "Digital Smart Farming",
+   "dept": "스마트팜과학과",
+   "page": 628,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SFS211",
+     "name": "사물인터넷(IoT)기초",
+     "credits": 3,
+     "offered_by": "스마트팜과학과"
+    },
+    {
+     "code": "SFS214",
+     "name": "스마트농업프로그래밍",
+     "credits": 3,
+     "offered_by": "스마트팜과학과"
+    },
+    {
+     "code": "CBM307",
+     "name": "그린바이오소재생명공학",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    },
+    {
+     "code": "FSB271",
+     "name": "식품나노과학개론",
+     "credits": 3,
+     "offered_by": "식품생명공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "그린바이오소재",
+   "english": "Green Bio Resources",
+   "dept": "식물·환경신소재공학과",
+   "page": 650,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "PAM421",
+     "name": "기능성바이오소재",
+     "credits": 3,
+     "offered_by": "식물·환경신소재공학과"
+    },
+    {
+     "code": "PAM337",
+     "name": "지속가능한바이오 플라스틱소재및응용",
+     "credits": 3,
+     "offered_by": "식물·환경신소재공학과"
+    },
+    {
+     "code": "OMB301",
+     "name": "약용소재학",
+     "credits": 3,
+     "offered_by": "한방생명공학과"
+    },
+    {
+     "code": "FSB361",
+     "name": "바이오기능성식품소재",
+     "credits": 3,
+     "offered_by": "식품생명공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "바이오헬스",
+   "english": "Bio-Health",
+   "dept": "식품생명공학과",
+   "page": 673,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "FSB482",
+     "name": "식품분자생물학",
+     "credits": 3,
+     "offered_by": "식품생명공학과"
+    },
+    {
+     "code": "FSB441",
+     "name": "식품생명공학",
+     "credits": 3,
+     "offered_by": "식품생명공학과"
+    },
+    {
+     "code": "GEN328",
+     "name": "바이오의약품개론",
+     "credits": 3,
+     "offered_by": "유전생명공학과"
+    },
+    {
+     "code": "CBM302",
+     "name": "바이오약리학",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "디지털종자생명",
+   "english": "Digital Seed and Life Sciences",
+   "dept": "유전생명공학과",
+   "page": 716,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "GEN208",
+     "name": "작물생명공학",
+     "credits": 3,
+     "offered_by": "유전생명공학과"
+    },
+    {
+     "code": "GEN312",
+     "name": "유전공학",
+     "credits": 3,
+     "offered_by": "유전생명공학과"
+    },
+    {
+     "code": "SFS301",
+     "name": "식물육종학",
+     "credits": 3,
+     "offered_by": "스마트팜과학과"
+    },
+    {
+     "code": "CBM212",
+     "name": "바이오빅데이터분석및실험",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "그린바이오소재",
+   "english": "Green Bio Resources",
+   "dept": "융합바이오·신소재공학과",
+   "page": 761,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "CBM405",
+     "name": "기능성바이오소재",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    },
+    {
+     "code": "CBM319",
+     "name": "바이오플라스틱응용기술",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    },
+    {
+     "code": "CBM301",
+     "name": "약용소재학",
+     "credits": 3,
+     "offered_by": "융합바이오·신소재공학과"
+    },
+    {
+     "code": "FSB361",
+     "name": "바이오기능성식품소재",
+     "credits": 3,
+     "offered_by": "식품생명공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "VR/AR 고객경험리서치",
+   "english": "VR/AR User Experience Research",
+   "dept": "국제학과",
+   "page": 791,
+   "required_credits": 12,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SWCON104",
+     "name": "웹/파이선프로그래밍",
+     "credits": 3,
+     "offered_by": "전자공학과"
+    },
+    {
+     "code": "IS3528",
+     "name": "Topics in Marketing (H)",
+     "credits": 3,
+     "offered_by": "국제학과"
+    },
+    {
+     "code": "CSE104",
+     "name": "실감미디어컴퓨팅기초",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM4103",
+     "name": "XR기술PBL",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4101",
+     "name": "실감미디어프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 15,
+   "choice_note": "표에 '택2' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "table total read as 12 (layout), listed courses add up to 15"
+   ]
+  },
+  {
+   "name": "글로벌협력",
+   "english": "Global Cooperation",
+   "dept": "프랑스어학과",
+   "page": 858,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR3043",
+     "name": "현대아프리카의이해",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "RU4301",
+     "name": "유라시아의이해",
+     "credits": 3,
+     "offered_by": "러시아어학과"
+    },
+    {
+     "code": "ESP329",
+     "name": "라틴아메리카지역연구",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "KO1201",
+     "name": "문화의이해",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "글로벌미디어컬처",
+   "english": "Global Media Culture",
+   "dept": "프랑스어학과",
+   "page": 859,
+   "required_credits": 12,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "FR3044",
+     "name": "프랑스어권미디어문화",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "FR4041",
+     "name": "프랑스문화콘텐츠",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "ELC255",
+     "name": "영화와미국문화",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "ELC342",
+     "name": "미디어연구",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "FT2076",
+     "name": "초급영화이론",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 15,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "라틴아메리카 국제개발협력",
+   "english": "International Development and Cooperation with Latin America",
+   "dept": "스페인어학과",
+   "page": 878,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "ESP117",
+     "name": "라틴아메리카역사와문화",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "ESP346",
+     "name": "기후변화와라틴아메리카",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "IS2507",
+     "name": "Understanding International Development Cooperation",
+     "credits": 3,
+     "offered_by": "국제학과"
+    },
+    {
+     "code": "IS3529",
+     "name": "Topics in International Development Cooperation (H)",
+     "credits": 3,
+     "offered_by": "국제학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "글로벌 협력",
+   "english": "Global Cooperation",
+   "dept": "스페인어학과",
+   "page": 879,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR3043",
+     "name": "현대아프리카의이해",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "RU4301",
+     "name": "유라시아의이해",
+     "credits": 3,
+     "offered_by": "러시아어학과"
+    },
+    {
+     "code": "ESP329",
+     "name": "라틴아메리카지역연구",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "KO1201",
+     "name": "문화의이해",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "아메리카 문화융합",
+   "english": "Trans-American Cultural Convergence",
+   "dept": "스페인어학과",
+   "page": 880,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "ELC106",
+     "name": "미국역사와문화",
+     "credits": 3,
+     "offered_by": "영미어문전공"
+    },
+    {
+     "code": "ELC255",
+     "name": "영화와미국문화",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "ESP334",
+     "name": "미국히스패닉의세계",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "ESP346",
+     "name": "기후변화와라틴아메리카",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "글로벌 협력",
+   "english": "Global Cooperation",
+   "dept": "러시아어학과",
+   "page": 898,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR3043",
+     "name": "현대아프리카의이해",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "RU4301",
+     "name": "유라시아의이해",
+     "credits": 3,
+     "offered_by": "러시아어학과"
+    },
+    {
+     "code": "ESP329",
+     "name": "라틴아메리카지역연구",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "KO1201",
+     "name": "문화의이해",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "중국디지털리터러시(Digital Literacy of China) - 중국어학과 주관",
+   "english": "",
+   "dept": "중국어학과",
+   "page": 916,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "CHI108",
+     "name": "중국디지털인문정보",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "CHI321",
+     "name": "중국어디지털리터러시",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "GEE1345",
+     "name": "파이썬으로배우는소프트웨어코딩",
+     "credits": 3,
+     "offered_by": null
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "check",
+   "problems": [
+    "GEE1954: not in any catalog and its line could not be read"
+   ],
+   "notes": []
+  },
+  {
+   "name": "미디어와 영상문화콘텐츠(Media & Video Contents) - 한국어학과 주관, 중국어학과 참여",
+   "english": "",
+   "dept": "중국어학과",
+   "page": 917,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "KO4201",
+     "name": "한국대중문화",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "ELC359",
+     "name": "영상문화와기술",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "동아시아영상문화산업",
+   "english": "East Asian Media & Contents Industry",
+   "dept": "중국어학과",
+   "page": 918,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "JP116",
+     "name": "일본영화감상과비평",
+     "credits": 3,
+     "offered_by": "일본어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "FT2033",
+     "name": "현대영화연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "동아시아영상문화산업",
+   "english": "East Asian Media & Contents Industry",
+   "dept": "일본어학과",
+   "page": 938,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "JP116",
+     "name": "일본영화감상과비평",
+     "credits": 3,
+     "offered_by": "일본어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "FT2033",
+     "name": "현대영화연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "미디어와 영상문화콘텐츠",
+   "english": "Media & Video Contents",
+   "dept": "한국어학과",
+   "page": 960,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "KO4201",
+     "name": "한국대중문화",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "ELC359",
+     "name": "영상문화와기술",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "한국어데이터사이언스(Korean Data Science) - 한국어학과 주관, 후마니타스칼리지 참여",
+   "english": "",
+   "dept": "한국어학과",
+   "page": 961,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "KO2503",
+     "name": "한국어정보학의이해",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "KO3206",
+     "name": "언어빅데이터처리와활용",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "KO2504",
+     "name": "한국어에듀테크",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "GEE1954",
+     "name": "한국어에듀테크",
+     "credits": 3,
+     "offered_by": null
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": "표에 '택2' 표시가 있습니다",
+   "status": "check",
+   "problems": [
+    "GEE1345: not in any catalog and its line could not be read"
+   ],
+   "notes": []
+  },
+  {
+   "name": "글로벌 협력",
+   "english": "Global Cooperation",
+   "dept": "한국어학과",
+   "page": 962,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR3043",
+     "name": "현대아프리카의이해",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "RU4301",
+     "name": "유라시아의이해",
+     "credits": 3,
+     "offered_by": "러시아어학과"
+    },
+    {
+     "code": "ESP329",
+     "name": "라틴아메리카지역연구",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "KO1201",
+     "name": "문화의이해",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "동아시아영상문화산업",
+   "english": "East Asian Media & Contents Industry",
+   "dept": "한국어학과",
+   "page": 963,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "JP116",
+     "name": "일본영화감상과비평",
+     "credits": 3,
+     "offered_by": "일본어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "FT2033",
+     "name": "현대영화연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "아메리카 문화융합",
+   "english": "Trans-American Cultural Convergence",
+   "dept": "영미문화전공",
+   "page": 1016,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "ELC106",
+     "name": "미국역사와문화",
+     "credits": 3,
+     "offered_by": "영미어문전공"
+    },
+    {
+     "code": "ELC255",
+     "name": "영화와미국문화",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "ESP334",
+     "name": "미국히스패닉의세계",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    },
+    {
+     "code": "ESP346",
+     "name": "기후변화와라틴아메리카",
+     "credits": 3,
+     "offered_by": "스페인어학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "글로벌미디어컬처",
+   "english": "Global Media Culture",
+   "dept": "영미문화전공",
+   "page": 1017,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR4041",
+     "name": "프랑스문화콘텐츠",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "ELC255",
+     "name": "영화와미국문화",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "ELC342",
+     "name": "미디어연구",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "FT2076",
+     "name": "초급영화이론",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "check",
+   "problems": [
+    "table total says 15, listed courses add up to 12: a course may be missing"
+   ],
+   "notes": []
+  },
+  {
+   "name": "미디어와 영상문화콘텐츠",
+   "english": "Media & Video Contents",
+   "dept": "영미문화전공",
+   "page": 1018,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "KO4201",
+     "name": "한국대중문화",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "ELC359",
+     "name": "영상문화와기술",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "인공지능 디자인설계",
+   "english": "AI Design Engineering",
+   "dept": "산업디자인학과",
+   "page": 1041,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "ID3012",
+     "name": "UX디자인",
+     "credits": 3,
+     "offered_by": "소프트웨어융합학과"
+    },
+    {
+     "code": "ID3020",
+     "name": "이노베이티브디자인2",
+     "credits": 3,
+     "offered_by": "산업디자인학과"
+    },
+    {
+     "code": "SWCON104",
+     "name": "웹/파이선프로그래밍",
+     "credits": 3,
+     "offered_by": "전자공학과"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "로컬브랜드매니지먼트",
+   "english": "Local Brand Management",
+   "dept": "시각디자인학과",
+   "page": 1060,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "VID3038",
+     "name": "아이덴티티디자인",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    },
+    {
+     "code": "VID3032",
+     "name": "브랜드패키지디자인",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    },
+    {
+     "code": "VID2026",
+     "name": "소비자행태와브랜드전략",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    },
+    {
+     "code": "CUENT4014",
+     "name": "로컬코크리에이션랩1",
+     "credits": 3,
+     "offered_by": null
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "지역공간디자인매니지먼트",
+   "english": "Local Space Design Management",
+   "dept": "시각디자인학과",
+   "page": 1061,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "LA337",
+     "name": "경관해석및재현",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA313",
+     "name": "도시공간디자인론",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA341",
+     "name": "로컬코크리에이션랩3",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "VID3040",
+     "name": "스몰브랜드창업과운영",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "로컬콘텐츠마케팅",
+   "english": "Local Contents Marketing",
+   "dept": "시각디자인학과",
+   "page": 1062,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "CUENT2011",
+     "name": "엔터테인먼트마케팅",
+     "credits": 3,
+     "offered_by": null
+    },
+    {
+     "code": "CUENT4004",
+     "name": "축제이벤트기획",
+     "credits": 3,
+     "offered_by": null
+    },
+    {
+     "code": "CUENT3012",
+     "name": "지역문화콘텐츠기획",
+     "credits": 3,
+     "offered_by": null
+    },
+    {
+     "code": "VID3039",
+     "name": "로컬코크리에이션랩2",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "지역공간디자인매니지먼트",
+   "english": "Local Space Design Management",
+   "dept": "환경조경디자인학과",
+   "page": 1079,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "LA313",
+     "name": "도시공간디자인론",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA337",
+     "name": "경관해석및재현",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA341",
+     "name": "로컬코크리에이션랩3",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "VID3040",
+     "name": "스몰브랜드창업과운영",
+     "credits": 3,
+     "offered_by": "시각디자인학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "가상현실공간디자인",
+   "english": "Virtual Reality Space Design",
+   "dept": "환경조경디자인학과",
+   "page": 1080,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "LA215",
+     "name": "경관·지리정보체계",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA212",
+     "name": "디지털디자인미디어2",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "DC201",
+     "name": "3D모델링",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC332",
+     "name": "가상현실디자인",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "AI애니메이션",
+   "english": "AI Animation",
+   "dept": "디지털콘텐츠학과",
+   "page": 1101,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "DC331",
+     "name": "어드밴스드모션그래픽스",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC334",
+     "name": "어드밴스드애니메이션",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "FT2023",
+     "name": "디지털편집실습",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    },
+    {
+     "code": "FT3072",
+     "name": "장면구성과연출",
+     "credits": 2,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 11,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "가상현실공간디자인",
+   "english": "Virtual Reality Space Design",
+   "dept": "디지털콘텐츠학과",
+   "page": 1102,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "LA215",
+     "name": "경관·지리정보체계",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "LA212",
+     "name": "디지털디자인미디어2",
+     "credits": 3,
+     "offered_by": "환경조경디자인학과"
+    },
+    {
+     "code": "DC201",
+     "name": "3D모델링",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC332",
+     "name": "가상현실디자인",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "영상음악",
+   "english": "Screen Scoring",
+   "dept": "디지털콘텐츠학과",
+   "page": 1103,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "PM3034",
+     "name": "사운드테크놀로지1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "PM4028",
+     "name": "영화음악",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "DC204",
+     "name": "영상디자인",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC214",
+     "name": "디지털영상",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "AI 패션테크",
+   "english": "AI Fashion Tech",
+   "dept": "의류디자인학과",
+   "page": 1123,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "TC313",
+     "name": "패션스튜디오1",
+     "credits": 3,
+     "offered_by": "의류디자인학과"
+    },
+    {
+     "code": "TC321",
+     "name": "웨어러블테크놀로지",
+     "credits": 3,
+     "offered_by": "웨어러블디자인테크놀로지"
+    },
+    {
+     "code": "WDT3001",
+     "name": "버츄얼피팅스튜디오",
+     "credits": 3,
+     "offered_by": "웨어러블디자인테크놀로지"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "미래 의류소재 및 디자인기획",
+   "english": "Future Apparel Material and Product Planning",
+   "dept": "의류디자인학과",
+   "page": 1124,
+   "required_credits": 9,
+   "rule": "unknown",
+   "courses": [
+    {
+     "code": "TC319",
+     "name": "텍스타일가공과디자인",
+     "credits": 3,
+     "offered_by": "의류디자인학과"
+    },
+    {
+     "code": "WDT2001",
+     "name": "컬쳐앤브랜딩",
+     "credits": 3,
+     "offered_by": "웨어러블디자인테크놀로지"
+    }
+   ],
+   "course_credits": 6,
+   "choice_note": null,
+   "status": "check",
+   "problems": [
+    "TC207: not in any catalog and its line could not be read",
+    "listed courses add up to 6, 9 credits are required"
+   ],
+   "notes": []
+  },
+  {
+   "name": "아트&인스톨레이션",
+   "english": "Art & Installation",
+   "dept": "도예학과",
+   "page": 1140,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "CA2020",
+     "name": "인체조형",
+     "credits": 3,
+     "offered_by": "도예학과"
+    },
+    {
+     "code": "FDA201",
+     "name": "아트미디어탐구",
+     "credits": 3,
+     "offered_by": "4D아트"
+    },
+    {
+     "code": "FDA301",
+     "name": "4D아트설치",
+     "credits": 3,
+     "offered_by": "4D아트"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "크리에이티브 퍼포먼스",
+   "english": "Creative Performance",
+   "dept": "연극영화학과",
+   "page": 1171,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "FT2030",
+     "name": "퍼포밍아츠연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    },
+    {
+     "code": "PM1023",
+     "name": "보컬앙상블&퍼포먼스1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "PM3034",
+     "name": "사운드테크놀로지1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "KPA303",
+     "name": "K-Pop댄스",
+     "credits": 3,
+     "offered_by": "K-퍼포밍아트"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "table total read as 3 (layout), listed courses add up to 12"
+   ]
+  },
+  {
+   "name": "AI애니메이션 마이크로디그리",
+   "english": "AI Animation",
+   "dept": "연극영화학과",
+   "page": 1172,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "DC331",
+     "name": "어드밴스드모션그래픽스",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC334",
+     "name": "어드밴스드애니메이션",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "FT2023",
+     "name": "디지털편집실습",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    },
+    {
+     "code": "FT3072",
+     "name": "장면구성과연출",
+     "credits": 2,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 11,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "table total read as 3 (layout), listed courses add up to 11"
+   ]
+  },
+  {
+   "name": "동아시아영상문화산업",
+   "english": "East Asian Media & Contents Industry",
+   "dept": "연극영화학과",
+   "page": 1173,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "JP116",
+     "name": "일본영화감상과비평",
+     "credits": 3,
+     "offered_by": "일본어학과"
+    },
+    {
+     "code": "KO3204",
+     "name": "한국소설과영상",
+     "credits": 3,
+     "offered_by": "한국어학과"
+    },
+    {
+     "code": "CHI416",
+     "name": "중국영화와비평",
+     "credits": 3,
+     "offered_by": "중국어학과"
+    },
+    {
+     "code": "FT2033",
+     "name": "현대영화연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "글로벌미디어컬처",
+   "english": "Global Media Culture",
+   "dept": "연극영화학과",
+   "page": 1174,
+   "required_credits": 12,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "FR4041",
+     "name": "프랑스문화콘텐츠",
+     "credits": 3,
+     "offered_by": "프랑스어학과"
+    },
+    {
+     "code": "ELC255",
+     "name": "영화와미국문화",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "ELC342",
+     "name": "미디어연구",
+     "credits": 3,
+     "offered_by": "영미문화전공"
+    },
+    {
+     "code": "FT2076",
+     "name": "초급영화이론",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "check",
+   "problems": [
+    "table total says 15, listed courses add up to 12: a course may be missing"
+   ],
+   "notes": []
+  },
+  {
+   "name": "영상음악",
+   "english": "Screen Scoring",
+   "dept": "포스트모던음악학과",
+   "page": 1197,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "PM3034",
+     "name": "사운드테크놀로지1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "PM4028",
+     "name": "영화음악",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "DC204",
+     "name": "영상디자인",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    },
+    {
+     "code": "DC214",
+     "name": "디지털영상",
+     "credits": 3,
+     "offered_by": "디지털콘텐츠학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "크리에이티브 퍼포먼스",
+   "english": "Creative Performance",
+   "dept": "포스트모던음악학과",
+   "page": 1199,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "FT2030",
+     "name": "퍼포밍아츠연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    },
+    {
+     "code": "PM1023",
+     "name": "보컬앙상블&퍼포먼스1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "PM3034",
+     "name": "사운드테크놀로지1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "KPA303",
+     "name": "K-Pop댄스",
+     "credits": 3,
+     "offered_by": "K-퍼포밍아트"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": null,
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "크리에이티브 퍼포먼스",
+   "english": "Creative Performance Microdegree",
+   "dept": "K-퍼포밍아트",
+   "page": 1388,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "FT2030",
+     "name": "퍼포밍아츠연구",
+     "credits": 3,
+     "offered_by": "연극영화학과"
+    },
+    {
+     "code": "PM1023",
+     "name": "보컬앙상블&퍼포먼스1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "PM3034",
+     "name": "사운드테크놀로지1",
+     "credits": 3,
+     "offered_by": "포스트모던음악학과"
+    },
+    {
+     "code": "KPA303",
+     "name": "K-Pop댄스",
+     "credits": 3,
+     "offered_by": "K-퍼포밍아트"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": "표에 '택3' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "AI 패션테크",
+   "english": "AI Fashion Tech",
+   "dept": "웨어러블디자인테크놀로지",
+   "page": 1401,
+   "required_credits": 9,
+   "rule": "all",
+   "courses": [
+    {
+     "code": "TC313",
+     "name": "패션스튜디오1",
+     "credits": 3,
+     "offered_by": "의류디자인학과"
+    },
+    {
+     "code": "TC321",
+     "name": "웨어러블테크놀로지",
+     "credits": 3,
+     "offered_by": "웨어러블디자인테크놀로지"
+    },
+    {
+     "code": "WDT3001",
+     "name": "버츄얼피팅스튜디오",
+     "credits": 3,
+     "offered_by": "웨어러블디자인테크놀로지"
+    }
+   ],
+   "course_credits": 9,
+   "choice_note": null,
+   "status": "verified",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "실감미디어펀더멘털",
+   "english": "Immersive Media Fundamentals",
+   "dept": "실감미디어",
+   "page": 1445,
+   "required_credits": 12,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "CSE104",
+     "name": "실감미디어컴퓨팅기초",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM1501",
+     "name": "실감디자인씽킹(XR)",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM1601",
+     "name": "실감미디어의이해",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM1101",
+     "name": "XR비즈니스입문",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM1701",
+     "name": "XR창업비즈니스모델",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM1702",
+     "name": "XR마케팅",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 18,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "게임공학",
+   "english": "Game Engineering",
+   "dept": "실감미디어",
+   "page": 1446,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SWCON211",
+     "name": "게임프로그래밍입문",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON212",
+     "name": "게임엔진기초",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON314",
+     "name": "게임공학",
+     "credits": 3,
+     "offered_by": "소프트웨어융합학과"
+    },
+    {
+     "code": "CSE428",
+     "name": "컴퓨터그래픽스",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM3203",
+     "name": "고급컴퓨터그래픽스",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM3303",
+     "name": "게임알고리즘",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4301",
+     "name": "게임캡스톤디자인",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM3603",
+     "name": "게임프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 24,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "check",
+   "problems": [
+    "table total says 30, listed courses add up to 24: a course may be missing"
+   ],
+   "notes": []
+  },
+  {
+   "name": "체감기술",
+   "english": "Digital Experience Technology",
+   "dept": "실감미디어",
+   "page": 1447,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SWCON312",
+     "name": "게임인터랙티브테크놀로지",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM4102",
+     "name": "실감디바이스기술",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM2102",
+     "name": "실감피지컬컴퓨팅",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4202",
+     "name": "HCI",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4203",
+     "name": "HCI특론",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4204",
+     "name": "혼합현실특론",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM3202",
+     "name": "실감콘텐츠경험분석",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4101",
+     "name": "실감미디어프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4302",
+     "name": "VR/AR게임프로그래밍",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 27,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "table total read as 3 (layout), listed courses add up to 27"
+   ]
+  },
+  {
+   "name": "XR입출력기술",
+   "english": "XR Input/Output Technology",
+   "dept": "실감미디어",
+   "page": 1448,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "SWCON313",
+     "name": "가상현실",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "SWCON492",
+     "name": "풀스택서비스네트워킹",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM4103",
+     "name": "XR기술PBL",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4101",
+     "name": "실감미디어프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "CSE426",
+     "name": "영상처리",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "CSE441",
+     "name": "컴퓨터비젼",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM4205",
+     "name": "고급컴퓨터비전",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM3203",
+     "name": "고급컴퓨터그래픽스",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 24,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  },
+  {
+   "name": "실감미디어기술",
+   "english": "Immersive Media Technology",
+   "dept": "실감미디어",
+   "page": 1449,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "CSE103",
+     "name": "객체지향프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "CSE224",
+     "name": "UI/UX프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "CSE428",
+     "name": "컴퓨터그래픽스",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM3202",
+     "name": "실감콘텐츠경험분석",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4101",
+     "name": "실감미디어프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    }
+   ],
+   "course_credits": 15,
+   "choice_note": "표에 '택1' 표시가 있습니다",
+   "status": "check",
+   "problems": [
+    "IM4013: not in any catalog and its line could not be read"
+   ],
+   "notes": [
+    "table total read as 3 (layout), listed courses add up to 15"
+   ]
+  },
+  {
+   "name": "테크놀로지&디자인융합콘텐츠제작",
+   "english": "Technology & Design Convergence",
+   "dept": "실감미디어",
+   "page": 1450,
+   "required_credits": 9,
+   "rule": "choose",
+   "courses": [
+    {
+     "code": "CSE104",
+     "name": "실감미디어컴퓨팅기초",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    },
+    {
+     "code": "IM4101",
+     "name": "실감미디어프로젝트",
+     "credits": 3,
+     "offered_by": "실감미디어"
+    },
+    {
+     "code": "IM4013",
+     "name": "XR기술PBL",
+     "credits": 3,
+     "offered_by": null
+    },
+    {
+     "code": "SWCON311",
+     "name": "게임그래픽프로그래밍",
+     "credits": 3,
+     "offered_by": "컴퓨터공학과"
+    }
+   ],
+   "course_credits": 12,
+   "choice_note": "표에 '택3' 표시가 있습니다",
+   "status": "choose",
+   "problems": [],
+   "notes": []
+  }
+ ]
+}

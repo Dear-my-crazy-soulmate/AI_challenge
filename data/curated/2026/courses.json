@@ -26862,6 +26862,797 @@
     }
    }
   },
+  "연극영화학과": {
+   "section": "연극영화학과",
+   "college": "예술·디자인대학",
+   "catalog_pages": [
+    1148,
+    1149,
+    1150
+   ],
+   "catalog": [
+    {
+     "code": "FT1075",
+     "name": "연극문헌과연기",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1079",
+     "name": "화술1",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1081",
+     "name": "뮤지컬보컬1",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1074",
+     "name": "뮤지컬문헌과연기",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1080",
+     "name": "화술2",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1082",
+     "name": "뮤지컬보컬2",
+     "credits": 2,
+     "category": "전공기초",
+     "page": 1148
+    },
+    {
+     "code": "FT1071",
+     "name": "극장스태프와무대미술",
+     "credits": 1,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT1072",
+     "name": "극장스태프와조명1",
+     "credits": 1,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT2066",
+     "name": "극장스태프와조명2",
+     "credits": 1,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT2067",
+     "name": "극장스태프와음향",
+     "credits": 1,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT3080",
+     "name": "세계연극사",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT4075",
+     "name": "제작실습1",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT4076",
+     "name": "제작실습2",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1148
+    },
+    {
+     "code": "FT1073",
+     "name": "노래해석과연기",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT1078",
+     "name": "즉흥과연기",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2068",
+     "name": "연극연기1",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2070",
+     "name": "뮤지컬워크숍",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2075",
+     "name": "뮤지컬장르분석",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2081",
+     "name": "무브먼트1",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2079",
+     "name": "뮤지컬보컬3",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2071",
+     "name": "연극연기2",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2073",
+     "name": "연극워크숍",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2082",
+     "name": "무브먼트2",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2080",
+     "name": "뮤지컬보컬4",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT2030",
+     "name": "퍼포밍아츠연구",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3076",
+     "name": "연극연기3",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3077",
+     "name": "뮤지컬연기연출론",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3078",
+     "name": "뮤지컬융복합창작실습",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3073",
+     "name": "연극연기연출론",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3088",
+     "name": "연극창작실습",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3085",
+     "name": "현대연극분석",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT3079",
+     "name": "카메라연기와촬영1",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT4074",
+     "name": "카메라연기와촬영2",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT4080",
+     "name": "오디션테크닉",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT4081",
+     "name": "뉴미디어엔터테이너",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1148
+    },
+    {
+     "code": "FT1001",
+     "name": "이미지와사운드",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1149
+    },
+    {
+     "code": "FT1003",
+     "name": "영화사",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1149
+    },
+    {
+     "code": "FT1007",
+     "name": "비디오제작실습",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1149
+    },
+    {
+     "code": "FT1005",
+     "name": "시나리오창작기초",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1149
+    },
+    {
+     "code": "FT2011",
+     "name": "영화촬영기초",
+     "credits": 2,
+     "category": "전공필수",
+     "page": 1149
+    },
+    {
+     "code": "FT2009",
+     "name": "디지털다큐멘타리제작",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1149
+    },
+    {
+     "code": "FT3071",
+     "name": "영화비평연습",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1149
+    },
+    {
+     "code": "FT4057",
+     "name": "캡스톤디자인1 (연극영화학)",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1149
+    },
+    {
+     "code": "FT4061",
+     "name": "캡스톤디자인2 (연극영화학)",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 1149
+    },
+    {
+     "code": "FT2076",
+     "name": "초급영화이론",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2023",
+     "name": "디지털편집실습",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2017",
+     "name": "고급촬영과조명",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2025",
+     "name": "사운드프로덕션",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2015",
+     "name": "TV제작",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2033",
+     "name": "현대영화연구",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT2021",
+     "name": "단편영화와시나리오",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3089",
+     "name": "멀티캠스튜디오운영 워크숍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3035",
+     "name": "현대영화이론",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3041",
+     "name": "영상마케팅",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3043",
+     "name": "영화제작실습",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3039",
+     "name": "영화편집연구",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3081",
+     "name": "고급시나리오창작",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3055",
+     "name": "TV-CM/뮤직비디오 제작실습",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT3072",
+     "name": "장면구성과연출",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FT4079",
+     "name": "현대한국영화연구",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1149
+    },
+    {
+     "code": "FD121",
+     "name": "AI리터러시",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1150
+    },
+    {
+     "code": "FD122",
+     "name": "AnD세미나",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 1150
+    },
+    {
+     "code": "FT4071",
+     "name": "졸업논문 (연극영화학)",
+     "credits": 0,
+     "category": "전공필수",
+     "page": 1150
+    },
+    {
+     "code": "FT3086",
+     "name": "독립심화학습1 (연극영화학)",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1150
+    },
+    {
+     "code": "FT3087",
+     "name": "독립심화학습2 (연극영화학)",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1150
+    },
+    {
+     "code": "EDU3166",
+     "name": "교직 전선 교과교육론 (연극영화학)",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1150
+    },
+    {
+     "code": "EDU3342",
+     "name": "교과교수법 (연극영화)",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1150
+    },
+    {
+     "code": "EDU3167",
+     "name": "교과교육연구및 지도법 (연극영화)",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 1150
+    }
+   ],
+   "programs": {
+    "single": {
+     "status": "choose",
+     "source": "catalog",
+     "page": null,
+     "groups": [
+      {
+       "category": "전공기초",
+       "credits": 10,
+       "rule": "choose",
+       "courses": [
+        "FT1075",
+        "FT1079",
+        "FT1081",
+        "FT1074",
+        "FT1080",
+        "FT1082",
+        "FT1001",
+        "FT1003",
+        "FT1007",
+        "FT1005",
+        "FD121",
+        "FD122"
+       ],
+       "course_credits": 30
+      },
+      {
+       "category": "전공필수",
+       "credits": 13,
+       "rule": "choose",
+       "courses": [
+        "FT1071",
+        "FT1072",
+        "FT2066",
+        "FT2067",
+        "FT3080",
+        "FT4075",
+        "FT4076",
+        "FT2011",
+        "FT2009",
+        "FT3071",
+        "FT4057",
+        "FT4061",
+        "FT4071"
+       ],
+       "course_credits": 27
+      },
+      {
+       "category": "전공선택",
+       "credits": 42,
+       "rule": "choose",
+       "courses": [
+        "FT1073",
+        "FT1078",
+        "FT2068",
+        "FT2070",
+        "FT2075",
+        "FT2081",
+        "FT2079",
+        "FT2071",
+        "FT2073",
+        "FT2082",
+        "FT2080",
+        "FT2030",
+        "FT3076",
+        "FT3077",
+        "FT3078",
+        "FT3073",
+        "FT3088",
+        "FT3085",
+        "FT3079",
+        "FT4074",
+        "FT4080",
+        "FT4081",
+        "FT2076",
+        "FT2023",
+        "FT2017",
+        "FT2025",
+        "FT2015",
+        "FT2033",
+        "FT2021",
+        "FT3089",
+        "FT3035",
+        "FT3041",
+        "FT3043",
+        "FT3039",
+        "FT3081",
+        "FT3055",
+        "FT3072",
+        "FT4079",
+        "FT3086",
+        "FT3087",
+        "EDU3166",
+        "EDU3342",
+        "EDU3167"
+       ],
+       "course_credits": 105
+      }
+     ],
+     "rules": [
+      {
+       "page": 1144,
+       "text": "1) 단일전공과정 : 연극영화학과 학생으로서 단일전공자는 전공기초 10학점(해당트랙 내 7학점) 전공필수 13학점(해당트랙 내 13학점). 전공선택 42학점 이상(해당트랙 내 35학점)을 포함하여 전공학점 65학점 이상 이수하여야 한다."
+      },
+      {
+       "page": 1145,
+       "text": "제7조(타전공과목 인정) ① 단일전공자에 한하여 동일계열 또는 타계열의 전공과목도 전공심화를 위하여 10학점까지 수강할 수 있으며, 수강한 과목은 전공선택학점으로 인정한다."
+      }
+     ],
+     "problems": []
+    },
+    "double": {
+     "status": "choose",
+     "source": "catalog",
+     "page": null,
+     "groups": [
+      {
+       "category": "전공기초",
+       "credits": 10,
+       "rule": "choose",
+       "courses": [
+        "FT1075",
+        "FT1079",
+        "FT1081",
+        "FT1074",
+        "FT1080",
+        "FT1082",
+        "FT1001",
+        "FT1003",
+        "FT1007",
+        "FT1005",
+        "FD121",
+        "FD122"
+       ],
+       "course_credits": 30
+      },
+      {
+       "category": "전공필수",
+       "credits": 13,
+       "rule": "choose",
+       "courses": [
+        "FT1071",
+        "FT1072",
+        "FT2066",
+        "FT2067",
+        "FT3080",
+        "FT4075",
+        "FT4076",
+        "FT2011",
+        "FT2009",
+        "FT3071",
+        "FT4057",
+        "FT4061",
+        "FT4071"
+       ],
+       "course_credits": 27
+      },
+      {
+       "category": "전공선택",
+       "credits": 19,
+       "rule": "choose",
+       "courses": [
+        "FT1073",
+        "FT1078",
+        "FT2068",
+        "FT2070",
+        "FT2075",
+        "FT2081",
+        "FT2079",
+        "FT2071",
+        "FT2073",
+        "FT2082",
+        "FT2080",
+        "FT2030",
+        "FT3076",
+        "FT3077",
+        "FT3078",
+        "FT3073",
+        "FT3088",
+        "FT3085",
+        "FT3079",
+        "FT4074",
+        "FT4080",
+        "FT4081",
+        "FT2076",
+        "FT2023",
+        "FT2017",
+        "FT2025",
+        "FT2015",
+        "FT2033",
+        "FT2021",
+        "FT3089",
+        "FT3035",
+        "FT3041",
+        "FT3043",
+        "FT3039",
+        "FT3081",
+        "FT3055",
+        "FT3072",
+        "FT4079",
+        "FT3086",
+        "FT3087",
+        "EDU3166",
+        "EDU3342",
+        "EDU3167"
+       ],
+       "course_credits": 105
+      }
+     ],
+     "rules": [
+      {
+       "page": 1144,
+       "text": "2) 다전공과정 : 연극영화학과 학생으로서 타전공을 다전공과정으로 이수하거나, 타전공 학생으로서 연극영화학과를 다전공 과정으로 이수하는 학생은 최소전공인정학점제에 의거 전공기초 10학점(해당트랙 내 7학점), 전공필수 13학점(해당트랙 내 13학점), 전공선택 19학점(해당트랙 내 19학점)을 포함하여 전공학점 42학점 이상을 이수하여야 한다."
+      }
+     ],
+     "problems": []
+    },
+    "minor": {
+     "status": "choose",
+     "source": "catalog",
+     "page": null,
+     "groups": [
+      {
+       "category": "전공필수",
+       "credits": 13,
+       "rule": "choose",
+       "courses": [
+        "FT1071",
+        "FT1072",
+        "FT2066",
+        "FT2067",
+        "FT3080",
+        "FT4075",
+        "FT4076",
+        "FT2011",
+        "FT2009",
+        "FT3071",
+        "FT4057",
+        "FT4061",
+        "FT4071"
+       ],
+       "course_credits": 27
+      },
+      {
+       "category": "전공선택",
+       "credits": 8,
+       "rule": "choose",
+       "courses": [
+        "FT1073",
+        "FT1078",
+        "FT2068",
+        "FT2070",
+        "FT2075",
+        "FT2081",
+        "FT2079",
+        "FT2071",
+        "FT2073",
+        "FT2082",
+        "FT2080",
+        "FT2030",
+        "FT3076",
+        "FT3077",
+        "FT3078",
+        "FT3073",
+        "FT3088",
+        "FT3085",
+        "FT3079",
+        "FT4074",
+        "FT4080",
+        "FT4081",
+        "FT2076",
+        "FT2023",
+        "FT2017",
+        "FT2025",
+        "FT2015",
+        "FT2033",
+        "FT2021",
+        "FT3089",
+        "FT3035",
+        "FT3041",
+        "FT3043",
+        "FT3039",
+        "FT3081",
+        "FT3055",
+        "FT3072",
+        "FT4079",
+        "FT3086",
+        "FT3087",
+        "EDU3166",
+        "EDU3342",
+        "EDU3167"
+       ],
+       "course_credits": 105
+      }
+     ],
+     "rules": [
+      {
+       "page": 1145,
+       "text": "제6조(부전공이수학점) ① 연극영화학과(전공)를 부전공과정으로 이수하고자 하는 자는 전공필수 13학점을 포함하여 전공학점 21 학점 이상을 이수하여야 한다."
+      }
+     ],
+     "problems": []
+    }
+   }
+  },
   "포스트모던음악학과": {
    "section": "포스트모던음악학과",
    "college": "예술·디자인대학",
@@ -36252,7 +37043,6 @@
  },
  "missing_depts": [
   "글로벌문화기술",
-  "연극영화학과",
   "인공지능학과"
  ],
  "section_notes": {
@@ -36302,9 +37092,6 @@
   ],
   "한국어학과 한국콘텐츠학전공": [
    "한국어학과한국콘텐츠학전공: not in the credit overview"
-  ],
-  "연극영화학과": [
-   "error NO_CATALOG  no [별표1] page found"
   ],
   "글로벌엔지니어링 융합전공": [
    "warn DUPLICATE_CODE  CE131 listed 2 times (전공선택)",
