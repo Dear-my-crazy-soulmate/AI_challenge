@@ -41,7 +41,13 @@ export interface CreditBreakdown {
   계: number;
 }
 
-export type CreditUnavailableReason = "INVALID_INPUT" | "SAME_DEPT" | "NO_DEPT_DATA" | "NOT_OFFERED" | "NOT_VERIFIED";
+export type CreditUnavailableReason =
+  | "INVALID_INPUT"
+  | "SAME_DEPT"
+  | "NO_DEPT_DATA"
+  | "NOT_OFFERED"
+  | "NOT_VERIFIED"
+  | "PROHIBITED"; // set by majorRules (courses.ts)
 
 export interface CreditUnavailable {
   available: false;

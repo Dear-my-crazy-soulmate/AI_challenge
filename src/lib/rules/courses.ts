@@ -3,6 +3,8 @@
 // and the credit overview (credits.ts). Pure functions, never throw.
 import { buildCreditPlan } from "./credits";
 import type { CreditData, CreditKind, CreditUnavailable, CreditWarning, ProgramKind } from "./credits";
+import { applyMajorRules, prohibitedReason } from "./majorRules";
+import type { AppliedMajorRules, MajorRules } from "./majorRules";
 
 export type CourseCategory = "전공기초" | "전공필수" | "전공선택";
 export type GroupRule = "all" | "choose" | "unknown";
@@ -74,6 +76,7 @@ export interface CoursePlanOk {
   primary: ProgramCourses;
   second: ProgramCourses;
   shared: { code: string; name: string }[]; // 기초/필수 courses listed in both programs
+  majorRules: AppliedMajorRules; // school-wide double/minor rules applied to this combination
   warnings: CreditWarning[];
   source: { pdf: string; asOf: string };
 }
@@ -122,10 +125,14 @@ export function buildCoursePlan(
   input: { primary: string; second: string; kind: CreditKind },
   credits: CreditData,
   courses: CourseData,
+  rules: MajorRules,
 ): CoursePlanResult {
   const plan = buildCreditPlan(input, credits);
   if (!plan.available) return plan;
+  const banned = prohibitedReason(plan.input.primary, plan.input.second, rules);
+  if (banned) return { available: false, reason: "PROHIBITED", message: banned };
 
+  const collegeOf = (dept: string) => credits.depts.find((d) => d.dept === dept)?.college ?? "";
   const primary = programCourses(plan.primary.dept, plan.primary.kind, courses);
   const second = programCourses(plan.second.dept, plan.second.kind, courses);
   // Only 기초/필수 courses: elective pools of related majors overlap by design.
@@ -144,6 +151,17 @@ export function buildCoursePlan(
     primary,
     second,
     shared,
+    majorRules: applyMajorRules(
+      {
+        kind: plan.input.kind,
+        primaryCollege: collegeOf(plan.primary.dept),
+        secondCollege: collegeOf(plan.second.dept),
+        total: plan.totals.total,
+      },
+      primary,
+      second,
+      rules,
+    ),
     warnings: plan.warnings,
     source: { pdf: courses.source_pdf.split("/").pop() ?? courses.source_pdf, asOf: courses.as_of },
   };

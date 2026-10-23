@@ -1,9 +1,12 @@
 import depts from "../../../data/curated/credits_global.json";
 import issues from "../../../data/curated/credits_global_issues.json";
+import majorRules from "../../../data/curated/2026/major_rules.json";
 import MajorPlanner from "@/components/MajorPlanner";
 import type { CreditData } from "@/lib/rules/credits";
+import type { MajorRules } from "@/lib/rules/majorRules";
 
 const data = { depts, issues } as unknown as CreditData;
+const rules = majorRules as unknown as MajorRules;
 
 export default function OnboardingPage() {
   return (
@@ -13,7 +16,7 @@ export default function OnboardingPage() {
         국제캠퍼스 2026학년도 교육과정 기준입니다. 본전공과 희망 전공을 고르면 각각 몇 학점을, 어떤 과목으로 들어야
         하는지 보여 줍니다.
       </p>
-      <MajorPlanner data={data} />
+      <MajorPlanner data={data} rules={rules} />
     </main>
   );
 }

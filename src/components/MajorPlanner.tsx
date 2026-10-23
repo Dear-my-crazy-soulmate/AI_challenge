@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { CourseGroup, CoursePlanResult, ProgramCourses } from "@/lib/rules/courses";
+import type { CourseGroup, CoursePlanOk, CoursePlanResult, ProgramCourses } from "@/lib/rules/courses";
 import { listCreditOptions } from "@/lib/rules/credits";
 import type { CreditData, CreditKind, ProgramKind } from "@/lib/rules/credits";
+import { prohibitedReason } from "@/lib/rules/majorRules";
+import type { MajorRules } from "@/lib/rules/majorRules";
 
 const KIND_LABEL: Record<ProgramKind, string> = { single: "단일전공", double: "다전공", minor: "부전공" };
 const STATUS: Record<ProgramCourses["status"], { label: string; tone: string }> = {
@@ -97,7 +99,77 @@ function Program({ title, p, credits }: { title: string; p: ProgramCourses; cred
   );
 }
 
-export default function MajorPlanner({ data }: { data: CreditData }) {
+function RulesApplied({ r }: { r: CoursePlanOk }) {
+  const m = r.majorRules;
+  const items: { key: string; text: string; page: number }[] = [];
+  if (m.basicExemption) {
+    items.push({
+      key: "basic",
+      page: m.basicExemption.page,
+      text: `같은 단과대학이고 전공기초 과목이 같아서, ${r.second.dept}의 전공기초 ${m.basicExemption.credits}학점은 다시 이수하지 않아도 됩니다.`,
+    });
+  }
+  if (m.overlap) {
+    items.push({
+      key: "overlap",
+      page: m.overlap.page,
+      text: `두 전공이 함께 요구하는 과목(${m.overlap.courses.map((c) => c.name).join(", ")}, ${m.overlap.credits}학점)은 양쪽 전공 학점으로 모두 인정되지만 졸업학점에는 한 번만 들어갑니다. 같은 학수번호일 때만 인정되며, 단과대학 시행세칙으로 인정 학점이 제한될 수 있습니다.`,
+    });
+  }
+  if (m.minorOverlap) {
+    items.push({
+      key: "minor",
+      page: m.minorOverlap.page,
+      text: `${m.minorOverlap.courses.map((c) => c.name).join(", ")}(${m.minorOverlap.credits}학점)은(는) 본전공에도 있는 과목이라 부전공 학점으로 인정되지 않습니다. 부전공 학점은 다른 부전공 과목으로 채워야 합니다(대체 과목은 학과 규정 확인).`,
+    });
+  }
+  return (
+    <section className="flex flex-col gap-2 rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+      <h3 className="text-base font-semibold">학교 공통 규칙</h3>
+      {items.length > 0 ? (
+        <ul className="flex flex-col gap-1">
+          {items.map((i) => (
+            <li key={i.key}>
+              {i.text} <span className="text-xs text-zinc-500">p.{i.page}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-zinc-600 dark:text-zinc-400">이 조합에 학점이 달라지는 공통 규칙은 없습니다.</p>
+      )}
+      <details>
+        <summary className="cursor-pointer text-zinc-700 dark:text-zinc-300">신청·이수 안내 {m.notices.length}개</summary>
+        <ul className="mt-2 list-disc pl-5 text-zinc-600 dark:text-zinc-400">
+          {m.notices.map((n) => (
+            <li key={n.id}>
+              {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </section>
+  );
+}
+
+function MicrodegreeRules({ rules }: { rules: MajorRules }) {
+  return (
+    <details className="rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+      <summary className="cursor-pointer font-semibold">마이크로디그리 규칙</summary>
+      <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+        {rules.microdegree.definition} <span className="text-xs text-zinc-500">p.{rules.microdegree.page}</span>
+      </p>
+      <ul className="mt-2 list-disc pl-5 text-zinc-600 dark:text-zinc-400">
+        {rules.microdegree.rules.map((n) => (
+          <li key={n.id}>
+            {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+export default function MajorPlanner({ data, rules }: { data: CreditData; rules: MajorRules }) {
   const byCollege = useMemo(() => {
     const map = new Map<string, string[]>();
     for (const d of data.depts) {
@@ -114,8 +186,11 @@ export default function MajorPlanner({ data }: { data: CreditData }) {
   const [error, setError] = useState("");
 
   const options = useMemo(
-    () => (primary ? listCreditOptions(primary, data).filter((o) => o.kind === kind) : []),
-    [primary, kind, data],
+    () =>
+      primary
+        ? listCreditOptions(primary, data).filter((o) => o.kind === kind && !prohibitedReason(primary, o.dept, rules))
+        : [],
+    [primary, kind, data, rules],
   );
   const optionsByCollege = useMemo(() => {
     const map = new Map<string, string[]>();
@@ -233,12 +308,14 @@ export default function MajorPlanner({ data }: { data: CreditData }) {
               {shown.totals.savedCredits > 0 &&
                 ` · 다전공을 하면 본전공이 단일전공 ${shown.singleCredits}학점에서 ${shown.totals.primaryCredits}학점으로 줄어듭니다`}
             </p>
-            {shown.shared.length > 0 && (
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                두 전공의 기초·필수에 함께 있는 과목: {shown.shared.map((c) => c.name).join(", ")} (중복 인정 여부는 학과 규정 확인)
+            {shown.majorRules.minimumCredits < shown.totals.total && (
+              <p className="mt-1 text-sm font-medium">
+                공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소{" "}
+                <span className="tabular-nums">{shown.majorRules.minimumCredits}</span>학점입니다.
               </p>
             )}
           </section>
+          <RulesApplied r={shown} />
           <Program title="본전공" p={shown.primary} credits={shown.totals.primaryCredits} />
           <Program title={`희망 ${KIND_LABEL[shown.input.kind]}`} p={shown.second} credits={shown.totals.secondCredits} />
           {shown.warnings.length > 0 && (
@@ -261,6 +338,8 @@ export default function MajorPlanner({ data }: { data: CreditData }) {
           </p>
         </div>
       )}
+
+      <MicrodegreeRules rules={rules} />
     </div>
   );
 }

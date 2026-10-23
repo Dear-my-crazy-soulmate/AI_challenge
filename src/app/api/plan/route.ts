@@ -4,12 +4,15 @@
 import courses from "../../../../data/curated/2026/courses.json";
 import depts from "../../../../data/curated/credits_global.json";
 import issues from "../../../../data/curated/credits_global_issues.json";
+import majorRules from "../../../../data/curated/2026/major_rules.json";
 import { buildCoursePlan } from "@/lib/rules/courses";
 import type { CourseData } from "@/lib/rules/courses";
+import type { MajorRules } from "@/lib/rules/majorRules";
 import type { CreditData, CreditKind } from "@/lib/rules/credits";
 
 const credits = { depts, issues } as unknown as CreditData;
 const data = courses as unknown as CourseData;
+const rules = majorRules as unknown as MajorRules;
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
@@ -21,6 +24,7 @@ export async function GET(request: Request) {
     },
     credits,
     data,
+    rules,
   );
   return Response.json(result);
 }
