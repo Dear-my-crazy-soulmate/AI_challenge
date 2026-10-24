@@ -27,7 +27,7 @@ export interface MdOption {
 
 const chip = (on: boolean) =>
   `flex h-11 flex-none items-center justify-center rounded-xl border px-3.5 text-sm font-semibold ${
-    on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink"
+    on ? "border-ink bg-ink text-paper" : "border-line bg-card text-ink"
   }`;
 
 function Choice<T extends string | number>({ label, value, options, onChange }: { label: string; value: T; options: [T, string][]; onChange: (v: T) => void }) {

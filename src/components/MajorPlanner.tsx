@@ -331,7 +331,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               key={c.k}
               type="button"
               onClick={c.go}
-              className="flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-[7px] text-[13px]"
+              className="flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-[7px] text-[13px]"
             >
               <span className="text-mute">{c.k}</span>
               <span className="font-semibold">{c.v}</span>
@@ -343,7 +343,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       {picking && (
         <div className="flex flex-col gap-4">
           <h2 className="text-pretty text-2xl font-bold leading-[1.35] tracking-[-0.6px]">{pickTitle}</h2>
-          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-white px-3.5">
+          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-card px-3.5">
             <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
             <input
               type="search"
@@ -367,7 +367,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                       setQuery("");
                     }}
                     className={`flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-                      on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink-2"
+                      on ? "border-ink bg-ink text-paper" : "border-line bg-card text-ink-2"
                     }`}
                   >
                     {c}
@@ -397,7 +397,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               </span>
             </button>
           )}
-          <div className="flex flex-col overflow-hidden rounded-[18px] bg-white">
+          <div className="flex flex-col overflow-hidden rounded-[18px] bg-card">
             {rows.map((r) => (
               <button
                 key={r.key}
@@ -432,7 +432,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 setSecond("");
                 goto(3);
               }}
-              className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-white p-[18px] text-left active:scale-[.99]"
+              className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-card p-[18px] text-left active:scale-[.99]"
             >
               <span className="flex items-baseline justify-between gap-2.5">
                 <span className="text-lg font-bold">{MODE_LABEL[k.mode]}</span>
@@ -460,7 +460,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               setFetched(null);
               setAttempt((n) => n + 1);
             }}
-            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-semibold"
+            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-semibold"
           >
             다시 시도
           </button>
@@ -591,7 +591,7 @@ function ResultWithReset({ message, onReset }: { message: string; onReset: () =>
       <button
         type="button"
         onClick={onReset}
-        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-semibold"
+        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-semibold"
       >
         다시 계산하기
       </button>

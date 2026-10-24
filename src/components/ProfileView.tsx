@@ -112,7 +112,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const goalHref = goal ? `/onboarding?${new URLSearchParams({ primary: goal.primary, mode: goal.mode, second: goal.second })}` : "/onboarding";
   return (
     <>
-      <section className="flex items-center gap-3.5 rounded-[22px] bg-white p-[18px]">
+      <section className="flex items-center gap-3.5 rounded-[22px] bg-card p-[18px]">
         <Avatar dept={profile.avatar ?? profile.primary} size={56} />
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-pretty text-lg font-bold">{profile.name || "내 정보"}</span>
@@ -128,14 +128,14 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
 
       <div className="grid grid-cols-3 gap-2">
         {stats.map((s) => (
-          <div key={s.k} className="flex flex-col gap-1 rounded-2xl bg-white px-3 py-3.5">
+          <div key={s.k} className="flex flex-col gap-1 rounded-2xl bg-card px-3 py-3.5">
             <span className="text-xs text-mute">{s.k}</span>
             <span className="text-xl font-bold tabular-nums">{s.v}</span>
           </div>
         ))}
       </div>
 
-      <section className="overflow-hidden rounded-[22px] bg-white">
+      <section className="overflow-hidden rounded-[22px] bg-card">
         <Row label="프로필 수정" right={profile.primary} onClick={() => setEditing(true)} />
         <Row
           label="다전공 목표"

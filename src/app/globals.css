@@ -2,18 +2,20 @@
 
 /* Design tokens from the "다전공 길잡이" design handoff (warm paper + one red accent). */
 @theme {
-  --color-canvas: #e8e5de;
-  --color-paper: #f5f3ee;
+  /* Pure white page; cards are a very light neutral gray so they still stand out (--color-card). */
+  --color-canvas: #ffffff;
+  --color-paper: #ffffff;
+  --color-card: #f5f5f5;
   --color-ink: #1c1b18;
-  --color-ink-2: #4a4842;
-  --color-ink-3: #33312c;
-  --color-mute: #6b6860;
-  --color-faint: #9a968c;
-  --color-line: #e4e0d7;
-  --color-line-2: #efece5;
-  --color-chip: #ddd9cf;
-  --color-sand: #f2efe8;
-  --color-sand-2: #e8e4da;
+  --color-ink-2: #4a4a4a;
+  --color-ink-3: #333333;
+  --color-mute: #6b6b6b;
+  --color-faint: #9b9b9b;
+  --color-line: #e6e6e6;
+  --color-line-2: #eeeeee;
+  --color-chip: #dedede;
+  --color-sand: #f1f1f1;
+  --color-sand-2: #e8e8e8;
   --color-accent: oklch(0.52 0.17 25);
   --color-accent-bright: oklch(0.62 0.17 25);
   --color-accent-soft: oklch(0.95 0.03 25);

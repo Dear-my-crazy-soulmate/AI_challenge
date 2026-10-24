@@ -118,7 +118,7 @@ export default function QuizApp({
                 key={m.major}
                 type="button"
                 onClick={() => start(m)}
-                className="flex flex-col gap-3 rounded-[20px] bg-white p-[18px] text-left active:scale-[.99]"
+                className="flex flex-col gap-3 rounded-[20px] bg-card p-[18px] text-left active:scale-[.99]"
               >
                 <span className="flex items-center justify-between gap-2.5">
                   <span className="flex flex-col gap-[3px]">
@@ -176,11 +176,11 @@ export default function QuizApp({
             {cur.options.map((text, i) => {
               const chosen = sel === i;
               const right = i === cur.answer;
-              let box = "border-line bg-white text-ink";
+              let box = "border-line bg-card text-ink";
               let dot = "bg-sand text-ink-2";
               let mark = "";
               if (chosen && !revealed) {
-                box = "border-ink bg-white text-ink";
+                box = "border-ink bg-card text-ink";
                 dot = "bg-ink text-white";
               }
               if (revealed && right) {
@@ -213,7 +213,7 @@ export default function QuizApp({
             })}
           </div>
           {revealed && (
-            <div role="status" className="flex flex-col gap-1.5 rounded-[18px] bg-white px-[18px] py-4">
+            <div role="status" className="flex flex-col gap-1.5 rounded-[18px] bg-card px-[18px] py-4">
               <span className={`text-[15px] font-bold ${sel === cur.answer ? "text-ok" : "text-accent"}`}>
                 {sel === cur.answer ? "정답이에요" : "아쉬워요"}
               </span>
@@ -247,7 +247,7 @@ export default function QuizApp({
             <span className="text-pretty text-[15px] font-semibold leading-normal">{reportTitle(recent.score, recent.n)}</span>
           </section>
 
-          <section className="flex flex-col gap-2.5 rounded-[20px] bg-white p-[18px]">
+          <section className="flex flex-col gap-2.5 rounded-[20px] bg-card p-[18px]">
             <div className="flex items-center gap-2">
               <h3 className="text-[15px] font-bold">체험 피드백</h3>
               <SampleTag className="text-[11px]" />
@@ -256,7 +256,7 @@ export default function QuizApp({
             <p className="text-xs leading-normal text-mute">점수는 참고 지표예요. 전공 적합성을 판정하지 않아요.</p>
           </section>
 
-          <section className="rounded-[20px] bg-white px-[18px] py-1.5">
+          <section className="rounded-[20px] bg-card px-[18px] py-1.5">
             {qs.map((q, i) => {
               const ok = isCorrect(q, picks[i]);
               return (

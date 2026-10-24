@@ -25,7 +25,7 @@ export default function RecentCalc() {
       <h2 className="text-sm font-bold">이어서 보기</h2>
       <Link
         href={`/onboarding?${q}`}
-        className="flex items-center justify-between gap-3 rounded-[18px] bg-white px-[18px] py-4 active:scale-[.99]"
+        className="flex items-center justify-between gap-3 rounded-[18px] bg-card px-[18px] py-4 active:scale-[.99]"
       >
         <span className="flex min-w-0 flex-col gap-1">
           <span className="text-xs text-mute">최근 계산 · {recent.kind}</span>

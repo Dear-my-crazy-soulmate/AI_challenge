@@ -75,7 +75,7 @@ export default function PostDetail({ id }: { id: string | null }) {
         </div>
 
         {r && (
-          <section aria-label="후기 정보" className="flex flex-col gap-3 rounded-[20px] bg-white p-[18px]">
+          <section aria-label="후기 정보" className="flex flex-col gap-3 rounded-[20px] bg-card p-[18px]">
             <Row k="시작 시기">{`${r.startedGrade}학년 ${r.startedTerm}학기`}</Row>
             <Row k="학업 부담">{`${LOAD_LABEL[r.load]} (${r.load}/4)`}</Row>
             <Row k="장점">{r.pros}</Row>
@@ -107,7 +107,7 @@ export default function PostDetail({ id }: { id: string | null }) {
       <section aria-label="댓글" className="flex flex-col gap-3">
         <h3 className="text-[15px] font-bold">댓글 {list.length}</h3>
         {list.map((c) => (
-          <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl bg-white px-4 py-3.5">
+          <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl bg-card px-4 py-3.5">
             <div className="flex items-start justify-between gap-2">
               <CommunityBadge badge={c.badge} />
               {c.is_sample && <SampleTag />}

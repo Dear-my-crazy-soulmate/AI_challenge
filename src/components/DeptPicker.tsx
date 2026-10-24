@@ -60,7 +60,7 @@ export default function DeptPicker({
           ))}
         </div>
       )}
-      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-white px-3.5">
+      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-card px-3.5">
         <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
         <input
           type="search"
@@ -71,7 +71,7 @@ export default function DeptPicker({
           className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
         />
       </label>
-      <div className="max-h-64 overflow-y-auto rounded-[18px] bg-white">
+      <div className="max-h-64 overflow-y-auto rounded-[18px] bg-card">
         {shown.map((o) => {
           const on = selected.includes(o.dept);
           const locked = full && !on;
