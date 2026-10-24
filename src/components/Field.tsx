@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 export const primaryButton =
   "box-border flex h-[54px] w-full items-center justify-center rounded-2xl bg-ink text-base font-bold text-paper active:opacity-90 disabled:bg-chip disabled:text-faint";
@@ -13,6 +13,20 @@ export function Field({ label, ...props }: { label: string } & InputHTMLAttribut
       <input
         {...props}
         className="h-12 rounded-[14px] border border-line bg-white px-3.5 text-base font-normal outline-none focus:border-ink"
+      />
+    </label>
+  );
+}
+
+/** Labelled multi-line input, same look as Field. */
+export function Area({ label, hint, ...props }: { label: string; hint?: string } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <label className="flex flex-col gap-2 text-sm font-semibold">
+      {label}
+      {hint && <span className="-mt-1 text-xs font-normal text-mute">{hint}</span>}
+      <textarea
+        {...props}
+        className="min-h-24 resize-y rounded-[14px] border border-line bg-white px-3.5 py-3 text-base font-normal leading-normal outline-none focus:border-ink"
       />
     </label>
   );

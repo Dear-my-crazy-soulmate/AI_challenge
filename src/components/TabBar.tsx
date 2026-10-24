@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type Shape = "circle" | "overlap" | "diamond" | "person";
+type Shape = "circle" | "overlap" | "diamond" | "bubble" | "person";
 
 const TABS: { href: string; label: string; shape: Shape; also?: string[] }[] = [
   { href: "/", label: "홈", shape: "circle" },
   { href: "/onboarding", label: "계산기", shape: "overlap" },
   { href: "/experience", label: "체험", shape: "diamond" },
+  { href: "/community", label: "커뮤니티", shape: "bubble" },
   { href: "/profile", label: "MY", shape: "person", also: ["/login", "/signup"] },
 ];
 
@@ -16,6 +17,7 @@ const SHAPE: Record<Exclude<Shape, "person">, string> = {
   circle: "h-5 w-5 rounded-full",
   overlap: "h-[18px] w-[26px] rounded-[9px]",
   diamond: "h-4 w-4 rotate-45 rounded-[4px]",
+  bubble: "h-[17px] w-[22px] rounded-[7px] rounded-bl-[2px]",
 };
 
 export default function TabBar() {
@@ -23,7 +25,7 @@ export default function TabBar() {
   return (
     <nav
       aria-label="주요 메뉴"
-      className="fixed inset-x-0 bottom-0 z-10 mx-auto grid w-full max-w-[430px] grid-cols-4 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-10 mx-auto grid w-full max-w-[430px] grid-cols-5 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md"
     >
       {TABS.map((t) => {
         const on = t.href === "/" ? path === "/" : [t.href, ...(t.also ?? [])].some((p) => path.startsWith(p));

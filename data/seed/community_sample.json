@@ -1,0 +1,111 @@
+{
+  "is_sample": true,
+  "as_of": "2026-10-24",
+  "note": "Made-up demo posts so the community screens are not empty. They are not real students' words and make no claims about school rules or credits (CLAUDE.md rules 3 and 6). Replace with consented real reviews or keep labelled 예시 데이터.",
+  "posts": [
+    {
+      "id": "sample-p1",
+      "type": "review",
+      "title": "컴공 + 인공지능 다전공, 1년 반 해 본 후기",
+      "body": "",
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": "done", "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
+      "review": {
+        "startedGrade": 1,
+        "startedTerm": 2,
+        "load": 3,
+        "pros": "두 전공 과목이 서로 도움이 돼서 개념이 더 빨리 이해됐어요.",
+        "cons": "필수 과목이 한 학기에 몰릴 때는 시간표가 많이 빠듯했어요.",
+        "forWhom": "코딩과 수학이 둘 다 싫지 않은 사람"
+      },
+      "createdAt": "2026-10-20T09:00:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-p2",
+      "type": "review",
+      "title": "시각디자인 본전공에 소프트웨어융합 부전공을 얹어 봤어요",
+      "body": "프로토타입을 직접 만들어 볼 수 있어서 포트폴리오에 도움이 됐어요.",
+      "badge": { "primary": "시각디자인학과", "grade": 2, "stage": "doing", "combo": { "mode": "minor", "second": "소프트웨어융합학과", "secondName": "소프트웨어융합학과" } },
+      "review": {
+        "startedGrade": 2,
+        "startedTerm": 1,
+        "load": 2,
+        "pros": "디자인 과제에 코딩을 써 보니 결과물의 폭이 넓어졌어요.",
+        "cons": "처음에는 용어가 낯설어서 따라가는 데 시간이 걸렸어요.",
+        "forWhom": "디자인에 개발을 더해 보고 싶은 사람"
+      },
+      "createdAt": "2026-10-18T14:30:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-p3",
+      "type": "review",
+      "title": "응용수학 + 컴퓨터공학, 졸업까지 마친 입장에서",
+      "body": "",
+      "badge": { "primary": "응용수학과", "grade": 4, "stage": "done", "combo": { "mode": "double", "second": "컴퓨터공학과", "secondName": "컴퓨터공학과" } },
+      "review": {
+        "startedGrade": 1,
+        "startedTerm": 2,
+        "load": 4,
+        "pros": "수학적 배경이 있어서 알고리즘과 AI 수업이 훨씬 수월했어요.",
+        "cons": "학기마다 과제와 시험이 겹쳐서 체력 관리가 정말 중요했어요.",
+        "forWhom": "공부량이 많아도 두 분야를 다 해 보고 싶은 사람"
+      },
+      "createdAt": "2026-10-12T11:00:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-p4",
+      "type": "question",
+      "title": "다전공이랑 부전공 중에 뭐가 나을까요?",
+      "body": "전자공학과 1학년이에요. 소프트웨어 쪽이 궁금한데 다전공은 부담이 클 것 같고 부전공은 아쉬울까 봐 고민이에요. 비슷한 고민 해 보신 분 계신가요?",
+      "badge": { "primary": "전자공학과", "grade": 1, "stage": "thinking", "combo": null },
+      "createdAt": "2026-10-22T08:00:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-p5",
+      "type": "info",
+      "title": "다전공 고민할 때 해 본 것들 정리",
+      "body": "1) 두 학과 1학년 과목을 나란히 놓고 비교해 봤어요.\n2) 선배 후기를 최대한 많이 읽었어요.\n3) 신청 조건과 일정은 반드시 학과나 학교 공지로 직접 확인했어요.\n정답은 없지만 이 순서로 하니 마음이 덜 흔들렸어요.",
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": "doing", "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
+      "createdAt": "2026-10-15T19:00:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-p6",
+      "type": "question",
+      "title": "부전공으로 수학을 하면 도움이 될까요?",
+      "body": "컴퓨터공학과 2학년인데 응용수학을 부전공으로 해 볼까 해요. 해 보신 분들은 어떠셨는지 궁금해요.",
+      "badge": { "primary": "컴퓨터공학과", "grade": 2, "stage": "thinking", "combo": { "mode": "minor", "second": "응용수학과", "secondName": "응용수학과" } },
+      "createdAt": "2026-10-21T20:15:00Z",
+      "is_sample": true
+    }
+  ],
+  "comments": [
+    {
+      "id": "sample-c1",
+      "postId": "sample-p4",
+      "body": "저는 한 학기 들어 보고 결정했어요. 맛보기로 과목 하나 들어 보는 걸 추천해요.",
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": null, "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
+      "createdAt": "2026-10-22T10:00:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-c2",
+      "postId": "sample-p4",
+      "body": "시간 여유가 얼마나 되는지부터 따져 보면 좋아요. 부전공으로 시작해 보고 더 하고 싶으면 늘리는 사람도 있어요.",
+      "badge": { "primary": "응용수학과", "grade": 4, "stage": null, "combo": null },
+      "createdAt": "2026-10-22T12:40:00Z",
+      "is_sample": true
+    },
+    {
+      "id": "sample-c3",
+      "postId": "sample-p6",
+      "body": "알고리즘이나 AI 쪽에 관심 있으면 도움이 된다고 느꼈어요.",
+      "badge": { "primary": "응용수학과", "grade": 4, "stage": null, "combo": { "mode": "double", "second": "컴퓨터공학과", "secondName": "컴퓨터공학과" } },
+      "createdAt": "2026-10-21T22:00:00Z",
+      "is_sample": true
+    }
+  ]
+}
