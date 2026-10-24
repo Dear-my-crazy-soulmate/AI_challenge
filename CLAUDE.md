@@ -26,7 +26,7 @@ Next.js(App Router, TypeScript strict) + Tailwind + Supabase(Postgres, Auth, pgv
 1. LLM에게 계산·판정을 시키지 않는다. LLM은 설명·생성·요약만 한다.
 2. RAG 답변에는 출처와 기준일을 붙인다. 근거를 못 찾으면 추측하지 말고 "공식 확인 필요"로 답한다.
 3. 학교 규정·학점·과목 같은 사실을 지어내지 않는다. 값은 `data/curated/`에만 두고 모든 항목에 `source_url`과 `as_of`를 붙인다. 모르면 `TODO`로 남기고 사용자에게 알린다.
-4. 학번·이름·연락처 등 개인정보를 저장하거나 LLM에 보내지 않는다. 사용자 입력은 `src/lib/safety/`를 거친다.
+4. 이름·학번은 사용자가 입력한 경우에만 이 기기/본인 프로필에 저장하고 LLM에는 보내지 않는다(`forLlm()` 사용). 연락처는 받지 않는다. 사용자 입력은 `src/lib/safety/`를 거친다.
 5. API 키는 서버 코드에서만 쓴다. `NEXT_PUBLIC_` 변수에 비밀 값을 넣지 않는다. `.env.local`은 커밋하지 않는다.
 6. 가상·예시 데이터에는 `is_sample: true`를 붙이고 화면에 "예시 데이터"로 표기한다.
 7. AI가 만든 체험 문제는 `draft → verified → approved` 상태를 거치고, `approved`만 사용자에게 보여 준다.
