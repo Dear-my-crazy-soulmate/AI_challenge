@@ -1,77 +1,102 @@
-# 다전공 탐색 서비스 (가칭)
+# 다전공 탐색
 
-2026학번부터 다전공·부전공·마이크로디그리(MD)가 졸업요건이 되면서, 신입생이 **정보를 찾고, 전공을 체험하고, 경험자 후기를 확인해 결정**할 수 있도록 돕는 웹 서비스입니다.
+2026학번부터 다전공·부전공·마이크로디그리(MD) 중 하나가 졸업요건이 되면서, 신입생이 **정보를 찾고, 전공을 체험하고, 경험자 후기를 확인해 결정**할 수 있도록 돕는 앱입니다. 경희대학교 **국제캠퍼스** 전공만 다룹니다(서울캠퍼스 전공은 범위 밖).
 2026 KHU AI Challenge 출품작이며, 부문은 AI 문제해결 솔루션입니다(팀 확정 필요).
 
-> 상태: 기능 1의 "본전공 + 다전공/부전공 → 필요 학점과 과목" 화면(`/onboarding`)이 동작합니다(국제캠퍼스 2026학년도 기준). 진행 순서는 [PLAN.md](./PLAN.md)를 따릅니다.
+- 배포 주소: https://ai-challenge-ivory.vercel.app (휴대폰에서 "홈 화면에 추가"로 앱처럼 설치)
+- 진행 순서와 할 일: [PLAN.md](./PLAN.md)
 
-## 세 가지 기능
+## 현재 상태
 
-| 기능 | 설명 | 핵심 기술 |
+| 기능 | 상태 | 내용 |
 |---|---|---|
-| 1. 정보 통합 | 본전공을 입력하면 선택 가능한 조합과 필요 학점을 계산하고, 제도 질문에 출처를 붙여 답변 | 규칙 엔진(코드) + RAG |
-| 2. AI 전공 체험 | 관심 전공의 입문 문제를 풀고 AI 피드백과 적합도 참고 리포트를 받음 | 문제 생성 → 자체 검증 → 사람 검수 → 캐시 |
-| 3. 커뮤니티 | 전공별 구조화된 후기, 질문, AI 후기 요약 | Supabase + RLS, LLM 요약·필터 |
+| 1. 전공 조합 계획 (`/onboarding`) | **동작** | 본전공 + 희망 다전공·부전공·마이크로디그리를 고르면 필요한 학점과 과목, 적용되는 학교 규칙을 보여 줌 |
+| 1-2. 제도 Q&A (RAG) | 준비 중 | 출처를 붙여 제도 질문에 답변 |
+| 2. AI 전공 체험 | 준비 중 | 입문 문제 → 자체 검증 → 사람 검수 → 캐시 |
+| 3. 커뮤니티 | 준비 중 | 전공별 후기·질문, AI 요약 (Supabase + RLS) |
+
+### 기능 1에서 보여 주는 것
+
+- **학점**: 본전공(다전공을 하면 다전공 기준으로 줄어든 학점)과 희망 전공의 전공기초·필수·선택 학점, 합계
+- **과목**: 전공기초·전공필수 과목 목록. 과목 학점 합이 필요 학점과 같으면 "모두 이수", 더 많으면 "아래 중 선택", 맞지 않으면 "학과 확인 필요"로 표시하고 전공선택은 후보 목록으로 보여 줌
+- **학과 규정 원문**: 그 과정에 관한 학과 시행세칙 문장을 쪽 번호와 함께 표시
+- **학교 공통 규칙** (교육과정 p.25~26, p.115~118)
+  - 다전공 금지 조합 (예: 환경학 ↔ 환경공학은 1개만)
+  - 같은 단과대학·같은 전공기초면 두 번째 전공의 전공기초 면제
+  - 두 전공이 함께 요구하는 과목(같은 학수번호)은 양쪽에 인정되지만 졸업학점엔 한 번만 → "실제로 들어야 할 최소 전공학점"
+  - 부전공 과목이 본전공과 겹치면 부전공 학점으로 인정 안 됨
+  - 신청 자격, 최대 이수 개수, 포기 시 처리 등 안내
+- **마이크로디그리**: 43개(여러 학과가 같이 운영하는 것은 하나로 합침)의 과목·학점, 본전공과 겹치는 과목 표시, 마이크로디그리 규칙
+- **앱(PWA)**: 홈 화면 설치, 앱 아이콘, 한 번 본 화면과 결과는 오프라인에서도 열림
+
+### 알려진 한계
+
+- 과목 정보가 없는 학과: **인공지능학과, 글로벌문화기술** (편성표 형식이 달라 자동 추출 실패). 학점은 나옵니다.
+- "학과 확인 필요" 상태: 한 편성표에 여러 전공이 섞인 **기계공학부(3개 전공), 환경학및환경공학과(2개 전공)**, 과목 학점 합이 필요 학점과 다른 일부 학과
+- 학점 개요(`credits_global.json`)는 공식 사이트에서 받은 표 기준이며, 교육과정 책의 기본구조표(p.121~122)와 다른 곳이 있습니다(화학공학과·전자공학과·컴퓨터공학과 단일전공, 부전공 7건의 "타전공 인정학점" 칸). 책 기준으로 바꾸는 작업이 남아 있습니다.
+- 마이크로디그리 60개 중 7개는 책에 학수번호가 빠졌거나 표가 깨져 "학과 확인 필요"입니다.
 
 ## 설계 원칙
 
-- **계산은 코드, 설명은 LLM.** 학점·조합 판정은 LLM에 맡기지 않습니다.
-- **출처 없으면 답하지 않음.** 모든 규정 답변에 출처와 기준일을 붙입니다.
+- **계산은 코드, 설명은 LLM.** 학점·조합 판정은 LLM에 맡기지 않습니다(`src/lib/rules/`의 순수 함수 + 테스트).
+- **출처 없으면 답하지 않음.** 모든 값과 규칙에 출처(교육과정 책 쪽 번호)와 기준(2026학년도)을 붙입니다.
+- **지어내지 않음.** 책에 인쇄된 과목만 쓰고, 맞지 않는 값은 고치지 않고 "확인 필요"로 표시합니다.
 - **사람이 검수한 문제만 노출.** AI 생성 문제는 `approved` 상태만 사용자에게 보입니다.
 - **개인정보 미수집·미전송.** 학번, 이름, 연락처는 저장하지 않고 LLM에도 보내지 않습니다(ChatKHU 이용 가이드 준수).
 - **가상 데이터는 표기.** 예시 데이터는 화면에 "예시 데이터"로 표시합니다.
 
 ## 기술 스택
 
-Next.js (App Router, TypeScript) · Tailwind CSS · Supabase (Postgres, Auth, pgvector) · Vitest · Vercel
+Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(manifest + 서비스 워커)
+데이터 준비: Python 3 + pydantic, `pdftotext`
 
-LLM은 ChatKHU를 우선 사용합니다. API 연동 방식은 확인 중이므로, 처음에는 mock 구현으로 개발하고 `src/lib/llm/`의 인터페이스 뒤에서 교체합니다.
+예정: Supabase(Postgres, Auth, pgvector), LLM은 ChatKHU 우선(연동 방식 확인 전까지 `src/lib/llm/`에 mock으로 개발).
 
 ## 폴더 구조
 
 ```
 .
-├── CLAUDE.md                 # Claude Code가 매 세션 읽는 규칙
-├── README.md
-├── PLAN.md                   # 단계별 개발 계획 (체크리스트)
-├── .env.example              # 필요한 환경변수 이름만 (값 없음)
-├── .gitignore
-├── package.json
+├── CLAUDE.md                     # Claude Code가 매 세션 읽는 규칙
+├── README.md, PLAN.md
 ├── data/
-│   ├── curated/              # 사람이 검증한 규정·전공·MD 데이터 (source_url, as_of 필수)
-│   ├── raw/                  # 수집한 원문 (git 제외 권장)
-│   └── seed/                 # 시연용 후기·문제 시드 (is_sample 표기)
-├── docs/
-│   ├── prompt-log.md         # 프롬프트 버전 로그 (서식4 증빙)
-│   ├── eval/                 # 골든셋, 평가 결과
-│   └── decisions.md          # 결정 기록
-├── supabase/
-│   └── migrations/           # DB 스키마 SQL
-├── scripts/                  # 임베딩 적재, 문제 생성 배치 등 1회성 스크립트
+│   ├── raw/                      # 교육과정 PDF (git 제외, 팀 채널에서 받기)
+│   ├── extracted/                # 사람/LLM이 구조화한 원본 (overview_all.json 등)
+│   └── curated/                  # 앱이 쓰는 검증된 데이터
+│       ├── credits_global.json   # 국제캠 학과별 단일·다전공·부전공 학점
+│       └── 2026/
+│           ├── courses.json      # 학과별 교과목 편성표와 과정별 과목 그룹
+│           ├── major_rules.json  # 다전공·부전공·MD 공통 규칙 (쪽 번호·원문 포함)
+│           └── microdegrees.json # 마이크로디그리 과목 목록
+├── scripts/pipeline/             # 데이터 준비 (Python, 앱 런타임에는 안 씀)
+│   ├── book.py                   # 교육과정 책을 목차 기준으로 학과별 분리
+│   ├── catalog.py                # [별표1] 교육과정 편성표 → 과목 목록
+│   ├── programs.py               # 과정별 과목 그룹 + 학점 대조 → courses.json
+│   ├── microdegrees.py           # 마이크로디그리 → microdegrees.json
+│   ├── overview.py               # 학점 개요 검증 → credits_global.json
+│   └── ingest·detect·parse_table·schema·build·plan.py  # 학과별 PDF용 이전 파이프라인 (인공지능학과·철학과)
+├── public/sw.js                  # 서비스 워커 (오프라인)
 ├── src/
-│   ├── app/                  # 화면과 API 라우트
-│   │   ├── page.tsx          # 홈
-│   │   ├── onboarding/       # 본전공 입력
-│   │   ├── guide/            # 제도 비교 + Q&A (기능 1)
-│   │   ├── experience/       # 체험 챌린지 (기능 2)
-│   │   ├── community/        # 후기·질문 (기능 3)
-│   │   └── api/              # chat, challenge, posts 등
-│   ├── components/           # 공용 UI
-│   ├── lib/
-│   │   ├── llm/              # LLM 인터페이스, ChatKHU·mock 구현, prompts/
-│   │   ├── rag/              # 청킹, 임베딩, 검색
-│   │   ├── rules/            # 학점·조합 판정 (순수 함수)
-│   │   ├── safety/           # 개인정보 마스킹, 입력 검사
-│   │   └── supabase/         # 클라이언트 생성
-│   └── types/                # 공용 타입
-└── tests/                    # rules, rag, safety 테스트
+│   ├── app/
+│   │   ├── page.tsx              # 앱 홈
+│   │   ├── onboarding/           # 전공 조합 계획 화면
+│   │   ├── api/plan/             # 다전공·부전공 계산 API
+│   │   ├── api/microdegree/      # 마이크로디그리 API
+│   │   ├── manifest.ts, icons/   # 앱 설치 정보와 아이콘
+│   │   └── guide/, experience/, community/   # 기능 1-2·2·3 자리 (비어 있음)
+│   ├── components/               # MajorPlanner(화면), ServiceWorker
+│   └── lib/
+│       ├── rules/                # credits·courses·majorRules·microdegrees (순수 함수)
+│       └── llm/, rag/, safety/, supabase/   # 예정 (비어 있음)
+└── tests/
+    ├── rules/                    # Vitest
+    └── pipeline/                 # Python unittest
 ```
 
 ## 시작하기
 
 ### 1. 앱 실행 (화면만 볼 때)
 
-필요한 것: Git, Node.js(LTS). Python 가상환경은 필요 없습니다. 앱이 쓰는 데이터(`data/curated/`)는 저장소에 들어 있습니다.
+필요한 것: Git, Node.js(LTS). Python 가상환경과 `.env.local`은 지금은 필요 없습니다. 앱이 쓰는 데이터(`data/curated/`)는 저장소에 들어 있습니다.
 
 ```bash
 git clone https://github.com/Dear-my-crazy-soulmate/AI_challenge.git
@@ -81,24 +106,23 @@ npm run dev     # 터미널에 Local / Network 주소가 나옵니다
 npm test        # Vitest 테스트
 ```
 
-브라우저에서 **http://localhost:3000/onboarding** 을 엽니다. 홈(`/`)은 아직 Next.js 기본 화면이라 `next.svg`, `vercel.svg` 404 로그가 보여도 정상입니다.
+브라우저에서 **http://localhost:3000** 을 엽니다. 개발 모드(`npm run dev`)에서는 서비스 워커가 꺼져 있습니다. 앱 설치·오프라인 동작은 `npm run build` 후 `npm run start`로 실행하거나 배포 주소에서 확인합니다.
 
 ### 2. 팀원과 함께 확인하는 방법
 
 | 방법 | 언제 | 주소 |
 |---|---|---|
-| A. 각자 실행 | 코드를 같이 고치며 확인할 때 (권장) | 각자 PC의 `http://localhost:3000/onboarding` |
-| B. 내 PC 서버를 같이 보기 | 같은 Wi-Fi에서 바로 보여 줄 때 | 서버 켠 사람의 `Network` 주소 + `/onboarding` |
-| C. 배포 주소 | 다른 장소에서 보거나 시연할 때 | https://ai-challenge-ivory.vercel.app/onboarding (main에 push된 내용) |
+| A. 각자 실행 | 코드를 같이 고치며 확인할 때 (권장) | 각자 PC의 `http://localhost:3000` |
+| B. 내 PC 서버를 같이 보기 | 같은 Wi-Fi에서 바로 보여 줄 때 | 서버 켠 사람의 `Network` 주소 |
+| C. 배포 주소 | 다른 장소에서 보거나 시연할 때 | https://ai-challenge-ivory.vercel.app (main에 push된 내용) |
 
-**A. 각자 실행**: 위 1번을 각자 하고, 변경은 `git pull`로 받습니다.
+**A. 각자 실행**: 위 1번을 각자 하고, 작업 전에 `git pull`로 변경을 받습니다. 같은 파일을 동시에 고치면 충돌이 나기 쉬우니 기능별 브랜치에서 작업하고 PR로 합치는 것을 권장합니다.
 
 **B. 같은 네트워크에서 한 사람의 서버를 같이 보기**
 
 1. 서버를 켠 사람의 터미널에 나온 `Network: http://192.168.x.x:3000` 주소를 팀원에게 공유합니다(주소는 PC·Wi-Fi마다 다릅니다).
-2. 팀원은 그 주소 뒤에 `/onboarding` 을 붙여 엽니다.
-3. Windows 방화벽 창이 뜨면 **개인 네트워크**에서 Node.js 허용을 선택합니다. 학교·공용 Wi-Fi는 기기 간 접속이 막혀 있을 수 있어서, 그때는 A나 C를 씁니다.
-4. 터미널에 `Blocked cross-origin request to Next.js dev resource /_next/hmr from "192.168.x.x"` 경고가 나오면: 페이지는 열리지만 코드 수정이 화면에 자동 반영(HMR)되지 않습니다. 필요하면 `next.config.ts`에 그 주소를 추가하고 서버를 다시 켭니다. 주소는 PC마다 달라서 저장소에는 커밋하지 않습니다.
+2. Windows 방화벽 창이 뜨면 **개인 네트워크**에서 Node.js 허용을 선택합니다. 학교·공용 Wi-Fi는 기기 간 접속이 막혀 있을 수 있어서, 그때는 A나 C를 씁니다.
+3. 터미널에 `Blocked cross-origin request to Next.js dev resource /_next/hmr from "192.168.x.x"` 경고가 나오면: 페이지는 열리지만 코드 수정이 화면에 자동 반영(HMR)되지 않습니다. 필요하면 `next.config.ts`에 그 주소를 추가하고 서버를 다시 켭니다. 주소는 PC마다 달라서 저장소에는 커밋하지 않습니다.
 
    ```ts
    const nextConfig: NextConfig = {
@@ -107,14 +131,16 @@ npm test        # Vitest 테스트
    };
    ```
 
-**C. 배포 주소**: Vercel에 연결된 `main`의 최신 내용입니다. push 후 반영되는 데 몇 분 걸릴 수 있습니다.
+**C. 배포 주소**: Vercel이 `main`에 push될 때마다 자동으로 배포합니다(1분 안팎).
 
-**같이 확인할 시나리오** (`/onboarding`)
+**같이 확인할 시나리오** (홈 → "내 전공 조합 계획하기")
 
-1. 본전공 `컴퓨터공학과` → 다전공 → `소프트웨어융합학과`: 합계 102학점, 두 전공 모두 "학점 검증 완료", 기초·필수 과목 목록이 나오는지
-2. 본전공 `체육학과` → 다전공 → `응용수학과`: "일부 선택 이수"와 "아래 과목 중 선택", 학과 규정 원문이 보이는지
-3. 본전공 `컴퓨터공학과` → 부전공 → `전자공학과`: 검증 미통과 안내가 나오는지
-4. 본전공 `체육학과` → 다전공 → `인공지능학과`: 학점은 나오고 과목은 "과목 정보 없음"으로 나오는지
+1. `컴퓨터공학과` → 다전공 → `소프트웨어융합학과`: 합계 102학점, 겹치는 필수 과목을 빼면 최소 84학점, 두 전공 모두 "학점 검증 완료"
+2. `스마트팜과학과` → 다전공 → `원예생명공학과`: 같은 단과대학·같은 전공기초라 원예생명공학과 전공기초 6학점 면제
+3. `체육학과` → 다전공 → `응용수학과`: "일부 선택 이수", "아래 과목 중 선택", 학과 규정 원문
+4. `환경학및환경공학과 (환경학)` → 다전공: 목록에 `(환경공학)`이 나오지 않음 (금지 조합)
+5. `컴퓨터공학과` → 부전공 → `전자공학과`: 검증 미통과 안내
+6. `컴퓨터공학과` → 마이크로디그리 → `빅데이터 분석`: 9학점 모두 이수, 2과목에 "본전공에도 있음"
 
 화면이 이상하면 주소, 선택한 조합, 화면 캡처를 함께 공유합니다.
 
@@ -130,14 +156,16 @@ python -m venv .venv
 원본 PDF는 저장소에 없습니다(`data/raw/`는 git 제외). 팀 채널에서 `2026경희대 교육과정.pdf`를 받아 `data/raw/`에 넣은 뒤 실행합니다.
 
 ```bash
-.venv/Scripts/python -I scripts/pipeline/overview.py                       # 학점 개요 검증
-PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py        # 책을 학과별로 분리
-PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py    # 과목 데이터 생성
-PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/microdegrees.py  # 마이크로디그리 과목 데이터 생성
-PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py     # 파이프라인 테스트
+.venv/Scripts/python -I scripts/pipeline/overview.py                         # 학점 개요 검증
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py          # 책을 학과별로 분리
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py      # 과목 데이터 생성
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/microdegrees.py  # 마이크로디그리 데이터 생성
+PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py       # 파이프라인 테스트
 ```
 
 `(.venv)` 활성화는 필요 없습니다. 위처럼 `.venv/Scripts/python`을 직접 쓰면 됩니다. 앱(`npm run dev`)은 가상환경과 관계없이 실행됩니다.
+
+**내년(2027) 갱신**: 새 교육과정 책을 `data/raw/2027경희대 교육과정.pdf`로 넣고 `PIPELINE_YEAR=2027`로 같은 명령을 실행하면 `data/curated/2027/`이 만들어집니다. 학생은 입학년도 교육과정을 따르므로 이전 연도 데이터는 지우지 않습니다. 각 스크립트가 출력하는 "check" 항목만 사람이 원문과 대조하면 됩니다.
 
 ## Claude Code로 개발하기
 
@@ -156,7 +184,7 @@ PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py     # 파
 
 ## AI 활용 기록 (대회 서식4)
 
-프롬프트를 쓰거나 바꿀 때마다 `docs/prompt-log.md`에 기록합니다: 단계, 모델, 프롬프트 버전, 문제점, 사람의 수정, 결과. API 키와 개인정보는 넣지 않습니다.
+LLM 프롬프트를 쓰기 시작하면 `docs/prompt-log.md`(아직 없음)를 만들어 바꿀 때마다 기록합니다: 단계, 모델, 프롬프트 버전, 문제점, 사람의 수정, 결과. API 키와 개인정보는 넣지 않습니다.
 
 ## 일정
 
