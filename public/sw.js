@@ -3,10 +3,10 @@
 //   so a combination you already looked at still opens offline.
 // - Static files (/_next/static, icons): cache first; their names change per build.
 // Bump VERSION to drop old caches after a change to this file.
-const VERSION = "v2";
+const VERSION = "v3";
 const PAGES = `pages-${VERSION}`;
 const STATIC = `static-${VERSION}`;
-const START = ["/", "/onboarding"];
+const START = ["/", "/onboarding", "/experience", "/profile"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(PAGES).then((c) => c.addAll(START)).then(() => self.skipWaiting()));

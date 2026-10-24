@@ -7,6 +7,8 @@ import type { FormEvent } from "react";
 
 import DeptPicker from "@/components/DeptPicker";
 import { ErrorNote, Field, SampleLoginNote, primaryButton } from "@/components/Field";
+import PersonalFields from "@/components/PersonalFields";
+import type { Personal } from "@/components/PersonalFields";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useAuth } from "@/lib/auth";
 import { MAX_INTERESTS } from "@/lib/auth/types";
@@ -23,6 +25,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
   const [again, setAgain] = useState("");
   const [primary, setPrimary] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
+  const [personal, setPersonal] = useState<Personal>({ name: "", studentId: "", grade: 1 });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -44,7 +47,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
     if (!mail.ok || !pw.ok) return setStep(1);
     const main = primary[0] ?? "";
     // The profile character follows the major until the user can pick another one.
-    const profile = checkProfile({ primary: main, interests, avatar: main || null }, depts.map((d) => d.dept));
+    const profile = checkProfile({ primary: main, interests, avatar: main || null, ...personal }, depts.map((d) => d.dept));
     if (!profile.ok) return setError(profile.message);
     setBusy(true);
     const r = await auth.signUp(mail.value, pw.value, profile.value);
@@ -138,6 +141,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
             <br />
             다니고 있나요?
           </h2>
+          <PersonalFields value={personal} onChange={setPersonal} />
           <DeptPicker
             label="내 본전공"
             options={depts.filter((d) => d.single)}
@@ -160,6 +164,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
           <button type="button" onClick={finish} disabled={busy || primary.length === 0} className={primaryButton}>
             {busy ? "만드는 중…" : "가입 완료"}
           </button>
+          <SampleLoginNote />
         </div>
       )}
     </main>

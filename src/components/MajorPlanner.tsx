@@ -3,18 +3,21 @@
 // The calculator: 본전공 -> 이수 형태 -> 희망 전공 -> 결과, one question per screen.
 // All numbers come from src/lib/rules/ (credits through /api/plan and /api/microdegree for the result).
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import Avatar from "@/components/Avatar";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
-import type { Breakdown } from "@/components/PlanResult";
-import type { CoursePlanResult } from "@/lib/rules/courses";
+import type { Breakdown, ResultActions } from "@/components/PlanResult";
+import { useGoal } from "@/components/useGoal";
+import type { CoursePlanOk, CoursePlanResult } from "@/lib/rules/courses";
 import { listCreditOptions } from "@/lib/rules/credits";
 import type { CreditData, ProgramKind } from "@/lib/rules/credits";
 import { prohibitedReason } from "@/lib/rules/majorRules";
 import type { MajorRules } from "@/lib/rules/majorRules";
-import type { Microdegree, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
+import type { Microdegree, MicrodegreePlanOk, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
 import { useAuth } from "@/lib/auth";
+import { isSameGoal, saveGoal } from "@/lib/goal";
+import type { Goal } from "@/lib/goal";
 import { saveRecent } from "@/lib/recent";
 
 type Mode = "double" | "minor" | "microdegree";
@@ -98,9 +101,10 @@ export interface PlannerProps {
   rules: MajorRules;
   microdegrees: Microdegree[];
   initial?: PlannerInitial;
+  quizMajors?: string[]; // majors that have 체험 문제, so a result can link to the right quiz
 }
 
-export default function MajorPlanner({ data, rules, microdegrees, initial }: PlannerProps) {
+export default function MajorPlanner({ data, rules, microdegrees, initial, quizMajors = [] }: PlannerProps) {
   const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
   const [step, setStep] = useState<Step>(start ? 4 : 1);
   const [primary, setPrimary] = useState(start?.primary ?? "");
@@ -189,6 +193,16 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
   // ---- pickers (steps 1 and 3) ----
   const picking = step === 1 || step === 3;
   const mine = firsts.find((d) => d.dept === profile?.primary);
+
+  // A signed-in user's 본전공 is already known, so start at 이수 형태 (once; the 본전공 chip still goes back).
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (autoStarted.current || start || !mine || step !== 1) return;
+    autoStarted.current = true;
+    setPrimary(mine.dept);
+    setStep(2);
+  }, [mine, start, step]);
+
   const isMdPick = step === 3 && mode === "microdegree";
   const q = query.trim().replace(/\s/g, "");
   const match = (s: string) => !q || s.replace(/\s/g, "").includes(q);
@@ -454,7 +468,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
       )}
 
       {current && !("error" in current) && current.kind === "plan" && (
-        <PlanResultSwitch plan={current.plan} data={data} primary={primary} mode={mode} onReset={reset} />
+        <PlanResultSwitch plan={current.plan} data={data} primary={primary} mode={mode} quizMajors={quizMajors} onReset={reset} />
       )}
 
       {current && !("error" in current) && current.kind === "md" && (
@@ -464,24 +478,65 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
   );
 }
 
+/** Buttons under a result: save it as 내 목표, and open the quiz of the major just calculated. */
+function useResultActions(goal: Goal, quizMajors: string[]): ResultActions {
+  const saved = isSameGoal(useGoal(), goal);
+  const hasQuiz = goal.mode !== "microdegree" && quizMajors.includes(goal.second);
+  return {
+    goalSaved: saved,
+    onSaveGoal: () => saveGoal(goal),
+    quizHref: hasQuiz ? `/experience?major=${encodeURIComponent(goal.second)}` : "/experience",
+    quizLabel: hasQuiz ? `${goal.second} 체험 문제 풀기` : "전공 체험 문제 보러 가기",
+  };
+}
+
 function PlanResultSwitch({
   plan,
   data,
   primary,
   mode,
+  quizMajors,
   onReset,
 }: {
   plan: CoursePlanResult;
   data: CreditData;
   primary: string;
   mode: Mode | null;
+  quizMajors: string[];
   onReset: () => void;
 }) {
   if (!plan.available) return <ResultWithReset message={plan.message} onReset={onReset} />;
   const a = creditsOf(data, primary, mode === "double" ? "double" : "single");
   const b = creditsOf(data, plan.second.dept, plan.input.kind);
   if (!a || !b) return <ResultWithReset message="학점 데이터를 찾을 수 없어요. 학과 공식 안내를 확인하세요." onReset={onReset} />;
-  return <PlanView plan={plan} primaryCredits={a} secondCredits={b} onReset={onReset} />;
+  return <PlanOk plan={plan} a={a} b={b} quizMajors={quizMajors} onReset={onReset} />;
+}
+
+function PlanOk({
+  plan,
+  a,
+  b,
+  quizMajors,
+  onReset,
+}: {
+  plan: CoursePlanOk;
+  a: Breakdown;
+  b: Breakdown;
+  quizMajors: string[];
+  onReset: () => void;
+}) {
+  const actions = useResultActions(
+    {
+      primary: plan.primary.dept,
+      mode: plan.input.kind,
+      second: plan.second.dept,
+      secondName: plan.second.dept,
+      primaryCredits: plan.totals.primaryCredits,
+      secondCredits: plan.totals.secondCredits,
+    },
+    quizMajors,
+  );
+  return <PlanView plan={plan} primaryCredits={a} secondCredits={b} actions={actions} onReset={onReset} />;
 }
 
 function MdResultSwitch({
@@ -500,7 +555,33 @@ function MdResultSwitch({
   if (!plan.available) return <ResultWithReset message={plan.message} onReset={onReset} />;
   const a = creditsOf(data, primary, "single");
   if (!a) return <ResultWithReset message="학점 데이터를 찾을 수 없어요. 학과 공식 안내를 확인하세요." onReset={onReset} />;
-  return <MicrodegreeView plan={plan} primaryCredits={a} rules={rules} onReset={onReset} />;
+  return <MdOk plan={plan} a={a} rules={rules} onReset={onReset} />;
+}
+
+function MdOk({
+  plan,
+  a,
+  rules,
+  onReset,
+}: {
+  plan: MicrodegreePlanOk;
+  a: Breakdown;
+  rules: MajorRules;
+  onReset: () => void;
+}) {
+  const md = plan.microdegree;
+  const actions = useResultActions(
+    {
+      primary: plan.primary.dept,
+      mode: "microdegree",
+      second: plan.input.id,
+      secondName: md.name,
+      primaryCredits: plan.primaryCredits,
+      secondCredits: md.required_credits,
+    },
+    [],
+  );
+  return <MicrodegreeView plan={plan} primaryCredits={a} rules={rules} actions={actions} onReset={onReset} />;
 }
 
 function ResultWithReset({ message, onReset }: { message: string; onReset: () => void }) {

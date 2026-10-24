@@ -1,0 +1,152 @@
+{
+  "is_sample": true,
+  "as_of": "2026-10-24",
+  "note": "Demo questions taken from the design prototype. Not AI-generated and not reviewed by a department, so they are shown only with the 예시 데이터 label (CLAUDE.md rules 6 and 7). Replace with approved questions later.",
+  "majors": [
+    {
+      "major": "인공지능학과",
+      "college": "소프트웨어융합대학",
+      "questions": [
+        {
+          "id": "ai-1",
+          "skill": "데이터 감각",
+          "question": "사진 1만 장 중 9,500장이 고양이예요. 모델이 모든 사진을 “고양이”라고 답하면 정확도는 몇 %일까요?",
+          "options": ["5%", "50%", "95%", "계산할 수 없다"],
+          "answer": 2,
+          "explanation": "9,500장을 맞혔으니 95%예요. 하지만 개는 하나도 못 찾았죠. 데이터가 한쪽에 쏠리면 정확도만으로는 모델을 평가할 수 없어요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "ai-2",
+          "skill": "모델 이해",
+          "question": "학습한 데이터에서는 정확도 99%, 처음 보는 데이터에서는 60%가 나왔어요. 어떤 현상일까요?",
+          "options": ["과소적합", "과적합", "데이터가 너무 많음", "정상적인 결과"],
+          "answer": 1,
+          "explanation": "학습 데이터를 “외워 버려서” 새 데이터에 일반화하지 못하는 과적합이에요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "ai-3",
+          "skill": "개념",
+          "question": "입력과 정답이 짝지어진 데이터로 학습하는 방식은 무엇일까요?",
+          "options": ["지도학습", "비지도학습", "강화학습", "전이학습"],
+          "answer": 0,
+          "explanation": "정답(레이블)이 주어진 데이터로 배우는 건 지도학습이에요.",
+          "status": "draft",
+          "is_sample": true
+        }
+      ]
+    },
+    {
+      "major": "철학과",
+      "college": "문과대학",
+      "questions": [
+        {
+          "id": "phil-1",
+          "skill": "논증",
+          "question": "“모든 사람은 죽는다. 소크라테스는 사람이다. 따라서 소크라테스는 죽는다.” 이 논증의 형식은?",
+          "options": ["귀납 논증", "연역 논증", "유비 논증", "순환 논증"],
+          "answer": 1,
+          "explanation": "전제가 참이면 결론이 반드시 참인 연역 논증(삼단논법)이에요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "phil-2",
+          "skill": "비판적 사고",
+          "question": "“그 주장은 틀렸어. 말한 사람이 예전에 거짓말을 했거든.” 어떤 오류일까요?",
+          "options": ["허수아비 공격", "인신공격의 오류", "성급한 일반화", "오류 없음"],
+          "answer": 1,
+          "explanation": "주장의 내용이 아니라 말한 사람을 공격하는 인신공격의 오류예요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "phil-3",
+          "skill": "철학사",
+          "question": "질문과 대화로 상대가 스스로 무지를 깨닫게 하는 방법(산파술)으로 알려진 철학자는?",
+          "options": ["플라톤", "아리스토텔레스", "소크라테스", "데카르트"],
+          "answer": 2,
+          "explanation": "소크라테스예요. 그의 대화는 제자 플라톤의 기록으로 전해져요.",
+          "status": "draft",
+          "is_sample": true
+        }
+      ]
+    },
+    {
+      "major": "컴퓨터공학과",
+      "college": "소프트웨어융합대학",
+      "questions": [
+        {
+          "id": "cs-1",
+          "skill": "알고리즘",
+          "question": "정렬된 1,024개 숫자에서 이진 탐색으로 값을 찾을 때, 비교 횟수는 대략 몇 번일까요?",
+          "options": ["약 10번", "약 100번", "약 512번", "약 1,024번"],
+          "answer": 0,
+          "explanation": "매번 범위를 절반으로 줄이니 log₂1024 = 10, 대략 10번이면 충분해요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "cs-2",
+          "skill": "자료구조",
+          "question": "빈 스택에 1, 2, 3을 차례로 넣고(push) 두 번 꺼내면(pop) 남는 값은?",
+          "options": ["1", "2", "3", "아무것도 없다"],
+          "answer": 0,
+          "explanation": "스택은 나중에 넣은 것이 먼저 나와요(LIFO). 3, 2가 나가고 1이 남아요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "cs-3",
+          "skill": "프로그래밍",
+          "question": "다음 파이썬 코드의 출력은?",
+          "code": "x = 3\nfor i in range(x):\n    x += i\nprint(x)",
+          "options": ["3", "6", "9", "무한 반복"],
+          "answer": 1,
+          "explanation": "range(x)는 처음 x=3일 때 한 번만 만들어져요. 3+0+1+2 = 6이에요.",
+          "status": "draft",
+          "is_sample": true
+        }
+      ]
+    },
+    {
+      "major": "시각디자인학과",
+      "college": "예술·디자인대학",
+      "questions": [
+        {
+          "id": "vd-1",
+          "skill": "타이포그래피",
+          "question": "글자와 배경의 명도 차이가 작을 때 가장 먼저 생기는 문제는?",
+          "options": ["파일 용량 증가", "가독성 저하", "인쇄 비용 증가", "글꼴 깨짐"],
+          "answer": 1,
+          "explanation": "명도 대비가 낮으면 글자가 배경에 묻혀 읽기 어려워져요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "vd-2",
+          "skill": "디지털 도구",
+          "question": "16px 아이콘부터 대형 간판까지, 로고를 깨짐 없이 쓰려면 어떤 형식이 좋을까요?",
+          "options": ["JPG", "PNG", "벡터(SVG·AI)", "GIF"],
+          "answer": 2,
+          "explanation": "벡터는 수식으로 저장해서 크기를 바꿔도 선명해요.",
+          "status": "draft",
+          "is_sample": true
+        },
+        {
+          "id": "vd-3",
+          "skill": "레이아웃",
+          "question": "화면의 정보 위계를 만드는 방법이 아닌 것은?",
+          "options": ["크기 차이", "굵기 차이", "여백 조절", "모든 요소를 같은 크기로"],
+          "answer": 3,
+          "explanation": "모든 요소가 같으면 시선이 갈 곳이 없어요. 차이가 위계를 만들어요.",
+          "status": "draft",
+          "is_sample": true
+        }
+      ]
+    }
+  ]
+}

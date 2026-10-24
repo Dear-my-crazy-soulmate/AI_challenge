@@ -1,6 +1,7 @@
 // Stand-in login that lives only in this browser (no server, no Supabase yet).
 // Same shape as the real service will have, so screens do not change when it is swapped in.
 // The password is stored only as a SHA-256 hash; this is NOT real security, just a demo account.
+import { GRADES } from "./types";
 import type { AuthResult, AuthService, AuthState, Profile } from "./types";
 
 const USERS = "mock.auth.users"; // [{ id, email, hash }]
@@ -21,6 +22,19 @@ export interface KeyValueStore {
 }
 
 const fail = (message: string): AuthResult => ({ ok: false, message });
+
+/** Profiles saved before grade/name/studentId existed get neutral defaults instead of breaking. */
+function withDefaults(p: Partial<Profile> | undefined): Profile | null {
+  if (!p || typeof p.primary !== "string") return null;
+  return {
+    primary: p.primary,
+    interests: Array.isArray(p.interests) ? p.interests : [],
+    avatar: p.avatar ?? null,
+    grade: p.grade && GRADES.includes(p.grade) ? p.grade : 1,
+    name: typeof p.name === "string" ? p.name : "",
+    studentId: typeof p.studentId === "string" ? p.studentId : "",
+  };
+}
 
 async function hash(email: string, password: string): Promise<string> {
   const bytes = new TextEncoder().encode(`${email}:${password}`);
@@ -48,7 +62,7 @@ export function createMockAuth(store: KeyValueStore): AuthService {
     getSnapshot() {
       const id = sessionId();
       if (!id) return "out";
-      return JSON.stringify({ id, profile: read<Record<string, Profile>>(PROFILES, {})[id] ?? null });
+      return JSON.stringify({ id, profile: withDefaults(read<Record<string, Partial<Profile>>>(PROFILES, {})[id]) });
     },
     subscribe(onChange) {
       listeners.add(onChange);

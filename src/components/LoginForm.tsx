@@ -45,11 +45,16 @@ export default function LoginForm() {
         </div>
       ) : (
         <form onSubmit={submit} noValidate className="flex flex-col gap-4">
-          <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
-            다시 만나서
-            <br />
-            반가워요
-          </h2>
+          <div className="flex flex-col gap-4 pb-2">
+            <span aria-hidden className="relative h-12 w-[76px]">
+              <span className="absolute left-0 top-0 h-12 w-12 rounded-full bg-ink" />
+              <span className="absolute left-7 top-0 h-12 w-12 rounded-full bg-accent mix-blend-multiply" />
+            </span>
+            <h2 className="text-[32px] font-bold leading-[1.25] tracking-[-1px]">다전공 길잡이</h2>
+            <p className="text-pretty text-[15px] leading-[1.55] text-ink-2">
+              다전공·부전공·마이크로디그리를 내 학과 기준으로 계산하고, 목표를 저장해 두세요.
+            </p>
+          </div>
           <Field
             label="이메일"
             type="email"

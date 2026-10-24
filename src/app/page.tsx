@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import majorRules from "../../data/curated/2026/major_rules.json";
 import AccountButton from "@/components/AccountButton";
+import GoalCard from "@/components/GoalCard";
+import HomeIntro from "@/components/HomeIntro";
 import RecentCalc from "@/components/RecentCalc";
 import type { MajorRules } from "@/lib/rules/majorRules";
 
@@ -30,15 +32,9 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="flex flex-col gap-2.5">
-        <h1 className="text-pretty text-[27px] font-bold leading-[1.32] tracking-[-0.8px]">
-          26학번은 다전공·부전공·
-          <br />
-          마이크로디그리 중 하나를
-          <br />꼭 이수해야 해요
-        </h1>
-        <p className="text-[13px] text-mute">2026학년도 교육과정 p.{headlinePage}</p>
-      </section>
+      <HomeIntro page={headlinePage} />
+
+      <GoalCard />
 
       <div className="grid grid-cols-2 gap-3">
         <Link
@@ -62,10 +58,9 @@ export default function Home() {
           </span>
         </Link>
 
-        {/* 전공 체험 문제 is not built yet: same card, marked 준비 중 and not clickable. */}
-        <div
-          aria-disabled="true"
-          className="box-border flex h-[228px] flex-col justify-between rounded-3xl bg-accent px-[18px] pb-[18px] pt-5 text-white opacity-60"
+        <Link
+          href="/experience"
+          className="box-border flex h-[228px] flex-col justify-between rounded-3xl bg-accent px-[18px] pb-[18px] pt-5 text-white transition-transform active:scale-[.98]"
         >
           <span className="flex items-start justify-between">
             <span className="text-xs font-semibold opacity-70">02</span>
@@ -83,9 +78,9 @@ export default function Home() {
               문제
             </span>
             <span className="text-[13px] leading-[1.45] opacity-90">입문 문제를 풀며 나와 맞는지 가늠해 봐요</span>
-            <span className="self-start rounded-md bg-white/25 px-2 py-0.5 text-[11px] font-semibold">준비 중</span>
+            <span className="self-start rounded-md bg-white/25 px-2 py-0.5 text-[11px] font-semibold">예시 데이터</span>
           </span>
-        </div>
+        </Link>
       </div>
 
       <RecentCalc />

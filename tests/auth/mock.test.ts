@@ -14,7 +14,7 @@ function memoryStore(): KeyValueStore & { dump(): string } {
   };
 }
 
-const profile: Profile = { primary: "컴퓨터공학과", interests: ["철학과"], avatar: null };
+const profile: Profile = { primary: "컴퓨터공학과", interests: ["철학과"], avatar: null, grade: 1, name: "김경희", studentId: "2026100123" };
 
 describe("mock auth", () => {
   let store: ReturnType<typeof memoryStore>;
@@ -86,6 +86,19 @@ describe("mock auth", () => {
     off();
     await auth.signIn("a@b.co", "password1");
     expect(n).toBe(3);
+  });
+
+  it("fills defaults for a profile saved before grade, name and studentId existed", () => {
+    store.setItem("mock.auth.session", "u1");
+    store.setItem("mock.auth.profiles", JSON.stringify({ u1: { primary: "철학과", interests: ["체육학과"], avatar: "철학과" } }));
+    expect(auth.parse(auth.getSnapshot()).profile).toEqual({
+      primary: "철학과",
+      interests: ["체육학과"],
+      avatar: "철학과",
+      grade: 1,
+      name: "",
+      studentId: "",
+    });
   });
 
   it("keeps two users apart", async () => {

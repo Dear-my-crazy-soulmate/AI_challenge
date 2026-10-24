@@ -23,7 +23,10 @@ export function SampleLoginNote() {
   return (
     <p className="flex items-start gap-2 text-xs leading-normal text-mute">
       <span className="flex-none rounded-md bg-sand-2 px-[7px] py-0.5 font-semibold text-ink-2">예시 로그인</span>
-      <span>지금은 시연용이라 이 기기의 브라우저에만 저장돼요. 학번·이름·연락처는 받지 않아요.</span>
+      <span>
+        지금은 시연용이라 이 기기의 브라우저에만 저장돼요. 이름·학번은 넣고 싶을 때만 적고, AI에는 보내지 않아요. 연락처는 받지
+        않아요.
+      </span>
     </p>
   );
 }

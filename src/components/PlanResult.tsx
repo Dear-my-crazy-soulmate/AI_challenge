@@ -1,6 +1,7 @@
 // Result screens of the calculator (step 4): a dark total card, one card per program with
 // credit bars, the school-wide rules that apply, and the course lists folded inside each card.
 // Pure presentation: every number comes from src/lib/rules/ through /api/plan and /api/microdegree.
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { CourseGroup, CoursePlanOk, ProgramCourses } from "@/lib/rules/courses";
@@ -295,15 +296,42 @@ function RulesApplied({ r }: { r: CoursePlanOk }) {
   );
 }
 
-function ResetButton({ onReset }: { onReset: () => void }) {
+/** What the result screen offers next: save this combination as 내 목표, or try the major's quiz. */
+export interface ResultActions {
+  goalSaved: boolean;
+  onSaveGoal: () => void;
+  quizHref: string;
+  quizLabel: string;
+}
+
+function SaveGoalButton({ a }: { a: ResultActions }) {
   return (
     <button
       type="button"
-      onClick={onReset}
-      className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-semibold"
+      onClick={a.goalSaved ? undefined : a.onSaveGoal}
+      aria-pressed={a.goalSaved}
+      className={`box-border flex h-[54px] items-center justify-center rounded-2xl text-base font-bold ${
+        a.goalSaved ? "cursor-default bg-ok-soft text-ok" : "bg-accent text-white active:opacity-90"
+      }`}
     >
-      다시 계산하기
+      {a.goalSaved ? "✓ 내 목표로 저장됨" : "이 조합을 내 목표로 저장"}
     </button>
+  );
+}
+
+function ResetButton({ onReset, quiz }: { onReset: () => void; quiz: ResultActions }) {
+  return (
+    <>
+      <Link
+        href={quiz.quizHref}
+        className="box-border flex h-[52px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-bold"
+      >
+        {quiz.quizLabel}
+      </Link>
+      <button type="button" onClick={onReset} className="flex h-12 items-center justify-center text-sm font-semibold text-mute">
+        다른 조합 계산하기
+      </button>
+    </>
   );
 }
 
@@ -316,11 +344,13 @@ export function PlanView({
   plan,
   primaryCredits,
   secondCredits,
+  actions,
   onReset,
 }: {
   plan: CoursePlanOk;
   primaryCredits: Breakdown;
   secondCredits: Breakdown;
+  actions: ResultActions;
   onReset: () => void;
 }) {
   const kind = plan.input.kind;
@@ -336,6 +366,7 @@ export function PlanView({
         bLabel={label}
         b={plan.totals.secondCredits}
       />
+      <SaveGoalButton a={actions} />
       {plan.totals.savedCredits > 0 && (
         <div className="flex items-center gap-3.5 rounded-[18px] bg-accent-soft px-[18px] py-4">
           <span className="whitespace-nowrap text-[22px] font-bold tabular-nums text-accent-deep">−{plan.totals.savedCredits}</span>
@@ -385,7 +416,7 @@ export function PlanView({
         </details>
       )}
       <div className="mt-1 flex flex-col gap-2">
-        <ResetButton onReset={onReset} />
+        <ResetButton onReset={onReset} quiz={actions} />
       </div>
       <Source>
         출처: {plan.source.pdf} ({plan.source.asOf}). 과목 목록은 교육과정 편성표에서, 학점은 학과별 이수학점 표에서
@@ -400,11 +431,13 @@ export function MicrodegreeView({
   plan,
   primaryCredits,
   rules,
+  actions,
   onReset,
 }: {
   plan: Extract<MicrodegreePlanResult, { available: true }>;
   primaryCredits: Breakdown;
   rules: MajorRules;
+  actions: ResultActions;
   onReset: () => void;
 }) {
   const md = plan.microdegree;
@@ -421,6 +454,7 @@ export function MicrodegreeView({
         bLabel="마이크로디그리"
         b={known}
       />
+      <SaveGoalButton a={actions} />
       {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
       <ProgramCard
         role="본전공 · 단일전공"
@@ -472,7 +506,7 @@ export function MicrodegreeView({
         ))}
       </section>
       <div className="mt-1 flex flex-col gap-2">
-        <ResetButton onReset={onReset} />
+        <ResetButton onReset={onReset} quiz={actions} />
       </div>
       <Source>
         출처: {plan.source.pdf} ({plan.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.

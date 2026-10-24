@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
 
+import { useGoal } from "@/components/useGoal";
+import { isSameGoal } from "@/lib/goal";
 import { parseRecent, readRecentRaw } from "@/lib/recent";
 
 const subscribe = (onChange: () => void) => {
@@ -14,7 +16,9 @@ const subscribe = (onChange: () => void) => {
 export default function RecentCalc() {
   const raw = useSyncExternalStore(subscribe, readRecentRaw, () => null);
   const recent = useMemo(() => parseRecent(raw), [raw]);
-  if (!recent) return null;
+  const goal = useGoal();
+  // The goal card above already shows this combination.
+  if (!recent || isSameGoal(goal, recent)) return null;
   const q = new URLSearchParams({ primary: recent.primary, mode: recent.mode, second: recent.second });
   return (
     <section className="flex flex-col gap-2.5">
