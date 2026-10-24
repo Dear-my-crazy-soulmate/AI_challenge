@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import BrandMark from "@/components/BrandMark";
 import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
 import { useCommunity } from "@/components/useCommunity";
 import { useAuth } from "@/lib/auth";
@@ -20,7 +21,7 @@ export const fmtDate = (iso: string) => `${Number(iso.slice(5, 7))}월 ${Number(
 
 const chip = (on: boolean) =>
   `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-    on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink-2"
+    on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"
   }`;
 
 function snippet(p: Post): string {
@@ -48,8 +49,11 @@ export default function CommunityHome() {
   return (
     <main className="flex flex-col gap-3.5 px-[18px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between px-1">
-        <h1 className="text-[22px] font-bold tracking-[-0.5px]">커뮤니티</h1>
-        <Link href="/community/write" className="flex h-9 items-center rounded-[18px] bg-ink px-3.5 text-[13px] font-bold text-paper active:opacity-90">
+        <h1 className="flex items-center gap-2 text-[22px] font-bold tracking-[-0.5px]">
+          <BrandMark />
+          커뮤니티
+        </h1>
+        <Link href="/community/write" className="flex h-9 items-center rounded-[18px] bg-accent px-3.5 text-[13px] font-bold text-white active:opacity-90">
           글쓰기
         </Link>
       </header>
@@ -98,7 +102,7 @@ export default function CommunityHome() {
       </div>
 
       {summary && (
-        <section aria-label="후기 요약" className="flex flex-col gap-2 rounded-[20px] bg-ink px-[18px] py-4 text-paper">
+        <section aria-label="후기 요약" className="flex flex-col gap-2 rounded-[20px] bg-accent px-[18px] py-4 text-white">
           <span className="text-xs opacity-65">이 조건의 이수 후기 요약</span>
           <div className="flex items-baseline gap-2">
             <span className="text-[34px] font-bold leading-none tabular-nums">{summary.count}</span>
@@ -116,7 +120,9 @@ export default function CommunityHome() {
           <li key={p.id}>
             <Link href={`/community/post?id=${encodeURIComponent(p.id)}`} className="flex flex-col gap-2 rounded-[20px] border border-edge bg-card p-4 active:scale-[.99]">
               <span className="flex items-center gap-1.5">
-                <span className="rounded-md bg-sand px-1.5 py-px text-[11px] font-bold text-ink-2">{TYPE_LABEL[p.type]}</span>
+                <span className={`rounded-md px-1.5 py-px text-[11px] font-bold ${p.type === "review" ? "bg-accent-soft text-accent-deep" : "bg-sand text-ink-2"}`}>
+                  {TYPE_LABEL[p.type]}
+                </span>
                 {p.is_sample && <SampleTag />}
                 {p.mine && <span className="rounded-md bg-ok-soft px-1.5 py-px text-[11px] font-semibold text-ok">내 글</span>}
               </span>

@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 import Avatar from "@/components/Avatar";
+import BrandMark from "@/components/BrandMark";
 import DeptPicker from "@/components/DeptPicker";
 import { ErrorNote, SampleLoginNote, primaryButton, secondaryButton } from "@/components/Field";
 import PersonalFields from "@/components/PersonalFields";
@@ -113,7 +114,9 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   return (
     <>
       <section className="flex items-center gap-3.5 rounded-[22px] border border-edge bg-card p-[18px]">
-        <Avatar dept={profile.avatar ?? profile.primary} size={56} />
+        <span className="flex rounded-full ring-2 ring-accent ring-offset-2">
+          <Avatar dept={profile.avatar ?? profile.primary} size={56} />
+        </span>
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-pretty text-lg font-bold">{profile.name || "내 정보"}</span>
           <span className="text-[13px] text-mute">
@@ -130,7 +133,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
         {stats.map((s) => (
           <div key={s.k} className="flex flex-col gap-1 rounded-2xl border border-edge bg-card px-3 py-3.5">
             <span className="text-xs text-mute">{s.k}</span>
-            <span className="text-xl font-bold tabular-nums">{s.v}</span>
+            <span className="text-xl font-bold tabular-nums text-accent-deep">{s.v}</span>
           </div>
         ))}
       </div>
@@ -163,7 +166,10 @@ export default function ProfileView({ depts }: { depts: DeptOption[] }) {
   const { ready, signedIn, profile } = useAuth();
   return (
     <main className="flex flex-col gap-3.5 px-[18px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
-      <h1 className="px-1 text-[22px] font-bold tracking-[-0.5px]">MY</h1>
+      <h1 className="flex items-center gap-2 px-1 text-[22px] font-bold tracking-[-0.5px]">
+        <BrandMark />
+        MY
+      </h1>
       {!ready && <p className="text-sm text-mute">불러오는 중…</p>}
       {ready && !signedIn && (
         <div className="flex flex-col gap-3 px-1 pt-2">

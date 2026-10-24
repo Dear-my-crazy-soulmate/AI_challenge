@@ -360,7 +360,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                       setQuery("");
                     }}
                     className={`flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-                      on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink-2"
+                      on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"
                     }`}
                   >
                     {c}
@@ -381,7 +381,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                   <span className="text-pretty text-[15px] font-semibold">{r.title}</span>
                   <span className="text-xs text-mute">{r.sub}</span>
                 </span>
-                <span className="whitespace-nowrap text-sm font-semibold tabular-nums">{r.right}</span>
+                <span className="whitespace-nowrap text-sm font-semibold tabular-nums text-accent-deep">{r.right}</span>
               </button>
             ))}
             {rows.length === 0 && <p className="px-4 py-5 text-sm text-mute">검색 결과가 없어요.</p>}
@@ -448,7 +448,10 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               className="flex flex-col gap-2.5 rounded-[20px] border border-edge bg-card p-[18px] text-left active:scale-[.99]"
             >
               <span className="flex items-baseline justify-between gap-2.5">
-                <span className="text-lg font-bold">{MODE_LABEL[k.mode]}</span>
+                <span className="flex items-center gap-2 text-lg font-bold">
+                  <span aria-hidden className="h-2 w-2 flex-none rounded-full bg-accent" />
+                  {MODE_LABEL[k.mode]}
+                </span>
                 <span className="whitespace-nowrap text-[13px] font-semibold text-accent">{k.tag}</span>
               </span>
               <span className="text-pretty text-sm leading-normal text-ink-2">{k.desc}</span>

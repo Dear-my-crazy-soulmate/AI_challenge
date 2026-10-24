@@ -35,7 +35,7 @@ export default function TabBar() {
             key={t.label}
             href={t.href}
             aria-current={on ? "page" : undefined}
-            className={`flex h-[62px] flex-col items-center justify-center gap-1.5 ${on ? "text-ink" : "text-faint"}`}
+            className={`flex h-[62px] flex-col items-center justify-center gap-1.5 ${on ? "text-accent" : "text-faint"}`}
           >
             <span aria-hidden className="flex h-5 flex-col items-center justify-center gap-0.5">
               {t.shape === "person" ? (

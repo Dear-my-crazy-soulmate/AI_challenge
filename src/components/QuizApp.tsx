@@ -127,7 +127,7 @@ export default function QuizApp({
                   </span>
                   <span
                     className={`whitespace-nowrap rounded-xl px-2.5 py-[5px] text-xs font-semibold ${
-                      done ? "bg-ok-soft text-ok" : "bg-sand text-ink-2"
+                      done ? "bg-ok-soft text-ok" : "bg-accent-soft text-accent-deep"
                     }`}
                   >
                     {done ? `최근 ${recent.score}/${recent.n}` : `${m.questions.length}문제`}
@@ -180,8 +180,8 @@ export default function QuizApp({
               let dot = "bg-sand text-ink-2";
               let mark = "";
               if (chosen && !revealed) {
-                box = "border-ink bg-card text-ink";
-                dot = "bg-ink text-white";
+                box = "border-accent bg-card text-ink";
+                dot = "bg-accent text-white";
               }
               if (revealed && right) {
                 box = "border-ok bg-ok-soft text-ok";
