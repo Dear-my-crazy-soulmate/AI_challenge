@@ -1,11 +1,12 @@
 "use client";
 
-// The calculator: 본전공 -> 이수 형태 -> 희망 전공 -> 결과, one question per screen.
+// The calculator: 이수 형태 -> 희망 전공 -> 결과, one question per screen.
+// The 본전공 is the one from 내 정보 (entered at sign-up), so it is never asked here.
 // All numbers come from src/lib/rules/ (credits through /api/plan and /api/microdegree for the result).
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import Avatar from "@/components/Avatar";
+import { primaryButton, secondaryButton } from "@/components/Field";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
 import type { Breakdown, ResultActions } from "@/components/PlanResult";
 import { useGoal } from "@/components/useGoal";
@@ -21,7 +22,7 @@ import type { Goal } from "@/lib/goal";
 import { saveRecent } from "@/lib/recent";
 
 type Mode = "double" | "minor" | "microdegree";
-type Step = 1 | 2 | 3 | 4;
+type Step = 2 | 3 | 4; // 2 이수 형태, 3 희망 전공, 4 결과
 const MODES: readonly Mode[] = ["double", "minor", "microdegree"];
 const MODE_LABEL: Record<Mode, string> = { double: "다전공", minor: "부전공", microdegree: "마이크로디그리" };
 
@@ -106,15 +107,15 @@ export interface PlannerProps {
 
 export default function MajorPlanner({ data, rules, microdegrees, initial, quizMajors = [] }: PlannerProps) {
   const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
-  const [step, setStep] = useState<Step>(start ? 4 : 1);
-  const [primary, setPrimary] = useState(start?.primary ?? "");
+  const [step, setStep] = useState<Step>(start ? 4 : 2);
+  const [linkPrimary, setLinkPrimary] = useState(start?.primary ?? ""); // 본전공 of a shared link, if any
   const [mode, setMode] = useState<Mode | null>(start?.mode ?? null);
   const [second, setSecond] = useState(start?.second ?? "");
   const [query, setQuery] = useState("");
   const [college, setCollege] = useState<string | null>(null);
   const [fetched, setFetched] = useState<Fetched | null>(null);
   const [attempt, setAttempt] = useState(0);
-  const { profile } = useAuth();
+  const { ready, signedIn, profile } = useAuth();
 
   const goto = (s: Step) => {
     setStep(s);
@@ -123,13 +124,15 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     window.scrollTo({ top: 0 });
   };
   const reset = () => {
-    setPrimary("");
+    setLinkPrimary(""); // a new calculation uses my own 본전공
     setMode(null);
     setSecond("");
-    goto(1);
+    goto(2);
   };
 
   const firsts = useMemo(() => singleDepts(data), [data]);
+  const mine = firsts.find((d) => d.dept === profile?.primary);
+  const primary = linkPrimary || mine?.dept || "";
   const seconds = useMemo(
     () => (primary && (mode === "double" || mode === "minor") ? secondDepts(primary, mode, data, rules) : []),
     [primary, mode, data, rules],
@@ -190,18 +193,11 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     }
   }, [current, mode, primary, second]);
 
-  // ---- pickers (steps 1 and 3) ----
-  const picking = step === 1 || step === 3;
-  const mine = firsts.find((d) => d.dept === profile?.primary);
+  // ---- 본전공 missing: not signed in, or the saved one has no single-major credits ----
+  const needPrimary = step !== 4 && !primary;
 
-  // A signed-in user's 본전공 is already known, so start at 이수 형태 (once; the 본전공 chip still goes back).
-  const autoStarted = useRef(false);
-  useEffect(() => {
-    if (autoStarted.current || start || !mine || step !== 1) return;
-    autoStarted.current = true;
-    setPrimary(mine.dept);
-    setStep(2);
-  }, [mine, start, step]);
+  // ---- picker (step 3) ----
+  const picking = step === 3 && !needPrimary;
 
   const isMdPick = step === 3 && mode === "microdegree";
   const q = query.trim().replace(/\s/g, "");
@@ -209,29 +205,22 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
 
   let rows: PickRow[] = [];
   let chips: string[] = [];
-  if (step === 1 || (step === 3 && !isMdPick)) {
-    const list = step === 1 ? firsts : seconds;
+  if (step === 3 && !isMdPick) {
+    const list = seconds;
     chips = [...new Set(list.map((d) => d.college))];
     const col = q ? null : college;
     // Departments the user marked as interesting come first when choosing a second major.
-    const liked = new Set(step === 3 ? (profile?.interests ?? []) : []);
+    const liked = new Set(profile?.interests ?? []);
     rows = [...list.filter((d) => liked.has(d.dept)), ...list.filter((d) => !liked.has(d.dept))]
       .filter((d) => match(d.dept) && (!col || d.college === col))
       .map((d) => ({
         key: d.dept,
         title: d.dept,
         sub: liked.has(d.dept) ? `${d.college} · 관심 전공` : d.college,
-        right: `${step === 1 ? "단일" : MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
+        right: `${MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
         onPick: () => {
-          if (step === 1) {
-            setPrimary(d.dept);
-            setMode(null);
-            setSecond("");
-            goto(2);
-          } else {
-            setSecond(d.dept);
-            goto(4);
-          }
+          setSecond(d.dept);
+          goto(4);
         },
       }));
   } else if (isMdPick) {
@@ -248,12 +237,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         },
       }));
   }
-  const pickTitle =
-    step === 1
-      ? "내 본전공은 무엇인가요?"
-      : isMdPick
-        ? "관심 있는 마이크로디그리를 골라 주세요"
-        : `희망 ${MODE_LABEL[mode ?? "double"]}을 골라 주세요`;
+  const pickTitle = isMdPick ? "관심 있는 마이크로디그리를 골라 주세요" : `희망 ${MODE_LABEL[mode ?? "double"]}을 골라 주세요`;
   const searchPlaceholder = isMdPick ? "이름이나 운영 학과로 검색" : "학과 이름으로 검색";
 
   // ---- kinds (step 2) ----
@@ -293,7 +277,6 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   }, [primary, data, rules, microdegrees]);
 
   const crumbs: { k: string; v: string; go: () => void }[] = [];
-  if (step > 1 && primary) crumbs.push({ k: "본전공", v: primary, go: () => goto(1) });
   if (step > 2 && mode) crumbs.push({ k: "형태", v: MODE_LABEL[mode], go: () => goto(2) });
   if (step > 3 && second) {
     const v = mode === "microdegree" ? (microdegrees.find((m) => m.id === second)?.name ?? second) : second;
@@ -305,7 +288,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   return (
     <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
       <div className="flex h-11 items-center justify-between">
-        {step === 1 ? (
+        {step === 2 ? (
           <Link href="/" aria-label="홈으로" className={backBtn}>
             ‹
           </Link>
@@ -315,23 +298,33 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
           </button>
         )}
         <h1 className="text-base font-bold">다전공 계산기</h1>
-        <span className="w-11 text-right text-[13px] tabular-nums text-mute">{step < 4 ? `${step}/3` : "결과"}</span>
+        <span className="w-11 text-right text-[13px] tabular-nums text-mute">{needPrimary ? "" : step < 4 ? `${step - 1}/2` : "결과"}</span>
       </div>
 
-      <div className="-mt-2.5 grid grid-cols-3 gap-1.5" aria-hidden>
-        {[1, 2, 3].map((i) => (
-          <div key={i} className={`h-1 rounded-sm transition-colors duration-300 ${step >= i ? "bg-accent" : "bg-chip"}`} />
+      <div className="-mt-2.5 grid grid-cols-2 gap-1.5" aria-hidden>
+        {[1, 2].map((i) => (
+          <div key={i} className={`h-1 rounded-sm transition-colors duration-300 ${step - 1 >= i ? "bg-accent" : "bg-chip"}`} />
         ))}
       </div>
 
-      {crumbs.length > 0 && (
+      {(primary || crumbs.length > 0) && (
         <div className="flex flex-wrap gap-1.5">
+          {primary && (
+            <Link
+              href="/profile"
+              title="내 정보에서 바꿀 수 있어요"
+              className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] text-paper"
+            >
+              <span className="opacity-65">본전공</span>
+              <span className="font-semibold">{primary}</span>
+            </Link>
+          )}
           {crumbs.map((c) => (
             <button
               key={c.k}
               type="button"
               onClick={c.go}
-              className="flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-[7px] text-[13px]"
+              className="flex items-center gap-1.5 rounded-full border border-edge bg-card px-3 py-[7px] text-[13px]"
             >
               <span className="text-mute">{c.k}</span>
               <span className="font-semibold">{c.v}</span>
@@ -343,7 +336,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       {picking && (
         <div className="flex flex-col gap-4">
           <h2 className="text-pretty text-2xl font-bold leading-[1.35] tracking-[-0.6px]">{pickTitle}</h2>
-          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-card px-3.5">
+          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
             <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
             <input
               type="search"
@@ -367,7 +360,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                       setQuery("");
                     }}
                     className={`flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-                      on ? "border-ink bg-ink text-paper" : "border-line bg-card text-ink-2"
+                      on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink-2"
                     }`}
                   >
                     {c}
@@ -376,28 +369,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               })}
             </div>
           )}
-          {step === 1 && mine && !q && (
-            <button
-              type="button"
-              onClick={() => {
-                setPrimary(mine.dept);
-                setMode(null);
-                setSecond("");
-                goto(2);
-              }}
-              className="flex items-center gap-3 rounded-[18px] bg-ink px-4 py-3.5 text-left text-paper active:opacity-90"
-            >
-              <Avatar dept={profile?.avatar ?? mine.dept} size={36} onDark />
-              <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-                <span className="text-xs opacity-70">내 정보의 본전공으로 시작</span>
-                <span className="text-[15px] font-semibold">{mine.dept}</span>
-              </span>
-              <span aria-hidden className="text-xl opacity-60">
-                ›
-              </span>
-            </button>
-          )}
-          <div className="flex flex-col overflow-hidden rounded-[18px] bg-card">
+          <div className="flex flex-col overflow-hidden rounded-[18px] border border-edge bg-card">
             {rows.map((r) => (
               <button
                 key={r.key}
@@ -417,12 +389,53 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         </div>
       )}
 
-      {step === 2 && (
+      {needPrimary && (
+        <div className="flex flex-col gap-3 pt-1">
+          {!ready ? (
+            <p className="text-sm text-mute" role="status">
+              불러오는 중…
+            </p>
+          ) : signedIn ? (
+            <>
+              <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+                내 본전공으로는
+                <br />
+                계산할 수 없어요
+              </h2>
+              <p className="text-sm leading-normal text-ink-2">
+                {profile?.primary ? `${profile.primary}은(는) 단일전공 학점 정보가 없어요. ` : ""}내 정보에서 본전공을 확인해 주세요.
+              </p>
+              <Link href="/profile" className={primaryButton}>
+                내 정보 확인
+              </Link>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+                로그인하면
+                <br />내 본전공으로 계산해요
+              </h2>
+              <p className="text-sm leading-normal text-ink-2">가입할 때 적은 본전공을 기준으로 필요한 학점을 계산해 드려요.</p>
+              <Link href="/login" className={primaryButton}>
+                로그인
+              </Link>
+              <Link href="/signup" className={secondaryButton}>
+                가입하기
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+
+      {step === 2 && !needPrimary && (
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
-            어떤 방식으로
-            <br />더 공부할까요?
-          </h2>
+          <div className="flex flex-col gap-1.5">
+            <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+              어떤 방식으로
+              <br />더 공부할까요?
+            </h2>
+            <span className="text-[13px] text-mute">본전공은 내 정보의 학과로 계산해요.</span>
+          </div>
           {kinds.map((k) => (
             <button
               key={k.mode}
@@ -432,7 +445,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 setSecond("");
                 goto(3);
               }}
-              className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-card p-[18px] text-left active:scale-[.99]"
+              className="flex flex-col gap-2.5 rounded-[20px] border border-edge bg-card p-[18px] text-left active:scale-[.99]"
             >
               <span className="flex items-baseline justify-between gap-2.5">
                 <span className="text-lg font-bold">{MODE_LABEL[k.mode]}</span>
@@ -460,7 +473,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               setFetched(null);
               setAttempt((n) => n + 1);
             }}
-            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-semibold"
+            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold"
           >
             다시 시도
           </button>
@@ -591,7 +604,7 @@ function ResultWithReset({ message, onReset }: { message: string; onReset: () =>
       <button
         type="button"
         onClick={onReset}
-        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-semibold"
+        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold"
       >
         다시 계산하기
       </button>

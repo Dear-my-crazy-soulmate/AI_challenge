@@ -17,7 +17,7 @@ type Fetched = { key: string; sections: CourseSection[] } | { key: string; error
 
 const chip = (on: boolean) =>
   `flex h-11 flex-none items-center justify-center rounded-xl border px-3.5 text-sm font-semibold tabular-nums ${
-    on ? "border-ink bg-ink text-paper" : "border-line bg-card text-ink"
+    on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink"
   }`;
 
 export default function CourseSheet({
@@ -115,7 +115,7 @@ export default function CourseSheet({
                   ✕
                 </button>
               </div>
-              <label className="flex h-[46px] items-center gap-2.5 rounded-[14px] border border-line bg-card px-3.5">
+              <label className="flex h-[46px] items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
                 <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
                 <input
                   type="search"
@@ -132,7 +132,7 @@ export default function CourseSheet({
               {current && "error" in current && (
                 <div className="flex flex-col gap-2">
                   <p className="rounded-[14px] bg-warn-soft px-4 py-3 text-sm">{current.error}</p>
-                  <button type="button" onClick={() => setAttempt((n) => n + 1)} className="h-11 rounded-xl border border-line bg-card text-sm font-semibold">
+                  <button type="button" onClick={() => setAttempt((n) => n + 1)} className="h-11 rounded-xl border border-edge bg-card text-sm font-semibold">
                     다시 시도
                   </button>
                 </div>
@@ -147,7 +147,7 @@ export default function CourseSheet({
                 current.sections.map((sec) => (
                   <section key={sec.label} className="flex flex-col gap-1.5">
                     <h3 className="pl-0.5 text-xs font-bold text-mute">{sec.label}</h3>
-                    <div className="overflow-hidden rounded-2xl bg-card">
+                    <div className="overflow-hidden rounded-2xl border border-edge bg-card">
                       {sec.rows.map((r) => {
                         const has = taken.has(r.code);
                         return (
@@ -237,7 +237,7 @@ export default function CourseSheet({
             <p
               role="status"
               className={`text-pretty rounded-xl px-3.5 py-3 text-sm font-semibold ${
-                hits.length > 0 ? "bg-warn-soft text-warn" : days.length === 0 ? "bg-card text-mute" : "bg-card text-ink"
+                hits.length > 0 ? "border border-warn/30 bg-warn-soft text-warn" : days.length === 0 ? "border border-edge bg-card text-mute" : "border border-edge bg-card text-ink"
               }`}
             >
               {preview}

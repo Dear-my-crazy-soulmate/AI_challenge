@@ -128,7 +128,7 @@ function ProgramCard(p: {
 }) {
   const s = STATUS[p.status];
   return (
-    <section className="flex flex-col gap-3.5 rounded-[20px] bg-card p-[18px]">
+    <section className="flex flex-col gap-3.5 rounded-[20px] border border-edge bg-card p-[18px]">
       <div className="flex items-start justify-between gap-2.5">
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-xs text-mute">{p.role}</span>
@@ -278,7 +278,7 @@ function RulesApplied({ r }: { r: CoursePlanOk }) {
     });
   }
   return (
-    <section className="flex flex-col gap-1 rounded-[20px] bg-card p-[18px]">
+    <section className="flex flex-col gap-1 rounded-[20px] border border-edge bg-card p-[18px]">
       <h3 className="mb-1.5 text-[15px] font-bold">이 조합에 적용되는 규칙</h3>
       {items.length > 0 ? (
         items.map((i) => <RuleLine key={i.key} text={i.text} page={i.page} />)
@@ -324,7 +324,7 @@ function ResetButton({ onReset, quiz }: { onReset: () => void; quiz: ResultActio
     <>
       <Link
         href={quiz.quizHref}
-        className="box-border flex h-[52px] items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-bold"
+        className="box-border flex h-[52px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-bold"
       >
         {quiz.quizLabel}
       </Link>
@@ -404,7 +404,7 @@ export function PlanView({
       </ProgramCard>
       <RulesApplied r={plan} />
       {plan.warnings.length > 0 && (
-        <details className="rounded-[18px] bg-card px-[18px] py-3.5 text-[13px]">
+        <details className="rounded-[18px] border border-edge bg-card px-[18px] py-3.5 text-[13px]">
           <summary className="cursor-pointer font-semibold text-warn">학점 데이터 확인 항목 {plan.warnings.length}개</summary>
           <ul className="mt-2 list-disc pl-5 text-mute">
             {plan.warnings.map((w, i) => (
@@ -496,7 +496,7 @@ export function MicrodegreeView({
           <p className="text-xs text-mute">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
         </Foldable>
       </ProgramCard>
-      <section className="flex flex-col gap-1 rounded-[20px] bg-card p-[18px]">
+      <section className="flex flex-col gap-1 rounded-[20px] border border-edge bg-card p-[18px]">
         <h3 className="mb-1.5 text-[15px] font-bold">이 조합에 적용되는 규칙</h3>
         <p className="border-t border-line-2 pb-1 pt-2.5 text-[13px] leading-[1.55] text-mute">
           {rules.microdegree.definition} <span className="text-[11px]">p.{rules.microdegree.page}</span>

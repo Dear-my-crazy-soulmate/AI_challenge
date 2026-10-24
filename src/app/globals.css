@@ -12,7 +12,8 @@
   --color-mute: #6b6b6b;
   --color-faint: #9b9b9b;
   --color-line: #e6e6e6;
-  --color-line-2: #eeeeee;
+  --color-line-2: #e2e2e2; /* dividers inside cards, so it must show on --color-card */
+  --color-edge: #d6d6d6; /* outline of cards, inputs and chips on the white page */
   --color-chip: #dedede;
   --color-sand: #f1f1f1;
   --color-sand-2: #e8e8e8;

@@ -3,7 +3,7 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 export const primaryButton =
   "box-border flex h-[54px] w-full items-center justify-center rounded-2xl bg-ink text-base font-bold text-paper active:opacity-90 disabled:bg-chip disabled:text-faint";
 export const secondaryButton =
-  "box-border flex h-[50px] w-full items-center justify-center rounded-2xl border border-line bg-card text-[15px] font-semibold";
+  "box-border flex h-[50px] w-full items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold";
 
 /** Labelled text input in the app's style (16px text so phones do not zoom in). */
 export function Field({ label, ...props }: { label: string } & InputHTMLAttributes<HTMLInputElement>) {
@@ -12,7 +12,7 @@ export function Field({ label, ...props }: { label: string } & InputHTMLAttribut
       {label}
       <input
         {...props}
-        className="h-12 rounded-[14px] border border-line bg-card px-3.5 text-base font-normal outline-none focus:border-ink"
+        className="h-12 rounded-[14px] border border-edge bg-card px-3.5 text-base font-normal outline-none focus:border-ink"
       />
     </label>
   );
@@ -26,7 +26,7 @@ export function Area({ label, hint, ...props }: { label: string; hint?: string }
       {hint && <span className="-mt-1 text-xs font-normal text-mute">{hint}</span>}
       <textarea
         {...props}
-        className="min-h-24 resize-y rounded-[14px] border border-line bg-card px-3.5 py-3 text-base font-normal leading-normal outline-none focus:border-ink"
+        className="min-h-24 resize-y rounded-[14px] border border-edge bg-card px-3.5 py-3 text-base font-normal leading-normal outline-none focus:border-ink"
       />
     </label>
   );

@@ -20,7 +20,7 @@ export const fmtDate = (iso: string) => `${Number(iso.slice(5, 7))}월 ${Number(
 
 const chip = (on: boolean) =>
   `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-    on ? "border-ink bg-ink text-paper" : "border-line bg-card text-ink-2"
+    on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink-2"
   }`;
 
 function snippet(p: Post): string {
@@ -55,7 +55,7 @@ export default function CommunityHome() {
       </header>
       <p className="px-1 text-[13px] leading-normal text-mute">다전공을 하고 있거나 고민하는 학생들의 이야기예요. 모두 익명이고, 본전공과 어떤 전공을 하는지만 보여요.</p>
 
-      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-card px-3.5">
+      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
         <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
         <input
           type="search"
@@ -114,7 +114,7 @@ export default function CommunityHome() {
       <ul className="flex flex-col gap-2.5">
         {shown.map((p) => (
           <li key={p.id}>
-            <Link href={`/community/post?id=${encodeURIComponent(p.id)}`} className="flex flex-col gap-2 rounded-[20px] bg-card p-4 active:scale-[.99]">
+            <Link href={`/community/post?id=${encodeURIComponent(p.id)}`} className="flex flex-col gap-2 rounded-[20px] border border-edge bg-card p-4 active:scale-[.99]">
               <span className="flex items-center gap-1.5">
                 <span className="rounded-md bg-sand px-1.5 py-px text-[11px] font-bold text-ink-2">{TYPE_LABEL[p.type]}</span>
                 {p.is_sample && <SampleTag />}
@@ -132,7 +132,7 @@ export default function CommunityHome() {
           </li>
         ))}
         {shown.length === 0 && (
-          <li className="flex flex-col gap-2 rounded-[20px] bg-card px-[18px] py-6 text-center">
+          <li className="flex flex-col gap-2 rounded-[20px] border border-edge bg-card px-[18px] py-6 text-center">
             <span className="text-[15px] font-semibold">조건에 맞는 글이 없어요</span>
             <span className="text-[13px] text-mute">검색어를 바꾸거나, 이 조합의 첫 글을 남겨 보세요.</span>
           </li>
