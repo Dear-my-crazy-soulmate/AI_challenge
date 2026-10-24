@@ -1,467 +1,492 @@
 "use client";
 
+// The calculator: 본전공 -> 이수 형태 -> 희망 전공 -> 결과, one question per screen.
+// All numbers come from src/lib/rules/ (credits through /api/plan and /api/microdegree for the result).
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import type { CourseGroup, CoursePlanOk, CoursePlanResult, ProgramCourses } from "@/lib/rules/courses";
+import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
+import type { Breakdown } from "@/components/PlanResult";
+import type { CoursePlanResult } from "@/lib/rules/courses";
 import { listCreditOptions } from "@/lib/rules/credits";
-import type { CreditData, CreditKind, ProgramKind } from "@/lib/rules/credits";
+import type { CreditData, ProgramKind } from "@/lib/rules/credits";
 import { prohibitedReason } from "@/lib/rules/majorRules";
 import type { MajorRules } from "@/lib/rules/majorRules";
 import type { Microdegree, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
+import { saveRecent } from "@/lib/recent";
 
-const KIND_LABEL: Record<ProgramKind, string> = { single: "단일전공", double: "다전공", minor: "부전공" };
-type Mode = CreditKind | "microdegree";
+type Mode = "double" | "minor" | "microdegree";
+type Step = 1 | 2 | 3 | 4;
+const MODES: readonly Mode[] = ["double", "minor", "microdegree"];
 const MODE_LABEL: Record<Mode, string> = { double: "다전공", minor: "부전공", microdegree: "마이크로디그리" };
-const MD_STATUS: Record<Microdegree["status"], { label: string; tone: string }> = {
-  verified: { label: "학점 검증 완료", tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
-  choose: { label: "일부 선택 이수", tone: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
-  check: { label: "학과 확인 필요", tone: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
+
+export interface PlannerInitial {
+  primary: string;
+  mode: string;
+  second: string;
+}
+
+type Fetched =
+  | { key: string; kind: "plan"; plan: CoursePlanResult }
+  | { key: string; kind: "md"; plan: MicrodegreePlanResult }
+  | { key: string; error: string };
+
+interface PickRow {
+  key: string;
+  title: string;
+  sub: string;
+  right: string;
+  onPick: () => void;
+}
+
+function creditsOf(data: CreditData, dept: string, kind: ProgramKind): Breakdown | null {
+  const p = data.depts.find((d) => d.dept === dept)?.programs[kind];
+  return p && p.available === true ? { 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계 } : null;
+}
+
+const isMode = (m: string): m is Mode => (MODES as readonly string[]).includes(m);
+
+/** Departments that can be the 본전공 (they run a single major). */
+function singleDepts(data: CreditData) {
+  return data.depts.flatMap((d) => {
+    const b = creditsOf(data, d.dept, "single");
+    return b ? [{ dept: d.dept, college: d.college, credits: b.계 }] : [];
+  });
+}
+
+/** Second majors / minors that can be computed and are allowed for this primary. */
+function secondDepts(primary: string, mode: "double" | "minor", data: CreditData, rules: MajorRules) {
+  const ok = new Set(
+    listCreditOptions(primary, data)
+      .filter((o) => o.kind === mode && !prohibitedReason(primary, o.dept, rules))
+      .map((o) => o.dept),
+  );
+  return data.depts.flatMap((d) => {
+    const b = ok.has(d.dept) ? creditsOf(data, d.dept, mode) : null;
+    return b ? [{ dept: d.dept, college: d.college, credits: b.계 }] : [];
+  });
+}
+
+/** A saved/shared link only counts if it still points at a real combination. */
+function validInitial(
+  initial: PlannerInitial | undefined,
+  data: CreditData,
+  rules: MajorRules,
+  mds: Microdegree[],
+): { primary: string; mode: Mode; second: string } | null {
+  if (!initial || !isMode(initial.mode)) return null;
+  const { primary, mode, second } = initial;
+  if (!singleDepts(data).some((d) => d.dept === primary)) return null;
+  const found =
+    mode === "microdegree"
+      ? mds.some((m) => m.id === second)
+      : secondDepts(primary, mode, data, rules).some((d) => d.dept === second);
+  return found ? { primary, mode, second } : null;
+}
+
+const range = (xs: number[]) => {
+  if (xs.length === 0) return "";
+  const lo = Math.min(...xs);
+  const hi = Math.max(...xs);
+  return lo === hi ? `+${lo}학점` : `+${lo}~${hi}학점`;
 };
-const STATUS: Record<ProgramCourses["status"], { label: string; tone: string }> = {
-  verified: { label: "학점 검증 완료", tone: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
-  choose: { label: "일부 선택 이수", tone: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
-  check: { label: "학과 확인 필요", tone: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
-  no_courses: { label: "과목 정보 없음", tone: "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300" },
-};
 
-const selectClass = "rounded-md border border-zinc-300 bg-background px-3 py-2 text-base dark:border-zinc-700";
-
-function ruleText(g: CourseGroup): string {
-  if (g.credits === null) return "필요 학점 확인 필요";
-  if (g.rule === "all") return `${g.credits}학점 · 모두 이수`;
-  if (g.rule === "choose") return `${g.credits}학점 · 아래 과목 중 선택`;
-  return `${g.credits}학점 · 과목 목록과 학점이 맞지 않아 확인 필요`;
-}
-
-function Group({ g }: { g: CourseGroup }) {
-  const list = (
-    <ul className="mt-2 grid gap-1 sm:grid-cols-2">
-      {g.courses.map((c) => (
-        <li key={c.code} className="flex justify-between gap-2 rounded bg-zinc-50 px-2 py-1 text-sm dark:bg-zinc-900">
-          <span>
-            {c.name} <span className="text-xs text-zinc-500">{c.code}</span>
-          </span>
-          <span className="tabular-nums text-zinc-600 dark:text-zinc-400">{c.credits}학점</span>
-        </li>
-      ))}
-    </ul>
-  );
-  const head = (
-    <span className="font-medium">
-      {g.category} <span className="font-normal text-zinc-600 dark:text-zinc-400">{ruleText(g)}</span>
-    </span>
-  );
-  // Elective pools are long: keep them folded.
-  if (g.category === "전공선택") {
-    return (
-      <details className="text-sm">
-        <summary className="cursor-pointer">
-          {head} <span className="text-xs text-zinc-500">({g.courses.length}과목 보기)</span>
-        </summary>
-        {list}
-      </details>
-    );
-  }
-  return (
-    <div className="text-sm">
-      {head}
-      {g.courses.length > 0 ? list : <p className="mt-1 text-zinc-500">편성표에 해당 과목이 없습니다.</p>}
-    </div>
-  );
-}
-
-function Program({ title, p, credits }: { title: string; p: ProgramCourses; credits: number }) {
-  const s = STATUS[p.status];
-  return (
-    <section className="flex flex-col gap-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-base font-semibold">
-          {title}: {p.dept} ({KIND_LABEL[p.kind]}) <span className="tabular-nums">{credits}학점</span>
-        </h3>
-        <span className={`rounded-full px-2 py-0.5 text-xs ${s.tone}`}>{s.label}</span>
-      </div>
-      {p.groups.map((g) => (
-        <Group key={g.category} g={g} />
-      ))}
-      {p.problems.length > 0 && (
-        <ul className="list-disc pl-5 text-xs text-amber-700 dark:text-amber-400">
-          {p.problems.map((x, i) => (
-            <li key={i}>{x}</li>
-          ))}
-        </ul>
-      )}
-      {p.rules.length > 0 && (
-        <details className="text-sm">
-          <summary className="cursor-pointer text-zinc-700 dark:text-zinc-300">학과 규정 원문 {p.rules.length}개</summary>
-          <ul className="mt-2 flex flex-col gap-2 text-zinc-600 dark:text-zinc-400">
-            {p.rules.map((r, i) => (
-              <li key={i}>
-                <span className="text-xs text-zinc-500">p.{r.page}</span> {r.text}
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-      {p.pages.length > 0 && <p className="text-xs text-zinc-500">교육과정 책 확인 쪽: {p.pages.join(", ")}</p>}
-    </section>
-  );
-}
-
-function RulesApplied({ r }: { r: CoursePlanOk }) {
-  const m = r.majorRules;
-  const items: { key: string; text: string; page: number }[] = [];
-  if (m.basicExemption) {
-    items.push({
-      key: "basic",
-      page: m.basicExemption.page,
-      text: `같은 단과대학이고 전공기초 과목이 같아서, ${r.second.dept}의 전공기초 ${m.basicExemption.credits}학점은 다시 이수하지 않아도 됩니다.`,
-    });
-  }
-  if (m.overlap) {
-    items.push({
-      key: "overlap",
-      page: m.overlap.page,
-      text: `두 전공이 함께 요구하는 과목(${m.overlap.courses.map((c) => c.name).join(", ")}, ${m.overlap.credits}학점)은 양쪽 전공 학점으로 모두 인정되지만 졸업학점에는 한 번만 들어갑니다. 같은 학수번호일 때만 인정되며, 단과대학 시행세칙으로 인정 학점이 제한될 수 있습니다.`,
-    });
-  }
-  if (m.minorOverlap) {
-    items.push({
-      key: "minor",
-      page: m.minorOverlap.page,
-      text: `${m.minorOverlap.courses.map((c) => c.name).join(", ")}(${m.minorOverlap.credits}학점)은(는) 본전공에도 있는 과목이라 부전공 학점으로 인정되지 않습니다. 부전공 학점은 다른 부전공 과목으로 채워야 합니다(대체 과목은 학과 규정 확인).`,
-    });
-  }
-  return (
-    <section className="flex flex-col gap-2 rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
-      <h3 className="text-base font-semibold">학교 공통 규칙</h3>
-      {items.length > 0 ? (
-        <ul className="flex flex-col gap-1">
-          {items.map((i) => (
-            <li key={i.key}>
-              {i.text} <span className="text-xs text-zinc-500">p.{i.page}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-zinc-600 dark:text-zinc-400">이 조합에 학점이 달라지는 공통 규칙은 없습니다.</p>
-      )}
-      <details>
-        <summary className="cursor-pointer text-zinc-700 dark:text-zinc-300">신청·이수 안내 {m.notices.length}개</summary>
-        <ul className="mt-2 list-disc pl-5 text-zinc-600 dark:text-zinc-400">
-          {m.notices.map((n) => (
-            <li key={n.id}>
-              {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
-            </li>
-          ))}
-        </ul>
-      </details>
-    </section>
-  );
-}
-
-function MicrodegreeRules({ rules }: { rules: MajorRules }) {
-  return (
-    <details className="rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
-      <summary className="cursor-pointer font-semibold">마이크로디그리 규칙</summary>
-      <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        {rules.microdegree.definition} <span className="text-xs text-zinc-500">p.{rules.microdegree.page}</span>
-      </p>
-      <ul className="mt-2 list-disc pl-5 text-zinc-600 dark:text-zinc-400">
-        {rules.microdegree.rules.map((n) => (
-          <li key={n.id}>
-            {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
-          </li>
-        ))}
-      </ul>
-    </details>
-  );
-}
-
-function MicrodegreeResult({ r }: { r: Extract<MicrodegreePlanResult, { available: true }> }) {
-  const md = r.microdegree;
-  const s = MD_STATUS[md.status];
-  const also = new Set(r.alsoInPrimary.map((c) => c.code));
-  const ruleText =
-    md.required_credits === null
-      ? "필요 학점 확인 필요"
-      : md.rule === "all"
-        ? `${md.required_credits}학점 · 모두 이수`
-        : md.rule === "choose"
-          ? `${md.required_credits}학점 · 아래 과목 중 선택`
-          : `${md.required_credits}학점 · 과목 목록과 학점이 맞지 않아 확인 필요`;
-  return (
-    <div className="flex flex-col gap-4">
-      <section className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
-        <p className="text-lg font-semibold">
-          {r.primary.dept} 단일전공 <span className="tabular-nums">{r.primaryCredits}</span>학점 + {md.name}{" "}
-          <span className="tabular-nums">{md.required_credits ?? "?"}</span>학점
-        </p>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          마이크로디그리는 전공이 아니어서 본전공은 단일전공 기준으로 이수합니다. 마이크로디그리 과목은 전공·교양 학점으로도
-          함께 인정됩니다.
-        </p>
-      </section>
-      <section className="flex flex-col gap-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-base font-semibold">
-            {md.name} {md.english && <span className="text-sm font-normal text-zinc-500">{md.english}</span>}
-          </h3>
-          <span className={`rounded-full px-2 py-0.5 text-xs ${s.tone}`}>{s.label}</span>
-        </div>
-        <p className="text-sm">
-          운영 학과: {md.depts.join(", ")} · <span className="text-zinc-600 dark:text-zinc-400">{ruleText}</span>
-        </p>
-        <ul className="grid gap-1 sm:grid-cols-2">
-          {md.courses.map((c) => (
-            <li key={c.code} className="flex justify-between gap-2 rounded bg-zinc-50 px-2 py-1 text-sm dark:bg-zinc-900">
-              <span>
-                {c.name} <span className="text-xs text-zinc-500">{c.code}</span>
-                {also.has(c.code) && (
-                  <span className="ml-1 rounded bg-emerald-100 px-1 text-xs text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                    본전공에도 있음
-                  </span>
-                )}
-              </span>
-              <span className="tabular-nums text-zinc-600 dark:text-zinc-400">{c.credits}학점</span>
-            </li>
-          ))}
-        </ul>
-        {md.choice_note && <p className="text-xs text-zinc-500">{md.choice_note}</p>}
-        {md.problems.length > 0 && (
-          <ul className="list-disc pl-5 text-xs text-amber-700 dark:text-amber-400">
-            {md.problems.map((x, i) => (
-              <li key={i}>{x}</li>
-            ))}
-          </ul>
-        )}
-        <p className="text-xs text-zinc-500">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
-      </section>
-      <section className="flex flex-col gap-2 rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
-        <h3 className="text-base font-semibold">마이크로디그리 규칙</h3>
-        <ul className="list-disc pl-5 text-zinc-600 dark:text-zinc-400">
-          {r.rules.map((n) => (
-            <li key={n.id}>
-              {n.text} <span className="text-xs text-zinc-500">p.{n.page}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <p className="text-xs text-zinc-500">
-        출처: {r.source.pdf} ({r.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.
-      </p>
-    </div>
-  );
-}
-
-export default function MajorPlanner({
-  data,
-  rules,
-  microdegrees,
-}: {
+export interface PlannerProps {
   data: CreditData;
   rules: MajorRules;
   microdegrees: Microdegree[];
-}) {
-  const byCollege = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const d of data.depts) {
-      if (!d.programs.single.available) continue; // only these can be a 본전공
-      map.set(d.college, [...(map.get(d.college) ?? []), d.dept]);
-    }
-    return [...map.entries()];
-  }, [data]);
+  initial?: PlannerInitial;
+}
 
-  const [primary, setPrimary] = useState("");
-  const [kind, setKind] = useState<Mode>("double");
-  const [second, setSecond] = useState("");
-  const [result, setResult] = useState<CoursePlanResult | null>(null);
-  const [mdResult, setMdResult] = useState<MicrodegreePlanResult | null>(null);
-  const [error, setError] = useState("");
+export default function MajorPlanner({ data, rules, microdegrees, initial }: PlannerProps) {
+  const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
+  const [step, setStep] = useState<Step>(start ? 4 : 1);
+  const [primary, setPrimary] = useState(start?.primary ?? "");
+  const [mode, setMode] = useState<Mode | null>(start?.mode ?? null);
+  const [second, setSecond] = useState(start?.second ?? "");
+  const [query, setQuery] = useState("");
+  const [college, setCollege] = useState<string | null>(null);
+  const [fetched, setFetched] = useState<Fetched | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
-  const options = useMemo(
-    () =>
-      primary && kind !== "microdegree"
-        ? listCreditOptions(primary, data).filter((o) => o.kind === kind && !prohibitedReason(primary, o.dept, rules))
-        : [],
-    [primary, kind, data, rules],
+  const goto = (s: Step) => {
+    setStep(s);
+    setQuery("");
+    setCollege(null);
+    window.scrollTo({ top: 0 });
+  };
+  const reset = () => {
+    setPrimary("");
+    setMode(null);
+    setSecond("");
+    goto(1);
+  };
+
+  const firsts = useMemo(() => singleDepts(data), [data]);
+  const seconds = useMemo(
+    () => (primary && (mode === "double" || mode === "minor") ? secondDepts(primary, mode, data, rules) : []),
+    [primary, mode, data, rules],
   );
-  const optionsByCollege = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const o of [...options].sort((a, b) => a.dept.localeCompare(b.dept, "ko"))) {
-      map.set(o.college, [...(map.get(o.college) ?? []), o.dept]);
-    }
-    return [...map.entries()];
-  }, [options]);
 
+  // ---- result ----
+  const key = `${mode}|${primary}|${second}`;
   useEffect(() => {
-    if (!primary || !second) return;
+    if (step !== 4 || !mode || !primary || !second) return;
     const controller = new AbortController();
-    const isMd = kind === "microdegree";
-    const q = new URLSearchParams(isMd ? { primary, id: second } : { primary, second, kind });
+    const isMd = mode === "microdegree";
+    const q = new URLSearchParams(isMd ? { primary, id: second } : { primary, second, kind: mode });
     fetch(`/api/${isMd ? "microdegree" : "plan"}?${q}`, { signal: controller.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<CoursePlanResult | MicrodegreePlanResult>;
       })
-      .then((r) => {
-        if (isMd) {
-          setMdResult(r as MicrodegreePlanResult);
-          setResult(null);
-        } else {
-          setResult(r as CoursePlanResult);
-          setMdResult(null);
-        }
-        setError("");
-      })
+      .then((plan) =>
+        setFetched(
+          isMd
+            ? { key: `${mode}|${primary}|${second}`, kind: "md", plan: plan as MicrodegreePlanResult }
+            : { key: `${mode}|${primary}|${second}`, kind: "plan", plan: plan as CoursePlanResult },
+        ),
+      )
       .catch((e: unknown) => {
         if (controller.signal.aborted) return;
-        setResult(null);
-        setMdResult(null);
-        setError(`결과를 불러오지 못했습니다 (${e instanceof Error ? e.message : String(e)}). 다시 시도해 주세요.`);
+        setFetched({
+          key: `${mode}|${primary}|${second}`,
+          error: `결과를 불러오지 못했어요 (${e instanceof Error ? e.message : String(e)}).`,
+        });
       });
     return () => controller.abort();
-  }, [primary, second, kind]);
+  }, [step, mode, primary, second, attempt]);
+  const current = step === 4 && fetched?.key === key ? fetched : null;
 
-  const shown = primary && second && kind !== "microdegree" ? result : null;
-  const mdShown = primary && second && kind === "microdegree" ? mdResult : null;
+  // Remember the last successful combination for the home shortcut.
+  useEffect(() => {
+    if (!current || "error" in current || !mode || !current.plan.available) return;
+    if (current.kind === "md") {
+      const md = current.plan.microdegree;
+      saveRecent({
+        label: `${primary} + ${md.name}`,
+        kind: MODE_LABEL.microdegree,
+        total: current.plan.primaryCredits + (md.required_credits ?? 0),
+        primary,
+        mode,
+        second,
+      });
+    } else {
+      saveRecent({
+        label: `${primary} + ${second}`,
+        kind: MODE_LABEL[mode],
+        total: current.plan.totals.total,
+        primary,
+        mode,
+        second,
+      });
+    }
+  }, [current, mode, primary, second]);
+
+  // ---- pickers (steps 1 and 3) ----
+  const picking = step === 1 || step === 3;
+  const isMdPick = step === 3 && mode === "microdegree";
+  const q = query.trim().replace(/\s/g, "");
+  const match = (s: string) => !q || s.replace(/\s/g, "").includes(q);
+
+  let rows: PickRow[] = [];
+  let chips: string[] = [];
+  if (step === 1 || (step === 3 && !isMdPick)) {
+    const list = step === 1 ? firsts : seconds;
+    chips = [...new Set(list.map((d) => d.college))];
+    const col = q ? null : college;
+    rows = list
+      .filter((d) => match(d.dept) && (!col || d.college === col))
+      .map((d) => ({
+        key: d.dept,
+        title: d.dept,
+        sub: d.college,
+        right: `${step === 1 ? "단일" : MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
+        onPick: () => {
+          if (step === 1) {
+            setPrimary(d.dept);
+            setMode(null);
+            setSecond("");
+            goto(2);
+          } else {
+            setSecond(d.dept);
+            goto(4);
+          }
+        },
+      }));
+  } else if (isMdPick) {
+    rows = microdegrees
+      .filter((m) => match(m.name + m.depts.join("")))
+      .map((m) => ({
+        key: m.id,
+        title: m.name,
+        sub: `${m.depts.join(" · ")} · ${m.courses.length}과목`,
+        right: `${m.required_credits ?? "?"}학점`,
+        onPick: () => {
+          setSecond(m.id);
+          goto(4);
+        },
+      }));
+  }
+  const pickTitle =
+    step === 1
+      ? "내 본전공은 무엇인가요?"
+      : isMdPick
+        ? "관심 있는 마이크로디그리를 골라 주세요"
+        : `희망 ${MODE_LABEL[mode ?? "double"]}을 골라 주세요`;
+  const searchPlaceholder = isMdPick ? "이름이나 운영 학과로 검색" : "학과 이름으로 검색";
+
+  // ---- kinds (step 2) ----
+  const kinds = useMemo(() => {
+    if (!primary) return [];
+    const pageOf = (id: string) => rules.notices.find((n) => n.id === id)?.page;
+    const single = creditsOf(data, primary, "single");
+    const double = creditsOf(data, primary, "double");
+    const minors = data.depts
+      .filter((d) => d.dept !== primary && !prohibitedReason(primary, d.dept, rules))
+      .flatMap((d) => creditsOf(data, d.dept, "minor")?.계 ?? []);
+    const mdCredits = microdegrees.flatMap((m) => m.required_credits ?? []);
+    return [
+      double && single
+        ? {
+            mode: "double" as const,
+            tag: `본전공 ${single.계} → ${double.계}학점`,
+            desc: "두 번째 전공을 정식으로 이수해요. 본전공 이수 학점이 다전공 기준으로 줄어들어요.",
+            meta: `2학기 이상 등록 후 신청 · 선발 필요 (p.${pageOf("apply-eligibility")})`,
+          }
+        : null,
+      minors.length
+        ? {
+            mode: "minor" as const,
+            tag: range(minors),
+            desc: "다른 전공을 가볍게 이수해요. 본전공은 단일전공 기준 학점을 그대로 들어요.",
+            meta: `졸업예정학기에 인포21로 이수 심사 신청 (p.${pageOf("minor-apply")})`,
+          }
+        : null,
+      {
+        mode: "microdegree" as const,
+        tag: range(mdCredits),
+        desc: "특정 분야의 과목 묶음을 이수하는 소단위 과정이에요. 과목은 전공·교양 학점으로도 인정돼요.",
+        meta: `${microdegrees.length}개 과정 운영`,
+      },
+    ].filter((k) => k !== null);
+  }, [primary, data, rules, microdegrees]);
+
+  const crumbs: { k: string; v: string; go: () => void }[] = [];
+  if (step > 1 && primary) crumbs.push({ k: "본전공", v: primary, go: () => goto(1) });
+  if (step > 2 && mode) crumbs.push({ k: "형태", v: MODE_LABEL[mode], go: () => goto(2) });
+  if (step > 3 && second) {
+    const v = mode === "microdegree" ? (microdegrees.find((m) => m.id === second)?.name ?? second) : second;
+    crumbs.push({ k: "희망", v, go: () => goto(3) });
+  }
+
+  const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
 
   return (
-    <div className="mt-6 flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
-        <label className="flex flex-col gap-2 text-sm font-medium">
-          내 본전공
-          <select
-            className={selectClass}
-            value={primary}
-            onChange={(e) => {
-              setPrimary(e.target.value);
-              setSecond("");
-            }}
-          >
-            <option value="">학과를 선택하세요</option>
-            {byCollege.map(([college, names]) => (
-              <optgroup key={college} label={college}>
-                {names.map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-        <div className="flex flex-wrap gap-1" role="radiogroup" aria-label="이수 형태">
-          {(["double", "minor", "microdegree"] as const).map((k) => (
+    <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
+      <div className="flex h-11 items-center justify-between">
+        {step === 1 ? (
+          <Link href="/" aria-label="홈으로" className={backBtn}>
+            ‹
+          </Link>
+        ) : (
+          <button type="button" aria-label="이전 단계" onClick={() => goto((step - 1) as Step)} className={backBtn}>
+            ‹
+          </button>
+        )}
+        <h1 className="text-base font-bold">다전공 계산기</h1>
+        <span className="w-11 text-right text-[13px] tabular-nums text-mute">{step < 4 ? `${step}/3` : "결과"}</span>
+      </div>
+
+      <div className="-mt-2.5 grid grid-cols-3 gap-1.5" aria-hidden>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className={`h-1 rounded-sm transition-colors duration-300 ${step >= i ? "bg-accent" : "bg-chip"}`} />
+        ))}
+      </div>
+
+      {crumbs.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {crumbs.map((c) => (
             <button
-              key={k}
-              role="radio"
-              aria-checked={kind === k}
-              onClick={() => {
-                setKind(k);
-                setSecond("");
-              }}
-              className={`whitespace-nowrap rounded-full px-3 py-2 text-sm ${
-                kind === k ? "bg-foreground text-background" : "border border-zinc-300 dark:border-zinc-700"
-              }`}
+              key={c.k}
+              type="button"
+              onClick={c.go}
+              className="flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-[7px] text-[13px]"
             >
-              {MODE_LABEL[k]}
+              <span className="text-mute">{c.k}</span>
+              <span className="font-semibold">{c.v}</span>
             </button>
           ))}
         </div>
-        <label className="flex flex-col gap-2 text-sm font-medium">
-          희망 {MODE_LABEL[kind]}
-          <select
-            className={selectClass}
-            value={second}
-            disabled={!primary}
-            onChange={(e) => setSecond(e.target.value)}
-          >
-            {kind === "microdegree" ? (
-              <>
-                <option value="">{primary ? `${microdegrees.length}개 중 선택` : "본전공을 먼저 고르세요"}</option>
-                {microdegrees.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name} ({m.depts.join("·")}, {m.required_credits ?? "?"}학점)
-                  </option>
-                ))}
-              </>
-            ) : (
-              <>
-                <option value="">{primary ? `${options.length}개 중 선택` : "본전공을 먼저 고르세요"}</option>
-                {optionsByCollege.map(([college, names]) => (
-                  <optgroup key={college} label={college}>
-                    {names.map((n) => (
-                      <option key={n} value={n}>
-                        {n}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </>
-            )}
-          </select>
-        </label>
-      </div>
-
-      {error && <p className="rounded-md border border-red-300 bg-red-50 p-3 text-sm dark:border-red-800 dark:bg-red-950">{error}</p>}
-
-      {mdShown && !mdShown.available && (
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950">
-          {mdShown.message}
-        </p>
-      )}
-      {mdShown && mdShown.available && <MicrodegreeResult r={mdShown} />}
-
-      {shown && !shown.available && (
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950">
-          {shown.message}
-        </p>
       )}
 
-      {shown && shown.available && (
+      {picking && (
         <div className="flex flex-col gap-4">
-          <section className="rounded-md bg-zinc-100 p-4 dark:bg-zinc-900">
-            <p className="text-lg font-semibold">
-              전공 학점 합계 <span className="tabular-nums">{shown.totals.total}</span>학점
-            </p>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              {shown.primary.dept} {shown.totals.primaryCredits}학점 + {shown.second.dept}{" "}
-              {shown.totals.secondCredits}학점
-              {shown.totals.savedCredits > 0 &&
-                ` · 다전공을 하면 본전공이 단일전공 ${shown.singleCredits}학점에서 ${shown.totals.primaryCredits}학점으로 줄어듭니다`}
-            </p>
-            {shown.majorRules.minimumCredits < shown.totals.total && (
-              <p className="mt-1 text-sm font-medium">
-                공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소{" "}
-                <span className="tabular-nums">{shown.majorRules.minimumCredits}</span>학점입니다.
-              </p>
-            )}
-          </section>
-          <RulesApplied r={shown} />
-          <Program title="본전공" p={shown.primary} credits={shown.totals.primaryCredits} />
-          <Program title={`희망 ${KIND_LABEL[shown.input.kind]}`} p={shown.second} credits={shown.totals.secondCredits} />
-          {shown.warnings.length > 0 && (
-            <details className="text-sm">
-              <summary className="cursor-pointer text-amber-700 dark:text-amber-400">
-                학점 데이터 확인 항목 {shown.warnings.length}개
-              </summary>
-              <ul className="mt-2 list-disc pl-5 text-zinc-600 dark:text-zinc-400">
-                {shown.warnings.map((w, i) => (
-                  <li key={i}>
-                    {w.source} · {w.code}: {w.message}
-                  </li>
-                ))}
-              </ul>
-            </details>
+          <h2 className="text-pretty text-2xl font-bold leading-[1.35] tracking-[-0.6px]">{pickTitle}</h2>
+          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-white px-3.5">
+            <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={searchPlaceholder}
+              aria-label={searchPlaceholder}
+              className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
+            />
+          </label>
+          {chips.length > 0 && (
+            <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px]">
+              {["전체", ...chips].map((c) => {
+                const on = c === "전체" ? !college : college === c;
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => {
+                      setCollege(c === "전체" ? null : c);
+                      setQuery("");
+                    }}
+                    className={`flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
+                      on ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink-2"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
           )}
-          <p className="text-xs text-zinc-500">
-            출처: {shown.source.pdf} ({shown.source.asOf}). 과목 목록은 교육과정 편성표에서, 학점은 학과별 이수학점
-            표에서 가져왔습니다. 졸업요건은 학과 공식 안내로 최종 확인하세요.
-          </p>
+          <div className="flex flex-col overflow-hidden rounded-[18px] bg-white">
+            {rows.map((r) => (
+              <button
+                key={r.key}
+                type="button"
+                onClick={r.onPick}
+                className="box-border flex min-h-14 items-center gap-3 border-t border-line-2 px-4 py-3.5 text-left first:border-t-0 active:bg-paper"
+              >
+                <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                  <span className="text-pretty text-[15px] font-semibold">{r.title}</span>
+                  <span className="text-xs text-mute">{r.sub}</span>
+                </span>
+                <span className="whitespace-nowrap text-sm font-semibold tabular-nums">{r.right}</span>
+              </button>
+            ))}
+            {rows.length === 0 && <p className="px-4 py-5 text-sm text-mute">검색 결과가 없어요.</p>}
+          </div>
         </div>
       )}
 
-      <MicrodegreeRules rules={rules} />
+      {step === 2 && (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+            어떤 방식으로
+            <br />더 공부할까요?
+          </h2>
+          {kinds.map((k) => (
+            <button
+              key={k.mode}
+              type="button"
+              onClick={() => {
+                setMode(k.mode);
+                setSecond("");
+                goto(3);
+              }}
+              className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-white p-[18px] text-left active:scale-[.99]"
+            >
+              <span className="flex items-baseline justify-between gap-2.5">
+                <span className="text-lg font-bold">{MODE_LABEL[k.mode]}</span>
+                <span className="whitespace-nowrap text-[13px] font-semibold text-accent">{k.tag}</span>
+              </span>
+              <span className="text-pretty text-sm leading-normal text-ink-2">{k.desc}</span>
+              <span className="text-xs text-mute">{k.meta}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {step === 4 && !current && (
+        <p className="text-sm text-mute" role="status">
+          교육과정 데이터를 불러오는 중…
+        </p>
+      )}
+
+      {current && "error" in current && (
+        <div className="flex flex-col gap-3">
+          <Unavailable message={current.error} />
+          <button
+            type="button"
+            onClick={() => {
+              setFetched(null);
+              setAttempt((n) => n + 1);
+            }}
+            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-semibold"
+          >
+            다시 시도
+          </button>
+        </div>
+      )}
+
+      {current && !("error" in current) && current.kind === "plan" && (
+        <PlanResultSwitch plan={current.plan} data={data} primary={primary} mode={mode} onReset={reset} />
+      )}
+
+      {current && !("error" in current) && current.kind === "md" && (
+        <MdResultSwitch plan={current.plan} data={data} primary={primary} rules={rules} onReset={reset} />
+      )}
+    </main>
+  );
+}
+
+function PlanResultSwitch({
+  plan,
+  data,
+  primary,
+  mode,
+  onReset,
+}: {
+  plan: CoursePlanResult;
+  data: CreditData;
+  primary: string;
+  mode: Mode | null;
+  onReset: () => void;
+}) {
+  if (!plan.available) return <ResultWithReset message={plan.message} onReset={onReset} />;
+  const a = creditsOf(data, primary, mode === "double" ? "double" : "single");
+  const b = creditsOf(data, plan.second.dept, plan.input.kind);
+  if (!a || !b) return <ResultWithReset message="학점 데이터를 찾을 수 없어요. 학과 공식 안내를 확인하세요." onReset={onReset} />;
+  return <PlanView plan={plan} primaryCredits={a} secondCredits={b} onReset={onReset} />;
+}
+
+function MdResultSwitch({
+  plan,
+  data,
+  primary,
+  rules,
+  onReset,
+}: {
+  plan: MicrodegreePlanResult;
+  data: CreditData;
+  primary: string;
+  rules: MajorRules;
+  onReset: () => void;
+}) {
+  if (!plan.available) return <ResultWithReset message={plan.message} onReset={onReset} />;
+  const a = creditsOf(data, primary, "single");
+  if (!a) return <ResultWithReset message="학점 데이터를 찾을 수 없어요. 학과 공식 안내를 확인하세요." onReset={onReset} />;
+  return <MicrodegreeView plan={plan} primaryCredits={a} rules={rules} onReset={onReset} />;
+}
+
+function ResultWithReset({ message, onReset }: { message: string; onReset: () => void }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <Unavailable message={message} />
+      <button
+        type="button"
+        onClick={onReset}
+        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-line bg-white text-[15px] font-semibold"
+      >
+        다시 계산하기
+      </button>
     </div>
   );
 }
