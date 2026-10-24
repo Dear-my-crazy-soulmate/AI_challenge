@@ -5,6 +5,7 @@ import AccountButton from "@/components/AccountButton";
 import GoalCard from "@/components/GoalCard";
 import HomeIntro from "@/components/HomeIntro";
 import RecentCalc from "@/components/RecentCalc";
+import Timetable from "@/components/Timetable";
 import type { MajorRules } from "@/lib/rules/majorRules";
 
 const rules = majorRules as unknown as MajorRules;
@@ -35,6 +36,8 @@ export default function Home() {
       <HomeIntro page={headlinePage} />
 
       <GoalCard />
+
+      <Timetable />
 
       <div className="grid grid-cols-2 gap-3">
         <Link
