@@ -1,0 +1,106 @@
+"use client";
+
+import { useState } from "react";
+
+import type { DeptOption } from "@/lib/depts";
+
+/** Search + pick departments. max=1 replaces the choice, otherwise toggles up to max. */
+export default function DeptPicker({
+  label,
+  hint,
+  options,
+  selected,
+  max,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  options: DeptOption[];
+  selected: string[];
+  max: number;
+  onChange: (next: string[]) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const q = query.trim().replace(/\s/g, "");
+  const shown = options.filter((o) => !q || o.dept.replace(/\s/g, "").includes(q));
+
+  const toggle = (dept: string) => {
+    if (selected.includes(dept)) onChange(selected.filter((d) => d !== dept));
+    else if (max === 1) onChange([dept]);
+    else if (selected.length < max) onChange([...selected, dept]);
+  };
+  const full = max > 1 && selected.length >= max;
+
+  return (
+    <section className="flex flex-col gap-2.5">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="text-sm font-bold">{label}</h2>
+        {max > 1 && (
+          <span className="text-xs tabular-nums text-mute">
+            {selected.length}/{max}
+          </span>
+        )}
+      </div>
+      {hint && <p className="-mt-1 text-xs text-mute">{hint}</p>}
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {selected.map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => toggle(d)}
+              aria-label={`${d} 선택 해제`}
+              className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] font-semibold text-paper"
+            >
+              {d}
+              <span aria-hidden className="opacity-60">
+                ×
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-line bg-white px-3.5">
+        <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="학과 이름으로 검색"
+          aria-label={`${label} 검색`}
+          className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
+        />
+      </label>
+      <div className="max-h-64 overflow-y-auto rounded-[18px] bg-white">
+        {shown.map((o) => {
+          const on = selected.includes(o.dept);
+          const locked = full && !on;
+          return (
+            <button
+              key={o.dept}
+              type="button"
+              disabled={locked}
+              aria-pressed={on}
+              onClick={() => toggle(o.dept)}
+              className="box-border flex min-h-14 w-full items-center gap-3 border-t border-line-2 px-4 py-3 text-left first:border-t-0 enabled:active:bg-paper disabled:opacity-40"
+            >
+              <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                <span className="text-pretty text-[15px] font-semibold">{o.dept}</span>
+                <span className="text-xs text-mute">{o.college}</span>
+              </span>
+              <span
+                aria-hidden
+                className={`flex h-[22px] w-[22px] flex-none items-center justify-center rounded-full border-2 text-xs ${
+                  on ? "border-accent bg-accent text-white" : "border-chip"
+                }`}
+              >
+                {on ? "✓" : ""}
+              </span>
+            </button>
+          );
+        })}
+        {shown.length === 0 && <p className="px-4 py-5 text-sm text-mute">검색 결과가 없어요.</p>}
+      </div>
+    </section>
+  );
+}

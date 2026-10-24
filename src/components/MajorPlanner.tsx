@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import Avatar from "@/components/Avatar";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
 import type { Breakdown } from "@/components/PlanResult";
 import type { CoursePlanResult } from "@/lib/rules/courses";
@@ -13,6 +14,7 @@ import type { CreditData, ProgramKind } from "@/lib/rules/credits";
 import { prohibitedReason } from "@/lib/rules/majorRules";
 import type { MajorRules } from "@/lib/rules/majorRules";
 import type { Microdegree, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
+import { useAuth } from "@/lib/auth";
 import { saveRecent } from "@/lib/recent";
 
 type Mode = "double" | "minor" | "microdegree";
@@ -108,6 +110,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
   const [college, setCollege] = useState<string | null>(null);
   const [fetched, setFetched] = useState<Fetched | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const { profile } = useAuth();
 
   const goto = (s: Step) => {
     setStep(s);
@@ -185,6 +188,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
 
   // ---- pickers (steps 1 and 3) ----
   const picking = step === 1 || step === 3;
+  const mine = firsts.find((d) => d.dept === profile?.primary);
   const isMdPick = step === 3 && mode === "microdegree";
   const q = query.trim().replace(/\s/g, "");
   const match = (s: string) => !q || s.replace(/\s/g, "").includes(q);
@@ -195,12 +199,14 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
     const list = step === 1 ? firsts : seconds;
     chips = [...new Set(list.map((d) => d.college))];
     const col = q ? null : college;
-    rows = list
+    // Departments the user marked as interesting come first when choosing a second major.
+    const liked = new Set(step === 3 ? (profile?.interests ?? []) : []);
+    rows = [...list.filter((d) => liked.has(d.dept)), ...list.filter((d) => !liked.has(d.dept))]
       .filter((d) => match(d.dept) && (!col || d.college === col))
       .map((d) => ({
         key: d.dept,
         title: d.dept,
-        sub: d.college,
+        sub: liked.has(d.dept) ? `${d.college} · 관심 전공` : d.college,
         right: `${step === 1 ? "단일" : MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
         onPick: () => {
           if (step === 1) {
@@ -355,6 +361,27 @@ export default function MajorPlanner({ data, rules, microdegrees, initial }: Pla
                 );
               })}
             </div>
+          )}
+          {step === 1 && mine && !q && (
+            <button
+              type="button"
+              onClick={() => {
+                setPrimary(mine.dept);
+                setMode(null);
+                setSecond("");
+                goto(2);
+              }}
+              className="flex items-center gap-3 rounded-[18px] bg-ink px-4 py-3.5 text-left text-paper active:opacity-90"
+            >
+              <Avatar dept={profile?.avatar ?? mine.dept} size={36} onDark />
+              <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                <span className="text-xs opacity-70">내 정보의 본전공으로 시작</span>
+                <span className="text-[15px] font-semibold">{mine.dept}</span>
+              </span>
+              <span aria-hidden className="text-xl opacity-60">
+                ›
+              </span>
+            </button>
           )}
           <div className="flex flex-col overflow-hidden rounded-[18px] bg-white">
             {rows.map((r) => (

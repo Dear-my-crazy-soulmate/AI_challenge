@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import majorRules from "../../data/curated/2026/major_rules.json";
+import AccountButton from "@/components/AccountButton";
 import RecentCalc from "@/components/RecentCalc";
 import type { MajorRules } from "@/lib/rules/majorRules";
 
@@ -21,9 +22,12 @@ export default function Home() {
           </span>
           <span className="text-base font-bold tracking-[-0.3px]">다전공 길잡이</span>
         </div>
-        <span className="rounded-full border border-chip px-2.5 py-[5px] text-xs font-medium text-mute">
-          국제캠퍼스 · 2026
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full border border-chip px-2.5 py-[5px] text-xs font-medium text-mute">
+            국제캠퍼스 · 2026
+          </span>
+          <AccountButton />
+        </div>
       </header>
 
       <section className="flex flex-col gap-2.5">

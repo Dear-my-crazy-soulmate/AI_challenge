@@ -107,6 +107,13 @@ data/curated/       검증 통과분 출력: courses.json, requirements/<학과>
 - [ ] 클라이언트 생성, 환경변수 연결, curated 데이터 적재 스크립트
 - 확인: 앱에서 전공 목록 조회
 
+## Step 3a. 로그인과 프로필 (임시 구현, Step 3 사이)
+- [x] `src/lib/auth/`: `AuthService` 인터페이스 + 브라우저 저장 임시 구현(`mock.ts`), 입력 검증 `src/lib/safety/input.ts`
+- [x] `/login`, `/signup`(2단계: 계정 → 본전공·관심 전공), `/profile`, 홈 계정 버튼, 계산기에서 내 본전공 바로 시작·관심 전공 우선 표시
+- [ ] Step 3에서 Supabase Auth로 `AuthService` 교체(화면 코드는 그대로), 프로필은 RLS 적용 테이블에 저장
+- [ ] 학과별 캐릭터 PDF를 받으면 이미지로 변환해 `public/avatars/`에 넣고 `src/lib/avatars.ts`에 학과명과 연결
+- 개인정보: 프로필에는 학과명만 저장한다(학번·이름·연락처 제외). 임시 로그인은 화면에 "예시 로그인"으로 표시한다.
+
 ## Step 4. 온보딩과 제도 가이드 화면 (기능 1) (10/16~18)
 - [ ] 본전공 입력 화면 → 선택 가능한 조합 결과 화면(규칙 엔진 연결)
 - [ ] 다전공·부전공·MD 비교표(출처·기준일 표시)
