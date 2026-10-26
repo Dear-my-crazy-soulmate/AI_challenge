@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import Avatar from "@/components/Avatar";
 import BrandMark from "@/components/BrandMark";
 import PostRow from "@/components/PostRow";
 import { useCommunity } from "@/components/useCommunity";
@@ -102,16 +103,28 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
             </button>
           ))}
         </div>
-        <ul className="flex flex-col overflow-hidden rounded-[20px] border border-edge bg-card">
-          {visible.map((d) => (
-            <li key={d.dept} className="border-t border-line-2 first:border-t-0">
-              <Link href={deptHref(d.dept)} title={d.college} className="box-border flex min-h-11 items-center justify-between gap-3 px-4 py-2 active:bg-paper">
-                <span className="min-w-0 text-pretty text-[15px] font-semibold leading-snug">{d.dept}</span>
-                <span className={`whitespace-nowrap text-xs font-semibold ${stats.has(d.dept) ? "text-accent-deep" : "text-faint"}`}>{countText(d.dept)}</span>
-              </Link>
-            </li>
-          ))}
-          {rows.length === 0 && <li className="px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</li>}
+        <ul className="flex flex-col gap-2">
+          {visible.map((d) => {
+            const has = stats.has(d.dept);
+            return (
+              <li key={d.dept}>
+                <Link
+                  href={deptHref(d.dept)}
+                  title={d.college}
+                  className="box-border flex min-h-12 items-center gap-3 rounded-2xl border border-line bg-white py-2 pl-2.5 pr-3.5 shadow-[0_1px_3px_rgba(28,27,24,.06)] transition-transform active:scale-[.985]"
+                >
+                  <Avatar dept={d.dept} size={34} />
+                  <span className="min-w-0 flex-1 text-pretty text-[15px] font-semibold leading-snug">{d.dept}</span>
+                  {has ? (
+                    <span className="whitespace-nowrap rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent-deep">{countText(d.dept)}</span>
+                  ) : (
+                    <span className="whitespace-nowrap text-xs text-faint">첫 글 기다리는 중</span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+          {rows.length === 0 && <li className="rounded-2xl border border-line bg-white px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</li>}
         </ul>
         {!filtering && rows.length > 8 && (
           <button type="button" onClick={() => setShowAll((v) => !v)} className="box-border flex h-12 items-center justify-center rounded-2xl border border-edge bg-card text-sm font-semibold">
