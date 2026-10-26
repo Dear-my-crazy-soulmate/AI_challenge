@@ -113,10 +113,8 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const goalHref = goal ? `/onboarding?${new URLSearchParams({ primary: goal.primary, mode: goal.mode, second: goal.second })}` : "/onboarding";
   return (
     <>
-      <section className="flex items-center gap-3.5 rounded-[22px] border border-edge bg-card p-[18px]">
-        <span className="flex rounded-full ring-2 ring-accent ring-offset-2">
-          <Avatar dept={profile.avatar ?? profile.primary} size={56} />
-        </span>
+      <section className="flex items-center gap-4 rounded-[22px] border border-edge bg-card p-[18px]">
+        <Avatar dept={profile.primary} goal={goal} size={136} variant="full" />
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-pretty text-lg font-bold">{profile.name || "내 정보"}</span>
           <span className="text-[13px] text-mute">
@@ -125,6 +123,9 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
           </span>
           <span className="text-pretty text-[13px] font-semibold">
             {college} {profile.primary}
+          </span>
+          <span className="mt-1.5 text-pretty text-xs leading-normal text-mute">
+            {goal ? `내 목표(${MODE_NAME[goal.mode]} · ${goal.secondName})에 맞춰 바뀐 모습이에요.` : "본전공에 맞춘 기본 캐릭터예요. 목표를 저장하면 모습이 바뀌어요."}
           </span>
         </div>
       </section>

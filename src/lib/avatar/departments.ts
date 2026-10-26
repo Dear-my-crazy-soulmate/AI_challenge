@@ -1,0 +1,78 @@
+// Which look (see looks.ts) each department wears. Keyed by the exact names in credits_global.json;
+// tests/avatar.test.ts fails if a department there has no entry, so a new department cannot be forgotten.
+export const DEPT_LOOK: Record<string, string> = {
+  // 공과대학
+  기계공학: "mech",
+  지능로봇공학: "robot",
+  항공우주모빌리티: "aero",
+  산업경영공학과: "industrial",
+  원자력공학과: "nuclear",
+  화학공학과: "chemEng",
+  신소재공학과: "materials",
+  사회기반시스템공학과: "civil",
+  건축공학과: "structure",
+  "환경학및환경공학과 (환경학)": "environment",
+  "환경학및환경공학과 (환경공학)": "environment",
+  건축학과: "architecture",
+  // 전자정보대학
+  전자공학과: "electronics",
+  반도체공학과: "semiconductor",
+  생체의공학과: "biomedical",
+  // 소프트웨어융합대학
+  컴퓨터공학과: "cs",
+  인공지능학과: "ai",
+  소프트웨어융합학과: "softwareFusion",
+  // 응용과학대학
+  응용수학과: "math",
+  응용물리학과: "physics",
+  응용화학과: "appliedChem",
+  우주과학과: "astronomy",
+  // 생명과학대학
+  스마트팜과학과: "plant",
+  "식물·환경신소재공학과": "plant",
+  식품생명공학과: "food",
+  원예생명공학과: "flower",
+  유전생명공학과: "gene",
+  한방생명공학과: "hanbang",
+  "융합바이오·신소재공학과": "bioMaterials",
+  // 국제대학
+  국제학과: "international",
+  아시아학과: "asia",
+  // 외국어대학
+  프랑스어학과: "french",
+  스페인어학과: "spanish",
+  러시아어학과: "russian",
+  중국어학과: "chinese",
+  일본어학과: "japanese",
+  한국어학과: "korean",
+  영미어문전공: "english",
+  영미문화전공: "englishCulture",
+  // 예술·디자인대학
+  산업디자인학과: "productDesign",
+  시각디자인학과: "visualDesign",
+  환경조경디자인학과: "landscape",
+  의류디자인학과: "fashion",
+  디지털콘텐츠학과: "digitalContent",
+  도예학과: "ceramics",
+  연극영화학과: "theatre",
+  포스트모던음악학과: "music",
+  // 체육대학
+  체육학과: "sports",
+  스포츠의학과: "sportsMedicine",
+  골프산업학과: "golf",
+  스포츠지도학과: "coaching",
+  태권도학과: "taekwondo",
+  // 융합전공 (a new look of their own, never a mix)
+  글로벌엔지니어링: "globalEngineering",
+  글로벌문화기술: "cultureTech",
+  "4D아트": "art4d",
+  "아트&테크놀로지": "artTech",
+  "K-퍼포밍아트": "kPerforming",
+  실감미디어: "immersive",
+  양자정보: "quantum",
+  우주인공지능: "spaceAI",
+  첨단바이오신소재: "advancedBio",
+  첨단종자푸드테크: "seedFood",
+  인공지능반도체: "aiSemiconductor",
+  웨어러블디자인테크놀로지: "wearable",
+};

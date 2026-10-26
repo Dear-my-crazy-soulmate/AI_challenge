@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
+import Avatar from "@/components/Avatar";
 import DeptPicker from "@/components/DeptPicker";
 import { ErrorNote, Field, SampleLoginNote, primaryButton } from "@/components/Field";
 import PersonalFields from "@/components/PersonalFields";
@@ -160,6 +161,17 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
             max={MAX_INTERESTS}
             onChange={setInterests}
           />
+          {primary[0] && (
+            <section className="flex items-center gap-4 rounded-[20px] border border-edge bg-card p-4" aria-label="내 캐릭터 미리보기">
+              <Avatar dept={primary[0]} size={120} variant="full" />
+              <div className="flex flex-col gap-1">
+                <span className="text-[15px] font-bold">내 캐릭터</span>
+                <span className="text-pretty text-xs leading-normal text-mute">
+                  {primary[0]}에 맞춘 쿠옹이가 기본 프로필이 돼요. 다전공·부전공을 정하면 모습이 바뀌어요.
+                </span>
+              </div>
+            </section>
+          )}
           <ErrorNote message={error} />
           <button type="button" onClick={finish} disabled={busy || primary.length === 0} className={primaryButton}>
             {busy ? "만드는 중…" : "가입 완료"}

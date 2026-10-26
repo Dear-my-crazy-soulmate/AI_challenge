@@ -111,7 +111,7 @@ data/curated/       검증 통과분 출력: courses.json, requirements/<학과>
 - [x] `src/lib/auth/`: `AuthService` 인터페이스 + 브라우저 저장 임시 구현(`mock.ts`), 입력 검증 `src/lib/safety/input.ts`
 - [x] `/login`, `/signup`(2단계: 계정 → 본전공·관심 전공), `/profile`, 홈 계정 버튼, 계산기에서 내 본전공 바로 시작·관심 전공 우선 표시
 - [ ] Step 3에서 Supabase Auth로 `AuthService` 교체(화면 코드는 그대로), 프로필은 RLS 적용 테이블에 저장
-- [ ] 학과별 캐릭터 PDF를 받으면 이미지로 변환해 `public/avatars/`에 넣고 `src/lib/avatars.ts`에 학과명과 연결
+- [x] 학과별 캐릭터(10/26): 쿠옹이를 SVG로 그려 64개 학과 전부 옷·소품·작업물을 입힘(`src/lib/avatar/`). 이미지 파일 없이 본전공과 "내 목표"에 맞춰 즉석 생성 — 단일전공은 학과 룩, 다전공은 두 룩을 약 5:5로 섞기, 부전공은 본전공 위주(약 8:2), 마이크로디그리·융합전공은 새 룩(망토+훈장). 새 학과가 생기면 `departments.ts`에 룩을 연결(테스트가 누락을 막음)
 - [x] 디자인 v2 적용(10/24): 4개 탭(홈·계산기·체험·MY), 홈 "내 목표" 카드(계산 결과를 목표로 저장, 이 기기에만 저장), MY 탭, 계산기가 내 본전공으로 바로 시작
 - [x] 체험 문제 화면(`/experience`): 시안의 4개 전공×3문제를 `data/seed/quiz_sample.json`에 `is_sample: true`로 저장, 채점은 `src/lib/quiz.ts`(코드). AI 생성·검수(Step 6)는 아직 없음
 - 개인정보: 사용자 결정으로 프로필에 이름·학번(선택 입력)·학년을 저장한다(CLAUDE.md 규칙 4의 예외). LLM에는 `forLlm()`이 학과·학년만 넘긴다. 연락처는 받지 않는다. 임시 로그인은 화면에 "예시 로그인"으로 표시한다.
