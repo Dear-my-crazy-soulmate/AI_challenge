@@ -1,50 +1,49 @@
 "use client";
 
-// 커뮤니티 목록: 다전공을 하고 있거나 고민하는 학생들의 이수 후기·질문·정보.
-// Everything here is filtered by 이수 형태 and 전공 first, because that is how a student looks for it.
+// 커뮤니티 첫 화면: 학과 중심. 같은 학과라도 배우는 것, 분위기, 동아리가 다르니
+// 학과를 골라 그 학과 학생들이 직접 남긴 정보를 항목별로 모아 본다.
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import BrandMark from "@/components/BrandMark";
-import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
+import PostRow from "@/components/PostRow";
 import { useCommunity } from "@/components/useCommunity";
 import { useAuth } from "@/lib/auth";
-import { NO_FILTERS, filterPosts, summarizeReviews } from "@/lib/community/query";
-import type { Filters } from "@/lib/community/query";
-import { POST_TYPES, TYPE_LABEL } from "@/lib/community/types";
-import type { Post } from "@/lib/community/types";
-import { MODE_NAME } from "@/lib/goal";
-import type { GoalMode } from "@/lib/goal";
-
-const FORMS: GoalMode[] = ["double", "minor", "microdegree"];
-export const fmtDate = (iso: string) => `${Number(iso.slice(5, 7))}월 ${Number(iso.slice(8, 10))}일`;
+import { newestFirst, statsByDept } from "@/lib/community/query";
+import type { DeptOption } from "@/lib/depts";
 
 const chip = (on: boolean) =>
-  `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-    on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"
-  }`;
+  `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+const deptHref = (dept: string) => `/community/dept?name=${encodeURIComponent(dept)}`;
 
-function snippet(p: Post): string {
-  if (p.type === "review" && p.review) return `👍 ${p.review.pros}`;
-  return p.body.replace(/\s+/g, " ");
-}
-
-export default function CommunityHome() {
+export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
   const { posts, comments } = useCommunity();
   const { profile } = useAuth();
-  const [f, setF] = useState<Filters>(NO_FILTERS);
-  const set = (patch: Partial<Filters>) => setF((cur) => ({ ...cur, ...patch }));
+  const [text, setText] = useState("");
+  const [college, setCollege] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
-  const shown = useMemo(() => filterPosts(posts, f), [posts, f]);
-  const counts = useMemo(() => {
+  const stats = useMemo(() => statsByDept(posts), [posts]);
+  const commentCount = useMemo(() => {
     const m = new Map<string, number>();
     for (const c of comments) m.set(c.postId, (m.get(c.postId) ?? 0) + 1);
     return m;
   }, [comments]);
+  const colleges = useMemo(() => [...new Set(depts.map((d) => d.college))], [depts]);
 
-  const narrowed = f.form !== "all" || f.text.trim() !== "" || f.interests !== null;
-  const summary = narrowed ? summarizeReviews(shown) : null;
-  const interests = profile?.interests ?? [];
+  const q = text.replace(/\s/g, "");
+  const rows = depts
+    .filter((d) => (!q || d.dept.replace(/\s/g, "").includes(q)) && (q || !college || d.college === college))
+    .sort((a, b) => (stats.get(b.dept)?.total ?? 0) - (stats.get(a.dept)?.total ?? 0) || a.dept.localeCompare(b.dept));
+  const filtering = q !== "" || college !== null;
+  const visible = filtering || showAll ? rows : rows.slice(0, 8);
+  const mine = profile ? depts.find((d) => d.dept === profile.primary) : undefined;
+  const recent = newestFirst(posts).slice(0, 4);
+
+  const countText = (dept: string) => {
+    const s = stats.get(dept);
+    return s ? `정보 ${s.info} · 질문 ${s.questions}` : "아직 글이 없어요";
+  };
 
   return (
     <main className="flex flex-col gap-3.5 px-[18px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
@@ -57,93 +56,81 @@ export default function CommunityHome() {
           글쓰기
         </Link>
       </header>
-      <p className="px-1 text-[13px] leading-normal text-mute">다전공을 하고 있거나 고민하는 학생들의 이야기예요. 모두 익명이고, 본전공과 어떤 전공을 하는지만 보여요.</p>
+      <p className="px-1 text-[13px] leading-normal text-mute">
+        같은 학과라도 배우는 것, 분위기, 동아리는 달라요. 경희대 학생들이 학과별로 직접 남긴 정보를 항목별로 모아 봐요.
+      </p>
 
-      <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
-        <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
-        <input
-          type="search"
-          value={f.text}
-          onChange={(e) => set({ text: e.target.value })}
-          placeholder="전공 이름이나 키워드로 검색"
-          aria-label="커뮤니티 검색"
-          className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
-        />
-      </label>
-
-      <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" role="group" aria-label="글 종류">
-        {(["all", ...POST_TYPES] as const).map((t) => (
-          <button key={t} type="button" aria-pressed={f.type === t} onClick={() => set({ type: t })} className={chip(f.type === t)}>
-            {t === "all" ? "전체" : TYPE_LABEL[t]}
-          </button>
-        ))}
-      </div>
-      <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" role="group" aria-label="이수 형태">
-        {(["all", ...FORMS] as const).map((m) => (
-          <button key={m} type="button" aria-pressed={f.form === m} onClick={() => set({ form: m })} className={chip(f.form === m)}>
-            {m === "all" ? "모든 형태" : MODE_NAME[m]}
-          </button>
-        ))}
-        {interests.length > 0 && (
-          <button
-            type="button"
-            aria-pressed={f.interests !== null}
-            onClick={() => set({ interests: f.interests ? null : interests })}
-            className={chip(f.interests !== null)}
-          >
-            내 관심 전공
-          </button>
-        )}
-        {profile && (
-          <button type="button" aria-pressed={f.mineOnly} onClick={() => set({ mineOnly: !f.mineOnly })} className={chip(f.mineOnly)}>
-            내 글
-          </button>
-        )}
-      </div>
-
-      {summary && (
-        <section aria-label="후기 요약" className="flex flex-col gap-2 rounded-[20px] bg-accent px-[18px] py-4 text-white">
-          <span className="text-xs opacity-65">이 조건의 이수 후기 요약</span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[34px] font-bold leading-none tabular-nums">{summary.count}</span>
-            <span className="text-sm opacity-75">개의 후기</span>
-          </div>
-          <p className="text-[13px] leading-normal opacity-85">
-            학업 부담 평균 <b className="tabular-nums">{summary.avgLoad}</b>/4 ({summary.loadLabel}) · 이수 중 {summary.doing}명 · 이수 완료 {summary.done}명
-          </p>
-          <p className="text-[11px] opacity-60">후기 수와 평균은 코드로 계산한 값이에요. 개인의 경험이라 사람마다 달라요.</p>
-        </section>
+      {mine && (
+        <Link href={deptHref(mine.dept)} className="flex items-center justify-between gap-3 rounded-[20px] bg-ink px-[18px] py-4 text-paper active:opacity-90">
+          <span className="flex min-w-0 flex-col gap-1">
+            <span className="text-xs opacity-65">내 학과</span>
+            <span className="text-pretty text-lg font-bold">{mine.dept}</span>
+            <span className="text-xs opacity-75">{countText(mine.dept)}</span>
+          </span>
+          <span aria-hidden className="text-2xl opacity-60">
+            ›
+          </span>
+        </Link>
+      )}
+      {profile && profile.interests.length > 0 && (
+        <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" aria-label="관심 학과">
+          {profile.interests.map((d) => (
+            <Link key={d} href={deptHref(d)} className={chip(false)}>
+              {d}
+            </Link>
+          ))}
+        </div>
       )}
 
-      <ul className="flex flex-col gap-2.5">
-        {shown.map((p) => (
-          <li key={p.id}>
-            <Link href={`/community/post?id=${encodeURIComponent(p.id)}`} className="flex flex-col gap-2 rounded-[20px] border border-edge bg-card p-4 active:scale-[.99]">
-              <span className="flex items-center gap-1.5">
-                <span className={`rounded-md px-1.5 py-px text-[11px] font-bold ${p.type === "review" ? "bg-accent-soft text-accent-deep" : "bg-sand text-ink-2"}`}>
-                  {TYPE_LABEL[p.type]}
+      <section aria-label="학과 찾기" className="flex flex-col gap-2.5">
+        <h2 className="px-1 text-sm font-bold">학과별 이야기</h2>
+        <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
+          <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+          <input
+            type="search"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="학과 이름으로 검색"
+            aria-label="학과 검색"
+            className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
+          />
+        </label>
+        <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" role="group" aria-label="단과대학">
+          {[null, ...colleges].map((c) => (
+            <button key={c ?? "all"} type="button" aria-pressed={college === c} onClick={() => setCollege(c)} className={chip(college === c)}>
+              {c ?? "전체"}
+            </button>
+          ))}
+        </div>
+        <ul className="flex flex-col overflow-hidden rounded-[20px] border border-edge bg-card">
+          {visible.map((d) => (
+            <li key={d.dept} className="border-t border-line-2 first:border-t-0">
+              <Link href={deptHref(d.dept)} className="box-border flex min-h-14 items-center gap-3 px-4 py-3 active:bg-paper">
+                <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                  <span className="text-pretty text-[15px] font-semibold">{d.dept}</span>
+                  <span className="text-xs text-mute">{d.college}</span>
                 </span>
-                {p.is_sample && <SampleTag />}
-                {p.mine && <span className="rounded-md bg-ok-soft px-1.5 py-px text-[11px] font-semibold text-ok">내 글</span>}
-              </span>
-              <span className="text-pretty text-base font-bold leading-[1.4]">{p.title}</span>
-              {snippet(p) && <span className="line-clamp-2 text-pretty text-[13px] leading-normal text-ink-2">{snippet(p)}</span>}
-              <CommunityBadge badge={p.badge} />
-              <span className="flex gap-2 text-xs text-mute">
-                <span>{fmtDate(p.createdAt)}</span>
-                <span>댓글 {counts.get(p.id) ?? 0}</span>
-                {p.review && <span>학업 부담 {p.review.load}/4</span>}
-              </span>
-            </Link>
-          </li>
-        ))}
-        {shown.length === 0 && (
-          <li className="flex flex-col gap-2 rounded-[20px] border border-edge bg-card px-[18px] py-6 text-center">
-            <span className="text-[15px] font-semibold">조건에 맞는 글이 없어요</span>
-            <span className="text-[13px] text-mute">검색어를 바꾸거나, 이 조합의 첫 글을 남겨 보세요.</span>
-          </li>
+                <span className={`whitespace-nowrap text-xs font-semibold ${stats.has(d.dept) ? "text-accent-deep" : "text-faint"}`}>{countText(d.dept)}</span>
+              </Link>
+            </li>
+          ))}
+          {rows.length === 0 && <li className="px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</li>}
+        </ul>
+        {!filtering && rows.length > 8 && (
+          <button type="button" onClick={() => setShowAll((v) => !v)} className="box-border flex h-12 items-center justify-center rounded-2xl border border-edge bg-card text-sm font-semibold">
+            {showAll ? "접기" : `전체 ${rows.length}개 학과 보기`}
+          </button>
         )}
-      </ul>
+      </section>
+
+      {recent.length > 0 && (
+        <section aria-label="최근 올라온 글" className="flex flex-col gap-2.5">
+          <h2 className="px-1 text-sm font-bold">최근 올라온 글</h2>
+          {recent.map((p) => (
+            <PostRow key={p.id} post={p} comments={commentCount.get(p.id) ?? 0} showDept />
+          ))}
+        </section>
+      )}
     </main>
   );
 }

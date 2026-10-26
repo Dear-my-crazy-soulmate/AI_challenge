@@ -1,111 +1,162 @@
 {
   "is_sample": true,
-  "as_of": "2026-10-24",
-  "note": "Made-up demo posts so the community screens are not empty. They are not real students' words and make no claims about school rules or credits (CLAUDE.md rules 3 and 6). Replace with consented real reviews or keep labelled 예시 데이터.",
+  "as_of": "2026-10-27",
+  "note": "Made-up demo posts so the department pages are not empty. Course names come from data/curated/2026/courses.json; everything else (clubs, atmosphere, careers) is invented and shown as 예시 데이터 (CLAUDE.md rules 3 and 6). Replace with consented real posts.",
   "posts": [
     {
-      "id": "sample-p1",
-      "type": "review",
-      "title": "컴공 + 인공지능 다전공, 1년 반 해 본 후기",
+      "id": "sample-cs-1",
+      "type": "info", "dept": "컴퓨터공학과", "category": "curriculum",
+      "title": "1~2학년에 듣는 컴공 수업 정리",
       "body": "",
-      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": "done", "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
-      "review": {
-        "startedGrade": 1,
-        "startedTerm": 2,
-        "load": 3,
-        "pros": "두 전공 과목이 서로 도움이 돼서 개념이 더 빨리 이해됐어요.",
-        "cons": "필수 과목이 한 학기에 몰릴 때는 시간표가 많이 빠듯했어요.",
-        "forWhom": "코딩과 수학이 둘 다 싫지 않은 사람"
-      },
-      "createdAt": "2026-10-20T09:00:00Z",
-      "is_sample": true
+      "fields": { "courses": "자료구조, 객체지향프로그래밍, 컴퓨터구조", "style": ["실습 중심", "과제가 많음"], "load": 3, "tip": "자료구조부터 과제량이 확 늘어요. 학기 초에 프로그래밍 감을 잡아 두면 훨씬 수월해요." },
+      "badge": { "primary": "컴퓨터공학과", "grade": 2, "relation": "major" },
+      "createdAt": "2026-10-25T09:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-p2",
-      "type": "review",
-      "title": "시각디자인 본전공에 소프트웨어융합 부전공을 얹어 봤어요",
-      "body": "프로토타입을 직접 만들어 볼 수 있어서 포트폴리오에 도움이 됐어요.",
-      "badge": { "primary": "시각디자인학과", "grade": 2, "stage": "doing", "combo": { "mode": "minor", "second": "소프트웨어융합학과", "secondName": "소프트웨어융합학과" } },
-      "review": {
-        "startedGrade": 2,
-        "startedTerm": 1,
-        "load": 2,
-        "pros": "디자인 과제에 코딩을 써 보니 결과물의 폭이 넓어졌어요.",
-        "cons": "처음에는 용어가 낯설어서 따라가는 데 시간이 걸렸어요.",
-        "forWhom": "디자인에 개발을 더해 보고 싶은 사람"
-      },
-      "createdAt": "2026-10-18T14:30:00Z",
-      "is_sample": true
+      "id": "sample-cs-2",
+      "type": "info", "dept": "컴퓨터공학과", "category": "curriculum",
+      "title": "3학년 전공 필수는 시험과 팀 프로젝트가 같이 와요",
+      "body": "운영체제와 알고리즘을 같은 학기에 들으면 시험 기간이 꽤 빡빡했어요.",
+      "fields": { "courses": "알고리즘, 운영체제, 소프트웨어공학", "style": ["시험 중심", "팀 프로젝트"], "load": 4 },
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "relation": "major" },
+      "createdAt": "2026-10-22T14:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-p3",
-      "type": "review",
-      "title": "응용수학 + 컴퓨터공학, 졸업까지 마친 입장에서",
+      "id": "sample-cs-3",
+      "type": "info", "dept": "컴퓨터공학과", "category": "culture",
+      "title": "학과 분위기는 활발하고 협력하는 편이에요",
       "body": "",
-      "badge": { "primary": "응용수학과", "grade": 4, "stage": "done", "combo": { "mode": "double", "second": "컴퓨터공학과", "secondName": "컴퓨터공학과" } },
-      "review": {
-        "startedGrade": 1,
-        "startedTerm": 2,
-        "load": 4,
-        "pros": "수학적 배경이 있어서 알고리즘과 AI 수업이 훨씬 수월했어요.",
-        "cons": "학기마다 과제와 시험이 겹쳐서 체력 관리가 정말 중요했어요.",
-        "forWhom": "공부량이 많아도 두 분야를 다 해 보고 싶은 사람"
-      },
-      "createdAt": "2026-10-12T11:00:00Z",
-      "is_sample": true
+      "fields": { "vibe": ["활발한", "협력적"], "events": "개강 총회, 코딩 스터디", "people": "선배들이 과제 질문을 잘 받아 줘서 처음에도 덜 막막했어요." },
+      "badge": { "primary": "컴퓨터공학과", "grade": 2, "relation": "major" },
+      "createdAt": "2026-10-20T19:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-p4",
-      "type": "question",
-      "title": "다전공이랑 부전공 중에 뭐가 나을까요?",
-      "body": "전자공학과 1학년이에요. 소프트웨어 쪽이 궁금한데 다전공은 부담이 클 것 같고 부전공은 아쉬울까 봐 고민이에요. 비슷한 고민 해 보신 분 계신가요?",
-      "badge": { "primary": "전자공학과", "grade": 1, "stage": "thinking", "combo": null },
-      "createdAt": "2026-10-22T08:00:00Z",
-      "is_sample": true
+      "id": "sample-cs-4",
+      "type": "info", "dept": "컴퓨터공학과", "category": "clubs",
+      "title": "알고리즘 스터디에서 문제 풀이를 같이 해요",
+      "body": "",
+      "fields": { "name": "알고리즘 스터디", "kind": "학회·스터디", "activity": "매주 문제를 정해 풀고 풀이를 서로 설명해요. 코딩 테스트 준비에도 도움이 됐어요.", "join": "학기 초에 모집해요" },
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "relation": "major" },
+      "createdAt": "2026-10-18T12:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-p5",
-      "type": "info",
-      "title": "다전공 고민할 때 해 본 것들 정리",
-      "body": "1) 두 학과 1학년 과목을 나란히 놓고 비교해 봤어요.\n2) 선배 후기를 최대한 많이 읽었어요.\n3) 신청 조건과 일정은 반드시 학과나 학교 공지로 직접 확인했어요.\n정답은 없지만 이 순서로 하니 마음이 덜 흔들렸어요.",
-      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": "doing", "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
-      "createdAt": "2026-10-15T19:00:00Z",
-      "is_sample": true
+      "id": "sample-cs-5",
+      "type": "info", "dept": "컴퓨터공학과", "category": "career",
+      "title": "졸업하고 개발자, 연구원, 대학원으로 갔어요",
+      "body": "",
+      "fields": { "paths": "개발자, 연구원", "fields": ["대기업", "스타트업", "대학원"], "grad": "진학과 취업이 반반이에요" },
+      "badge": { "primary": "컴퓨터공학과", "grade": 4, "relation": "alumni" },
+      "createdAt": "2026-10-15T10:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-p6",
-      "type": "question",
-      "title": "부전공으로 수학을 하면 도움이 될까요?",
-      "body": "컴퓨터공학과 2학년인데 응용수학을 부전공으로 해 볼까 해요. 해 보신 분들은 어떠셨는지 궁금해요.",
-      "badge": { "primary": "컴퓨터공학과", "grade": 2, "stage": "thinking", "combo": { "mode": "minor", "second": "응용수학과", "secondName": "응용수학과" } },
-      "createdAt": "2026-10-21T20:15:00Z",
-      "is_sample": true
+      "id": "sample-cs-q1",
+      "type": "question", "dept": "컴퓨터공학과", "category": "curriculum",
+      "title": "코딩을 처음 해 보는데 1학년 수업을 따라갈 수 있을까요?",
+      "body": "전자공학과 1학년인데 컴퓨터공학과 수업이 궁금해요. 프로그래밍을 한 번도 안 해 봤어요.",
+      "fields": {},
+      "badge": { "primary": "전자공학과", "grade": 1, "relation": "curious" },
+      "createdAt": "2026-10-26T08:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-ai-1",
+      "type": "info", "dept": "인공지능학과", "category": "curriculum",
+      "title": "인공지능학과 1~2학년 수업 흐름",
+      "body": "",
+      "fields": { "courses": "인공지능개론, 인공지능프로그래밍, 딥러닝", "style": ["실습 중심", "팀 프로젝트"], "load": 3, "tip": "수학과 파이썬이 기본으로 깔려 있어서 방학에 미리 복습해 두면 좋아요." },
+      "badge": { "primary": "인공지능학과", "grade": 2, "relation": "major" },
+      "createdAt": "2026-10-24T11:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-ai-2",
+      "type": "info", "dept": "인공지능학과", "category": "multimajor",
+      "title": "컴퓨터공학과 학생이 인공지능학과를 다전공으로 해 봤어요",
+      "body": "",
+      "fields": { "partner": "컴퓨터공학과", "form": "다전공", "load": 3, "tip": "겹치는 기초 지식이 있어서 이해가 빨랐지만, 시간표가 빡빡해질 때가 많았어요." },
+      "badge": { "primary": "컴퓨터공학과", "grade": 3, "relation": "double" },
+      "createdAt": "2026-10-21T20:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-ai-q1",
+      "type": "question", "dept": "인공지능학과", "category": "curriculum",
+      "title": "수학을 얼마나 많이 하나요?",
+      "body": "수학을 잘하는 편은 아닌데 인공지능학과에 관심이 생겼어요. 입문 단계에서 수학이 얼마나 필요한지 궁금해요.",
+      "fields": {},
+      "badge": { "primary": "시각디자인학과", "grade": 1, "relation": "curious" },
+      "createdAt": "2026-10-23T21:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-vd-1",
+      "type": "info", "dept": "시각디자인학과", "category": "curriculum",
+      "title": "손으로 그리는 수업과 디지털 수업이 같이 있어요",
+      "body": "",
+      "fields": { "courses": "드로잉, 평면디자인, 디지털디자인", "style": ["실습 중심", "발표·토론"], "load": 3, "tip": "결과물을 발표하고 서로 피드백하는 시간이 많아서 작업 시간을 넉넉히 잡아야 해요." },
+      "badge": { "primary": "시각디자인학과", "grade": 2, "relation": "major" },
+      "createdAt": "2026-10-23T15:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-vd-2",
+      "type": "info", "dept": "시각디자인학과", "category": "culture",
+      "title": "자유롭고 활발한 분위기예요",
+      "body": "",
+      "fields": { "vibe": ["자유로운", "활발한"], "events": "학기말 전시", "people": "각자 작업에 대해 이야기하는 걸 좋아하는 사람이 많아요." },
+      "badge": { "primary": "시각디자인학과", "grade": 3, "relation": "major" },
+      "createdAt": "2026-10-19T13:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-pe-1",
+      "type": "info", "dept": "체육학과", "category": "curriculum",
+      "title": "이론 수업과 실기 수업이 섞여 있어요",
+      "body": "",
+      "fields": { "courses": "스포츠심리학, 해부생리학, 체육교수방법론", "style": ["강의 중심", "실습 중심"], "load": 2, "tip": "이론 과목은 암기할 내용이 많지만 실기가 있어서 몸을 쓰는 시간도 많아요." },
+      "badge": { "primary": "체육학과", "grade": 1, "relation": "major" },
+      "createdAt": "2026-10-24T09:30:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-pe-2",
+      "type": "info", "dept": "체육학과", "category": "career",
+      "title": "교사, 지도자, 스포츠 행정으로 많이 가요",
+      "body": "",
+      "fields": { "paths": "교사, 지도자, 스포츠 행정", "fields": ["교직", "공기업·공무원"], "grad": "대부분 취업해요" },
+      "badge": { "primary": "체육학과", "grade": 4, "relation": "alumni" },
+      "createdAt": "2026-10-17T16:00:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-math-1",
+      "type": "info", "dept": "응용수학과", "category": "curriculum",
+      "title": "수학 과목은 시험과 과제 비중이 커요",
+      "body": "",
+      "fields": { "courses": "미분적분학, 선형대수, 미분방정식, 해석학1", "style": ["시험 중심", "과제가 많음"], "load": 4, "tip": "증명 과제는 스터디로 같이 풀면 훨씬 이해가 잘 돼요." },
+      "badge": { "primary": "응용수학과", "grade": 3, "relation": "major" },
+      "createdAt": "2026-10-22T10:30:00Z", "is_sample": true
+    },
+    {
+      "id": "sample-en-1",
+      "type": "info", "dept": "영미어문전공", "category": "culture",
+      "title": "조용하고 협력적인 분위기예요",
+      "body": "",
+      "fields": { "vibe": ["조용한", "협력적"], "events": "영어 스터디, 독서 토론", "people": "발표와 토론 수업이 많아서 친해지기 쉬웠어요." },
+      "badge": { "primary": "영미어문전공", "grade": 2, "relation": "major" },
+      "createdAt": "2026-10-16T18:00:00Z", "is_sample": true
     }
   ],
   "comments": [
     {
-      "id": "sample-c1",
-      "postId": "sample-p4",
-      "body": "저는 한 학기 들어 보고 결정했어요. 맛보기로 과목 하나 들어 보는 걸 추천해요.",
-      "badge": { "primary": "컴퓨터공학과", "grade": 3, "stage": null, "combo": { "mode": "double", "second": "인공지능학과", "secondName": "인공지능학과" } },
-      "createdAt": "2026-10-22T10:00:00Z",
-      "is_sample": true
+      "id": "sample-c1", "postId": "sample-cs-q1",
+      "body": "저도 프로그래밍을 처음 해 보고 들어왔어요. 처음엔 어렵지만 기초부터 차근차근 알려 줘서 따라갈 수 있었어요.",
+      "badge": { "primary": "컴퓨터공학과", "grade": 2 },
+      "createdAt": "2026-10-26T10:00:00Z", "is_sample": true
     },
     {
-      "id": "sample-c2",
-      "postId": "sample-p4",
-      "body": "시간 여유가 얼마나 되는지부터 따져 보면 좋아요. 부전공으로 시작해 보고 더 하고 싶으면 늘리는 사람도 있어요.",
-      "badge": { "primary": "응용수학과", "grade": 4, "stage": null, "combo": null },
-      "createdAt": "2026-10-22T12:40:00Z",
-      "is_sample": true
+      "id": "sample-c2", "postId": "sample-cs-q1",
+      "body": "방학에 파이썬 기초를 미리 해 보면 개강 후 부담이 많이 줄어요.",
+      "badge": { "primary": "소프트웨어융합학과", "grade": 3 },
+      "createdAt": "2026-10-26T12:30:00Z", "is_sample": true
     },
     {
-      "id": "sample-c3",
-      "postId": "sample-p6",
-      "body": "알고리즘이나 AI 쪽에 관심 있으면 도움이 된다고 느꼈어요.",
-      "badge": { "primary": "응용수학과", "grade": 4, "stage": null, "combo": { "mode": "double", "second": "컴퓨터공학과", "secondName": "컴퓨터공학과" } },
-      "createdAt": "2026-10-21T22:00:00Z",
-      "is_sample": true
+      "id": "sample-c3", "postId": "sample-ai-q1",
+      "body": "선형대수와 확률이 자주 나와요. 그래도 코드로 직접 해 보면서 배우니까 입문은 할 만했어요.",
+      "badge": { "primary": "인공지능학과", "grade": 2 },
+      "createdAt": "2026-10-24T08:00:00Z", "is_sample": true
     }
   ]
 }

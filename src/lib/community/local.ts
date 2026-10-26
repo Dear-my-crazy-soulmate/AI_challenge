@@ -2,10 +2,11 @@
 // data/seed/community_sample.json are merged in on read and are never written to storage.
 // When Supabase is connected, this file is the one to swap (screens use useCommunity only).
 import { GRADES } from "../auth/types";
-import { POST_TYPES } from "./types";
+import { CATEGORY_IDS, POST_TYPES } from "./types";
 import type { Comment, Post } from "./types";
 
-export const COMMUNITY_KEY = "community.v1";
+// v2: posts are now about a department (v1 posts were multi-major reviews and are simply ignored)
+export const COMMUNITY_KEY = "community.v2";
 const CHANGE_EVENT = "communitychange"; // 'storage' does not fire in the tab that wrote
 
 export interface Stored {
@@ -24,11 +25,15 @@ export const isPost = (p: unknown): p is Post => {
     !!x &&
     typeof x.id === "string" &&
     POST_TYPES.includes(x.type as never) &&
+    typeof x.dept === "string" &&
+    (x.category === null || CATEGORY_IDS.includes(x.category as never)) &&
     typeof x.title === "string" &&
     typeof x.body === "string" &&
     typeof x.createdAt === "string" &&
+    !!x.fields &&
+    typeof x.fields === "object" &&
     isBadge(x.badge) &&
-    (x.type !== "review" || (!!x.review && typeof x.review.pros === "string" && typeof x.review.load === "number"))
+    (x.type !== "info" || x.category !== null)
   );
 };
 

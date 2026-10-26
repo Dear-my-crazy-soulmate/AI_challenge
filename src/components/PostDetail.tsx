@@ -5,15 +5,24 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
-import { fmtDate } from "@/components/CommunityHome";
 import { Area, ErrorNote, primaryButton, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useCommunity } from "@/components/useCommunity";
-import { useGoal } from "@/components/useGoal";
 import { useAuth } from "@/lib/auth";
 import { buildComment } from "@/lib/community/compose";
+import { fmtDate } from "@/lib/community/format";
 import { newId, update, withComment, withoutComment, withoutPost } from "@/lib/community/local";
-import { LIMITS, LOAD_LABEL, TYPE_LABEL } from "@/lib/community/types";
+import { CATEGORIES, LOAD_LABEL } from "@/lib/community/schema";
+import type { FieldDef } from "@/lib/community/schema";
+import { LIMITS, TYPE_LABEL } from "@/lib/community/types";
+import type { FieldValue } from "@/lib/community/types";
+
+/** a stored field value as the text a reader sees */
+function show(def: FieldDef, v: FieldValue | undefined): string {
+  if (v === undefined) return "";
+  if (def.kind === "scale" && typeof v === "number") return `${LOAD_LABEL[v - 1]} (${v}/4)`;
+  return Array.isArray(v) ? v.join(" · ") : String(v);
+}
 
 const Row = ({ k, children }: { k: string; children: string }) => (
   <div className="flex flex-col gap-1 border-t border-line-2 py-3 first:border-t-0 first:pt-0 last:pb-0">
@@ -26,7 +35,6 @@ export default function PostDetail({ id }: { id: string | null }) {
   const router = useRouter();
   const { posts, comments } = useCommunity();
   const { profile } = useAuth();
-  const goal = useGoal();
   const [text, setText] = useState("");
   const [error, setError] = useState("");
 
@@ -38,21 +46,20 @@ export default function PostDetail({ id }: { id: string | null }) {
         <h2 className="text-xl font-bold">글을 찾을 수 없어요</h2>
         <p className="text-sm text-mute">삭제되었거나 이 기기에 없는 글이에요.</p>
         <Link href="/community" className={secondaryButton}>
-          목록으로
+          커뮤니티로
         </Link>
       </main>
     );
   }
 
   const list = comments.filter((c) => c.postId === post.id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  const r = post.review;
-  const combo = post.badge.combo;
-  const calcHref = combo ? `/onboarding?${new URLSearchParams({ primary: post.badge.primary, mode: combo.mode, second: combo.second })}` : null;
+  const def = post.category ? CATEGORIES[post.category] : null;
+  const rows = post.type === "info" && def ? def.fields.flatMap((f) => (post.fields[f.key] === undefined ? [] : [{ f, text: show(f, post.fields[f.key]) }])) : [];
+  const deptHref = `/community/dept?name=${encodeURIComponent(post.dept)}`;
 
   function send() {
     if (!profile || !post) return;
-    const mine = goal ? { mode: goal.mode, second: goal.second, secondName: goal.secondName } : null;
-    const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, mine, newId("c"), new Date());
+    const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, newId("c"), new Date());
     if (!c.ok) return setError(c.message);
     if (!update((s) => withComment(s, c.value))) return setError("이 브라우저에서는 저장할 수 없어요.");
     setText("");
@@ -61,11 +68,17 @@ export default function PostDetail({ id }: { id: string | null }) {
 
   return (
     <main className="flex flex-col gap-4 px-[22px] pb-10 pt-[max(6px,env(safe-area-inset-top))]">
-      <ScreenHeader title="커뮤니티" backHref="/community" />
+      <ScreenHeader title="커뮤니티" backHref={deptHref} />
 
       <article className="flex flex-col gap-3">
-        <span className="flex items-center gap-1.5">
-          <span className="rounded-md bg-sand px-1.5 py-px text-[11px] font-bold text-ink-2">{TYPE_LABEL[post.type]}</span>
+        <span className="flex flex-wrap items-center gap-1.5">
+          <Link href={deptHref} className="rounded-md bg-ink px-1.5 py-px text-[11px] font-bold text-paper">
+            {post.dept}
+          </Link>
+          <span className={`rounded-md px-1.5 py-px text-[11px] font-bold ${post.type === "question" ? "bg-sand text-ink-2" : "bg-accent-soft text-accent-deep"}`}>
+            {post.type === "question" ? TYPE_LABEL.question : def?.label}
+          </span>
+          {post.type === "question" && def && <span className="rounded-md bg-sand px-1.5 py-px text-[11px] font-semibold text-ink-2">{def.label}</span>}
           {post.is_sample && <SampleTag />}
         </span>
         <h2 className="text-pretty text-[22px] font-bold leading-[1.35] tracking-[-0.5px]">{post.title}</h2>
@@ -74,28 +87,26 @@ export default function PostDetail({ id }: { id: string | null }) {
           <span className="text-xs text-mute">{fmtDate(post.createdAt)}</span>
         </div>
 
-        {r && (
-          <section aria-label="후기 정보" className="flex flex-col gap-3 rounded-[20px] border border-edge bg-card p-[18px]">
-            <Row k="시작 시기">{`${r.startedGrade}학년 ${r.startedTerm}학기`}</Row>
-            <Row k="학업 부담">{`${LOAD_LABEL[r.load]} (${r.load}/4)`}</Row>
-            <Row k="장점">{r.pros}</Row>
-            <Row k="단점">{r.cons}</Row>
-            {r.forWhom && <Row k="이런 사람에게 추천">{r.forWhom}</Row>}
+        {rows.length > 0 && (
+          <section aria-label="학과 정보" className="flex flex-col gap-3 rounded-[20px] border border-edge bg-card p-[18px]">
+            {rows.map((r) => (
+              <Row key={r.f.key} k={r.f.label}>
+                {r.text}
+              </Row>
+            ))}
           </section>
         )}
         {post.body && <p className="text-pretty whitespace-pre-wrap text-[15px] leading-[1.7]">{post.body}</p>}
 
-        {calcHref && (
-          <Link href={calcHref} className={secondaryButton}>
-            이 조합 학점 계산해 보기
-          </Link>
-        )}
+        <Link href={deptHref} className={secondaryButton}>
+          {post.dept}의 다른 이야기 보기
+        </Link>
         {post.mine && (
           <button
             type="button"
             onClick={() => {
               update((s) => withoutPost(s, post.id));
-              router.push("/community");
+              router.push(deptHref);
             }}
             className="h-11 text-sm font-semibold text-accent-deep"
           >
@@ -109,7 +120,7 @@ export default function PostDetail({ id }: { id: string | null }) {
         {list.map((c) => (
           <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl border border-edge bg-card px-4 py-3.5">
             <div className="flex items-start justify-between gap-2">
-              <CommunityBadge badge={c.badge} />
+              <CommunityBadge badge={c.badge} dept={post.dept} />
               {c.is_sample && <SampleTag />}
             </div>
             <p className="text-pretty whitespace-pre-wrap text-sm leading-[1.6]">{c.body}</p>
@@ -123,7 +134,7 @@ export default function PostDetail({ id }: { id: string | null }) {
             </div>
           </div>
         ))}
-        {list.length === 0 && <p className="text-sm text-mute">아직 댓글이 없어요. 첫 댓글을 남겨 보세요.</p>}
+        {list.length === 0 && <p className="text-sm text-mute">아직 댓글이 없어요. {post.type === "question" ? "아는 만큼 답해 주세요." : "첫 댓글을 남겨 보세요."}</p>}
 
         {profile ? (
           <div className="flex flex-col gap-2">
