@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import sample from "../data/seed/quiz_sample.json";
 import { feedbackFor, isCorrect, isShowable, reportTitle, scoreOf, showableMajors } from "../src/lib/quiz";
 import type { QuizQuestion, QuizSet } from "../src/lib/quiz";
+import { parseBest, reaction, recordBest } from "../src/lib/quizProgress";
 
 const set = sample as unknown as QuizSet;
 const q = (over: Partial<QuizQuestion> = {}): QuizQuestion => ({
@@ -89,5 +90,26 @@ describe("reportTitle / feedbackFor", () => {
     expect(text).toContain("철학사");
     expect(text).not.toContain("논증 문제처럼");
     expect(text).not.toMatch(/적합|추천/);
+  });
+});
+
+describe("quiz progress (stars and 쿠옹이's reactions)", () => {
+  it("keeps the best score per major, and an equal score keeps the old record", () => {
+    let b = recordBest({}, "철학과", 1, 3);
+    b = recordBest(b, "철학과", 3, 3);
+    expect(b["철학과"]).toEqual({ score: 3, n: 3 });
+    expect(recordBest(b, "철학과", 2, 3)).toBe(b);
+  });
+  it("reads saved records and drops broken ones", () => {
+    expect(parseBest(JSON.stringify({ a: { score: 2, n: 3 }, b: { score: 5, n: 3 }, c: 1 }))).toEqual({ a: { score: 2, n: 3 } });
+    expect(parseBest("not json")).toEqual({});
+    expect(parseBest(null)).toEqual({});
+    expect(parseBest("[1]")).toEqual({});
+  });
+  it("cheers on a streak and comforts on a miss", () => {
+    expect(reaction(true, 1)).toBe("정답! 잘했어요");
+    expect(reaction(true, 2)).toContain("2연속");
+    expect(reaction(true, 3)).toContain("3연속");
+    expect(reaction(false, 0)).toContain("괜찮아요");
   });
 });

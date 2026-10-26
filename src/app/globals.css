@@ -48,3 +48,30 @@ input::placeholder {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* 체험 탭 animations: 쿠옹이 hops when right, tilts when wrong; cards and results pop in; confetti falls on a perfect score. */
+@keyframes quiz-hop {
+  0%, 100% { transform: translateY(0) }
+  35% { transform: translateY(-14px) rotate(-4deg) }
+  65% { transform: translateY(0) rotate(3deg) }
+}
+@keyframes quiz-tilt {
+  0%, 100% { transform: rotate(0) }
+  30% { transform: rotate(-7deg) }
+  65% { transform: rotate(5deg) }
+}
+@keyframes quiz-pop {
+  from { opacity: 0; transform: scale(.92) translateY(6px) }
+  to { opacity: 1; transform: none }
+}
+@keyframes quiz-fall {
+  from { transform: translateY(-12px) rotate(0); opacity: 1 }
+  to { transform: translateY(190px) rotate(300deg); opacity: 0 }
+}
+.quiz-hop { animation: quiz-hop .7s ease-out }
+.quiz-tilt { animation: quiz-tilt .6s ease-in-out }
+.quiz-pop { animation: quiz-pop .35s ease-out both }
+.quiz-fall { animation: quiz-fall 2s ease-in both }
+@media (prefers-reduced-motion: reduce) {
+  .quiz-hop, .quiz-tilt, .quiz-pop, .quiz-fall { animation: none }
+}
