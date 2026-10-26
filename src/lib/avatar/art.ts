@@ -181,18 +181,58 @@ export const FRONT = {
     <path d="M-20 30 L-34 74 L-10 62 Z M20 30 L34 74 L10 62 Z" fill="#e03131" ${o(6)}/>`,
 };
 
-/** open book with a speech bubble: one drawing for every language department */
-export const langFront = (greeting: string, color: string) => {
-  const size = greeting.length > 5 ? 26 : greeting.length > 3 ? 32 : 40;
-  return `<path d="M-6 -4 Q-60 -22 -112 -10 V62 Q-60 50 -6 70 Z" fill="#fff" ${o(8)}/><path d="M6 -4 Q60 -22 112 -10 V62 Q60 50 6 70 Z" fill="#fff" ${o(8)}/><path d="M-6 -4 V70 M6 -4 V70" stroke="${K}" stroke-width="6"/>
-    <path d="M-92 12 H-26 M-92 32 H-32 M26 12 H92 M26 32 H84" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
-    <path d="M-78 -78 H78 Q98 -78 98 -58 V-26 Q98 -6 78 -6 H24 L8 16 L0 -6 H-78 Q-98 -6 -98 -26 V-58 Q-98 -78 -78 -78 Z" fill="${color}" ${o(8)}/>
-    ${T(greeting, 0, -30 + size * 0.16, size, "#fff")}`;
+/** one banner with a big greeting plus the country's own landmark: used by every language department */
+export const langFront = (text: string, size: number, color: string, art: string) => {
+  const banner = `<rect x="-130" y="-46" width="260" height="92" rx="24" fill="${color}" ${o(9)}/>${T(text, 0, size * 0.34, size, "#fff")}`;
+  const scene = `<g transform="translate(0 -34)">${art}</g>`;
+  return {
+    front: banner, // held in front of the belly: just the big greeting
+    extra: scene, // floats beside the character when this is the main major
+    float: `<g transform="translate(0 -52) scale(.7)">${banner}</g><g transform="translate(0 44) scale(.8)">${scene}</g>`, // the whole thing, small, when it is the second major
+  };
+};
+
+const fanWedges = Array.from({ length: 7 }, (_, i) => {
+  const R = 66, cy = 78, a0 = ((196 + i * 21) * Math.PI) / 180, a1 = ((217 + i * 21) * Math.PI) / 180;
+  const p = (a: number) => `${(R * Math.cos(a)).toFixed(1)} ${(cy + R * Math.sin(a)).toFixed(1)}`;
+  return `<path d="M0 ${cy} L${p(a0)} A${R} ${R} 0 0 1 ${p(a1)} Z" fill="${i % 2 ? "#ffd43b" : "#e03131"}" ${o(5)}/>`;
+}).join("");
+const dome = (x: number, base: number, h: number, c1: string, c2: string) =>
+  `<g ${o(6)}><rect x="${x - 15}" y="${base - 22}" width="30" height="22" fill="#f1f3f5"/><path d="M${x - 20} ${base - 22} Q${x - 30} ${base - 22 - h * 0.55} ${x} ${base - 22 - h} Q${x + 30} ${base - 22 - h * 0.55} ${x + 20} ${base - 22} Z" fill="${c1}"/></g>
+  <path d="M${x - 10} ${base - 28} Q${x} ${base - 22 - h * 0.9} ${x + 10} ${base - 28}" fill="none" stroke="${c2}" stroke-width="6"/><path d="M${x} ${base - 22 - h} V${base - 30 - h}" stroke="${K}" stroke-width="5"/>`;
+const lantern = (x: number, s: number) =>
+  `<g transform="translate(${x} 28) scale(${s})"><path d="M0 -50 V-34" stroke="${K}" stroke-width="5"/><rect x="-14" y="-36" width="28" height="9" rx="3" fill="#ffd43b" ${o(5)}/><ellipse cx="0" cy="0" rx="32" ry="28" fill="#e03131" ${o(7)}/><path d="M-12 -26 Q-22 0 -12 26 M12 -26 Q22 0 12 26" fill="none" stroke="#a61e1e" stroke-width="4"/>${T("福", 0, 12, 30, "#ffd43b")}<rect x="-14" y="26" width="28" height="9" rx="3" fill="#ffd43b" ${o(5)}/><path d="M-8 35 V54 M0 35 V58 M8 35 V54" stroke="#ffd43b" stroke-width="4" stroke-linecap="round"/></g>`;
+const petals = (r: number, rx: number, ry: number, fill: string) =>
+  [0, 72, 144, 216, 288].map((a) => {
+    const x = (r * Math.cos(((a - 90) * Math.PI) / 180)).toFixed(1), y = (r * Math.sin(((a - 90) * Math.PI) / 180)).toFixed(1);
+    return `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${fill}" transform="rotate(${a} ${x} ${y})"/>`;
+  }).join("");
+
+export const LANG_ART = {
+  french: `<path d="M0 -8 L-10 22 L-32 76 H-16 L-9 58 H9 L16 76 H32 L10 22 Z" fill="#495057" ${o(6)}/><path d="M-9 40 H9 M-6 26 H6" stroke="#fff" stroke-width="4"/>
+    <g transform="rotate(-24 66 52)"><rect x="22" y="40" width="92" height="24" rx="12" fill="#e8b36a" ${o(7)}/><path d="M44 42 l6 20 M64 42 l6 20 M84 42 l6 20" stroke="#b9822b" stroke-width="4" stroke-linecap="round"/></g>
+    <g ${o(5)}><rect x="-104" y="26" width="16" height="30" fill="#1c3f94"/><rect x="-88" y="26" width="16" height="30" fill="#fff"/><rect x="-72" y="26" width="16" height="30" fill="#e03131"/></g>`,
+  spanish: `${fanWedges}<circle cx="0" cy="78" r="9" fill="#212529"/><g transform="translate(88 38)"><g ${o(5)}>${petals(11, 9, 9, "#e03131")}<circle r="7" fill="#a61e1e"/></g></g>
+    <g transform="translate(-92 44)"><path d="M0 18 Q-14 -20 10 -26" fill="none" stroke="#2f9e44" stroke-width="7" stroke-linecap="round"/><circle cx="12" cy="-26" r="13" fill="#ffd43b" ${o(5)}/></g>`,
+  russian: `${dome(-62, 74, 40, "#e03131", "#fff")}${dome(0, 74, 58, "#1c7ed6", "#ffd43b")}${dome(62, 74, 40, "#2f9e44", "#fff")}<rect x="-90" y="68" width="180" height="10" rx="4" fill="#f1f3f5" ${o(6)}/>
+    <g fill="#fff" opacity=".9"><circle cx="-100" cy="0" r="4"/><circle cx="96" cy="-6" r="5"/><circle cx="-78" cy="30" r="3"/></g>`,
+  chinese: `${lantern(-50, 1)}${lantern(52, 0.82)}`,
+  japanese: `<path d="M24 76 L66 -4 L108 76 Z" fill="#74a0e0" ${o(6)}/><path d="M52 20 L66 -4 L80 20 L72 26 L66 20 L60 26 Z" fill="#fff" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>
+    <g ${o(7)}><rect x="-70" y="-2" width="12" height="78" fill="#e03131"/><rect x="-30" y="-2" width="12" height="78" fill="#e03131"/><path d="M-84 -6 Q-44 -22 -4 -6 L-4 8 H-84 Z" fill="#212529"/><rect x="-76" y="22" width="64" height="9" fill="#e03131"/></g>
+    <g fill="#ffb3c7" ${o(4)}><circle cx="-100" cy="36" r="7"/><circle cx="12" cy="10" r="7"/><circle cx="26" cy="54" r="6"/></g>`,
+  korean: `<g transform="translate(-62 32)"><circle r="34" fill="#fff" ${o(7)}/><path d="M-34 0 A34 34 0 0 1 34 0 A17 17 0 0 1 0 0 A17 17 0 0 0 -34 0 Z" fill="#e03131"/><path d="M34 0 A34 34 0 0 1 -34 0 A17 17 0 0 1 0 0 A17 17 0 0 0 34 0 Z" fill="#1c64d6"/></g>
+    <g ${o(6)}><rect x="0" y="6" width="36" height="36" rx="5" fill="#fff"/><rect x="40" y="6" width="36" height="36" rx="5" fill="#fff"/><rect x="80" y="6" width="36" height="36" rx="5" fill="#fff"/></g>${T("한", 18, 36, 28, "#212529")}${T("글", 58, 36, 28, "#212529")}${T("날", 98, 36, 28, "#212529")}`,
+  english: `<g ${o(7)}><rect x="-86" y="-4" width="34" height="80" fill="#c9a96e"/><path d="M-90 -4 L-69 -40 L-48 -4 Z" fill="#8a6d3b"/><circle cx="-69" cy="26" r="13" fill="#fff"/></g><path d="M-69 26 V18 M-69 26 H-62" stroke="${K}" stroke-width="4" stroke-linecap="round"/>
+    <g transform="rotate(32 40 30)"><path d="M10 74 Q-6 20 40 -26 Q80 6 56 56 Q40 70 10 74 Z" fill="#f8f9fa" ${o(7)}/><path d="M10 74 Q30 28 40 -26" fill="none" stroke="${K}" stroke-width="5"/></g>
+    <path d="M-2 76 L16 56" stroke="${K}" stroke-width="9" stroke-linecap="round"/><rect x="62" y="48" width="34" height="28" rx="6" fill="#343a40" ${o(6)}/>`,
+  englishCulture: `<g ${o(7)}><path d="M-14 76 L-8 30 H8 L14 76 Z" fill="#74c0a0"/><rect x="-18" y="22" width="36" height="10" rx="4" fill="#2f9e44"/><path d="M-10 22 Q-30 -4 0 -14 Q30 -4 10 22 Z" fill="#ffd43b"/></g><path d="M0 -4 Q-8 6 0 14 Q8 6 0 -4 Z" fill="#fa5252"/>
+    ${[[-86, 20], [-62, 52], [62, 52], [86, 20], [-100, 62], [100, 62]].map(([x, y]) => `<path transform="translate(${x} ${y}) scale(.7)" d="M0 -26 L7 -8 L26 -7 L11 5 L16 24 L0 13 L-16 24 L-11 5 L-26 -7 L-7 -8 Z" fill="${Math.abs(x) > 90 ? "#e03131" : "#fff"}" ${o(6)}/>`).join("")}`,
 };
 
 // ============ GROUND: scenery next to the left foot ============
 export const GROUND = {
-  ball: `<circle cx="116" cy="902" r="52" fill="#fff" ${o(11)}/><path d="M116 874 L142 892 L132 922 L100 922 L90 892 Z" fill="#111" stroke="#111" stroke-width="5" stroke-linejoin="round"/><path d="M116 874 V850 M142 892 L166 884 M132 922 L148 946 M100 922 L84 946 M90 892 L66 884" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>`,
+  gym: `<g transform="translate(76 934)"><rect x="-8" y="-6" width="76" height="12" rx="5" fill="#adb5bd" ${o(7)}/><rect x="-24" y="-24" width="18" height="48" rx="6" fill="#495057" ${o(7)}/><rect x="68" y="-24" width="18" height="48" rx="6" fill="#495057" ${o(7)}/><rect x="-40" y="-16" width="14" height="32" rx="5" fill="#868e96" ${o(7)}/><rect x="84" y="-16" width="14" height="32" rx="5" fill="#868e96" ${o(7)}/></g>
+    <circle cx="150" cy="898" r="44" fill="#f08c00" ${o(10)}/><path d="M150 854 V942 M106 898 H194" stroke="#111" stroke-width="6"/><path d="M118 868 Q150 898 118 928 M182 868 Q150 898 182 928" fill="none" stroke="#111" stroke-width="6"/>`,
   robot: `<g transform="translate(112 884)"><path d="M0 -62 V-42" stroke="#111" stroke-width="8" stroke-linecap="round"/><circle cx="0" cy="-68" r="9" fill="#22d3ee" ${o(6)}/>
     <rect x="-44" y="-42" width="88" height="62" rx="16" fill="#dbe4ff" ${o(9)}/><circle cx="-16" cy="-14" r="9" fill="#22d3ee" ${o(5)}/><circle cx="16" cy="-14" r="9" fill="#22d3ee" ${o(5)}/>
     <path d="M-12 6 H12" stroke="#111" stroke-width="6" stroke-linecap="round"/><rect x="-32" y="22" width="64" height="40" rx="12" fill="#b2bef5" ${o(9)}/><circle cx="0" cy="42" r="8" fill="#22d3ee" ${o(5)}/></g>`,
@@ -235,6 +275,10 @@ export const HEAD = {
   visor: `<path d="M140 250 Q371 166 602 250" fill="none" ${o(46)}/><path d="M140 250 Q371 166 602 250" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round"/><path d="M200 214 Q371 160 540 214 Q640 238 700 290 Q560 250 371 256 Q220 254 200 214 Z" fill="#fa5252" ${o(10)}/>`,
   bandana: (c = "#e03131") => `<path d="M170 210 Q371 130 572 210 L540 260 Q371 200 202 260 Z" fill="${c}" ${o(11)}/><path d="M560 230 L640 200 L620 262 Z" fill="${c}" ${o(9)}/><g fill="#fff"><circle cx="300" cy="206" r="6"/><circle cx="371" cy="190" r="6"/><circle cx="442" cy="206" r="6"/></g>`,
   blackBeret: `<ellipse cx="371" cy="30" rx="170" ry="60" fill="#212529" ${o(12)}/><circle cx="371" cy="-26" r="12" fill="#212529" ${o(8)}/>`,
+  bowler: `<ellipse cx="371" cy="100" rx="230" ry="36" fill="#212529" ${o(11)}/><path d="M262 96 Q262 -34 371 -34 Q480 -34 480 96 Z" fill="#343a40" ${o(11)}/><path d="M262 74 H480" stroke="#c92a2a" stroke-width="14"/>`,
+  skullcap: `<path d="M244 134 Q244 6 371 2 Q498 6 498 134 Z" fill="#212529" ${o(12)}/><path d="M244 112 H498" stroke="#ffd43b" stroke-width="12"/><circle cx="371" cy="-8" r="15" fill="#e03131" ${o(8)}/>`,
+  hachimaki: `<path d="M138 262 Q371 178 604 262" fill="none" ${o(52)}/><path d="M138 262 Q371 178 604 262" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round"/><circle cx="371" cy="221" r="20" fill="#e03131"/>`,
+  rose: `<g transform="translate(262 30)"><path d="M-6 20 Q-40 24 -46 -8 Q-8 -12 -6 20 Z" fill="#2f9e44" ${o(7)}/><path d="M6 20 Q36 30 50 0 Q10 -8 6 20 Z" fill="#37b24d" ${o(7)}/><circle r="30" fill="#e03131" ${o(9)}/><path d="M-14 -4 Q0 -22 16 -6 Q4 12 -10 6" fill="none" stroke="#a61e1e" stroke-width="6" stroke-linecap="round"/></g>`,
   halo: (c = "#ffd43b") => `<ellipse cx="371" cy="-44" rx="150" ry="34" fill="none" stroke="${c}" stroke-width="16"/><ellipse cx="371" cy="-44" rx="150" ry="34" fill="none" stroke="${K}" stroke-width="4"/>${star(240, -88, 0.5, c)}${star(510, -92, 0.5, c)}`,
 };
 
@@ -283,5 +327,11 @@ export const MARK = {
   tooth: `<path d="M-22 -20 Q0 -30 22 -20 Q26 6 14 28 Q6 28 0 6 Q-6 28 -14 28 Q-26 6 -22 -20 Z" fill="currentColor"/>`,
   spark: `<path d="M0 -28 L6 -6 L28 0 L6 6 L0 28 L-6 6 L-28 0 L-6 -6 Z" fill="currentColor"/>`,
   flower: `<g fill="currentColor">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(16 * Math.cos((a * Math.PI) / 180)).toFixed(1)}" cy="${(16 * Math.sin((a * Math.PI) / 180)).toFixed(1)}" r="10"/>`).join("")}</g><circle r="7" fill="#a30f14"/>`,
+  eiffel: `<path d="M0 -28 L-8 -2 L-24 28 H-12 L-6 14 H6 L12 28 H24 L8 -2 Z" fill="currentColor"/>`,
+  dome: `<path d="M-14 24 Q-24 4 0 -28 Q24 4 14 24 Z" fill="currentColor"/><rect x="-12" y="22" width="24" height="8" fill="currentColor"/>`,
+  lantern: `<ellipse rx="22" ry="20" fill="currentColor"/><rect x="-10" y="-28" width="20" height="8" fill="currentColor"/><rect x="-10" y="20" width="20" height="8" fill="currentColor"/>`,
+  sakura: `<g fill="currentColor">${petals(14, 9, 12, "currentColor")}</g><circle r="5" fill="#a30f14"/>`,
+  taegeuk: `<g><circle r="24" fill="none" stroke="currentColor" stroke-width="6"/><path d="M-24 0 A24 24 0 0 1 24 0 A12 12 0 0 1 0 0 A12 12 0 0 0 -24 0 Z" fill="currentColor"/></g>`,
+  abc: `${T("Aa", 0, 14, 44, "currentColor")}`,
   bars: `<g fill="currentColor"><rect x="-26" y="2" width="14" height="24"/><rect x="-6" y="-14" width="14" height="40"/><rect x="14" y="-26" width="14" height="52"/></g>`,
 };

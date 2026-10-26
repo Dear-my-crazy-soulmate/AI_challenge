@@ -1,7 +1,7 @@
 // A "look" is one department's whole costume: clothes + work in hand + hat + glasses + mane symbol.
 // departments.ts says which look each department wears; fusion looks (융합전공) also carry a cape or pack.
 import { K } from "./base";
-import { FACE, FRONT, GROUND, HEAD, MARK, langFront } from "./art";
+import { FACE, FRONT, GROUND, HEAD, LANG_ART, MARK, langFront } from "./art";
 import * as O from "./outfits";
 import type { Outfit } from "./outfits";
 
@@ -13,6 +13,8 @@ export interface Look {
   face?: string;
   ground?: string;
   back?: string; // fusion looks: a cape or jetpack behind the body
+  extra?: string; // a larger scene floating beside the character (language departments)
+  float?: string; // what to float when this is the SECOND major of a double or minor (defaults to front)
 }
 
 const o = (w = 10) => `stroke="${K}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
@@ -48,14 +50,16 @@ const fusion = (c1: string, c2: string, outfit: Outfit, front: string, mark: str
   back: capeOf(c1, c2), outfit, front, mark, head, face,
 });
 
-const lang = (greeting: string, color: string, outfit: Outfit, head?: string): Look => ({ outfit, front: langFront(greeting, color), mark: MARK.book, head });
+const lang = (text: string, size: number, color: string, outfit: Outfit, art: string, mark: string, head?: string): Look => ({
+  outfit, ...langFront(text, size, color, art), mark, head,
+});
 
 export const LOOKS: Record<string, Look> = {
   // ---- the eight from the approved sketch
   cs: { outfit: O.hoodie(), front: FRONT.laptopCode, mark: MARK.code, head: HEAD.headphones(), face: FACE.roundGlasses("#1e293b", "rgba(125,211,252,.28)") },
   ai: { outfit: O.techJacket(), front: FRONT.neuralNet, mark: MARK.nodes, head: HEAD.antenna(), face: FACE.visor, ground: GROUND.robot },
   visualDesign: { outfit: O.apron(), front: FRONT.designCanvas, mark: MARK.splat, head: HEAD.beret(), face: FACE.paintDots },
-  sports: { outfit: O.jersey(), front: FRONT.stopwatch, mark: MARK.stopwatch, head: HEAD.headband, face: FACE.bandage, ground: GROUND.ball },
+  sports: { outfit: O.jersey(), front: FRONT.stopwatch, mark: MARK.stopwatch, head: HEAD.headband, face: FACE.bandage, ground: GROUND.gym },
   math: { outfit: O.vest(), front: FRONT.equationBoard, mark: MARK.pi, head: HEAD.mortarboard, face: FACE.squareGlasses("#312e81", "rgba(199,210,254,.22)") },
   electronics: { outfit: O.coverall(), front: FRONT.circuitBoard, mark: MARK.bolt, head: HEAD.bolt, face: FACE.roundGlasses("#e8590c", "rgba(253,186,116,.45)", 52) },
   chemEng: { outfit: O.labCoat(), front: FRONT.reactionFlask, mark: MARK.hex, head: HEAD.benzene, face: FACE.goggles("#1971c2", "rgba(165,216,255,.4)") },
@@ -83,20 +87,20 @@ export const LOOKS: Record<string, Look> = {
   flower: { outfit: O.overalls("#c2255c", "#fff0f6"), front: FRONT.flowerPot, mark: MARK.flower, head: HEAD.strawHat("#f06595") },
   food: { outfit: O.apron("#fff", "#fff9db", false), front: FRONT.bakeFood, mark: MARK.drop, head: HEAD.chefHat },
   gene: { outfit: O.labCoat("#d0ebff", "#a5d8ff", "#1864ab"), front: FRONT.dnaHelix, mark: MARK.spark, face: FACE.goggles("#e03131", "rgba(255,201,201,.3)") },
-  hanbang: { outfit: O.robe("#2b8a3e"), front: FRONT.herbMortar, mark: MARK.leaf, head: HEAD.gat },
+  hanbang: { outfit: O.robe("#2b8a3e"), front: FRONT.herbMortar, mark: MARK.leaf, head: HEAD.leaves },
   bioMaterials: { outfit: O.labCoat("#e5dbff", "#d0bfff", "#5f3dc4"), front: FRONT.bioMaterial, mark: MARK.hex, face: FACE.goggles("#7048e8", "rgba(216,191,255,.35)") },
 
   // ---- 국제대학 · 외국어대학
   international: { outfit: O.blazer("#1e3a5f"), front: FRONT.passportGlobe, mark: MARK.globe },
   asia: { outfit: O.blazer("#c2255c", "#fff"), front: FRONT.asiaMap, mark: MARK.star },
-  french: lang("Bonjour", "#1c3f94", O.blazer("#1c3f94", "#fff", "#e03131"), HEAD.beret("#1c3f94", "#122b6b")),
-  spanish: lang("¡Hola!", "#c92a2a", O.blazer("#c92a2a", "#fff3bf", "#ffd43b")),
-  russian: lang("Привет", "#364fc7", O.blazer("#364fc7", "#fff", "#e03131"), HEAD.ushanka),
-  chinese: lang("你好", "#c92a2a", O.blazer("#c92a2a", "#fff3bf", "#ffd43b")),
-  japanese: lang("こんにちは", "#e03131", O.blazer("#f8f9fa", "#fff", "#e03131")),
-  korean: lang("안녕!", "#1971c2", O.blazer("#1971c2", "#fff", "#e03131")),
-  english: lang("Hello", "#c92a2a", O.blazer("#1e3a5f", "#fff", "#c92a2a")),
-  englishCulture: lang("Hi!", "#862e9c", O.blazer("#862e9c", "#fff", "#ffd43b")),
+  french: lang("Bonjour", 46, "#1c3f94", O.breton(), LANG_ART.french, MARK.eiffel, HEAD.beret("#1c3f94", "#122b6b")),
+  spanish: lang("¡Hola!", 60, "#c92a2a", O.vest("#c92a2a", "#212529", "#ffd43b"), LANG_ART.spanish, MARK.flower, HEAD.rose),
+  russian: lang("Привет", 48, "#364fc7", O.embroidered("#c92a2a"), LANG_ART.russian, MARK.dome, HEAD.ushanka),
+  chinese: lang("你好", 80, "#c92a2a", O.mandarin(), LANG_ART.chinese, MARK.lantern, HEAD.skullcap),
+  japanese: lang("こんにちは", 46, "#e03131", O.happi(), LANG_ART.japanese, MARK.sakura, HEAD.hachimaki),
+  korean: lang("안녕!", 70, "#1971c2", O.hanbok(), LANG_ART.korean, MARK.taegeuk, HEAD.gat),
+  english: lang("Hello", 62, "#c92a2a", O.blazer("#6f4e37", "#f8f9fa", "#1c3f94"), LANG_ART.english, MARK.abc, HEAD.bowler),
+  englishCulture: lang("Hi!", 84, "#862e9c", O.varsity(), LANG_ART.englishCulture, MARK.star, HEAD.cap("#1c3f94", "#e03131")),
 
   // ---- 예술·디자인대학 · 체육대학
   productDesign: { outfit: O.vest("#ff922b", "#f8f9fa", "#212529"), front: FRONT.productSketch, mark: MARK.cube, face: FACE.roundGlasses("#e8590c", "rgba(255,255,255,.2)", 50) },

@@ -128,6 +128,44 @@ export const robe = (c = "#6741d9"): Outfit => ({
   accent: `<path d="M276 700 L330 740 M466 700 L412 740" stroke="#ffd43b" stroke-width="8" stroke-linecap="round"/>`,
 });
 
+// ---- clothes of the language departments: each one reads as its own country at a glance
+export const breton = (): Outfit => ({
+  sleeve: "#fff",
+  khu: "#1c3f94",
+  garment: `${body("#fff")}${[664, 692, 720, 748, 776, 804, 832].map((y) => `<rect x="262" y="${y}" width="218" height="12" fill="#1c3f94"/>`).join("")}<rect x="256" y="640" width="230" height="200" rx="14" fill="none" ${ST}/>`,
+  accent: `<path d="M318 690 Q371 738 424 690 L404 748 L371 722 L338 748 Z" fill="#e03131" ${thin(7)}/>`,
+});
+export const embroidered = (c = "#c92a2a"): Outfit => ({
+  sleeve: c,
+  khu: "#fff",
+  garment: `${body(c)}<rect x="262" y="772" width="218" height="14" fill="#fff"/><rect x="262" y="812" width="218" height="14" fill="#fff"/>${[286, 330, 372, 414, 458].map((x) => `<path d="M${x} 790 l8 8 l-8 8 l-8 -8 Z" fill="#fff"/>`).join("")}`,
+  accent: `<path d="M296 690 Q371 740 446 690" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-dasharray="4 14"/>`,
+});
+export const mandarin = (c = "#c92a2a"): Outfit => ({
+  sleeve: c,
+  khu: "#ffd43b",
+  garment: `${body(c)}<path d="M371 684 V838" stroke="#a61e1e" stroke-width="6"/>${[716, 752, 788].map((y) => `<g ${thin(5)}><circle cx="386" cy="${y}" r="9" fill="#ffd43b"/><path d="M372 ${y} H386" stroke="#ffd43b"/></g>`).join("")}`,
+  accent: `<rect x="338" y="684" width="66" height="22" rx="8" fill="#a61e1e" ${thin(6)}/>`,
+});
+export const happi = (c = "#1c3f94"): Outfit => ({
+  sleeve: c,
+  khu: "#fff",
+  garment: `${body(c)}<rect x="256" y="790" width="230" height="22" fill="#fff"/><rect x="256" y="640" width="230" height="200" rx="14" fill="none" ${ST}/>`,
+  accent: `<path d="M326 688 L356 840 M416 688 L386 840" stroke="#fff" stroke-width="16" stroke-linecap="round"/><path d="M356 800 H386" stroke="#212529" stroke-width="8"/>`,
+});
+export const hanbok = (): Outfit => ({
+  sleeve: "#ffe066",
+  khu: "#1971c2",
+  garment: `${body("#fff3bf")}<rect x="256" y="772" width="230" height="66" rx="10" fill="#e03131" ${thin(8)}/>`,
+  accent: `<path d="M316 686 L371 756 L426 686" fill="none" stroke="#1971c2" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/><path d="M371 756 L346 812 M371 756 L400 810" stroke="#e03131" stroke-width="12" stroke-linecap="round"/><circle cx="371" cy="756" r="9" fill="#e03131" ${thin(5)}/>`,
+});
+export const varsity = (c = "#1c3f94"): Outfit => ({
+  sleeve: "#f8f9fa",
+  khu: "#fff",
+  garment: `${body(c)}<path d="M371 686 V838" stroke="#f8f9fa" stroke-width="6"/><path d="M402 760 l7 15 l16 2 l-12 11 l3 16 l-14 -8 l-14 8 l3 -16 l-12 -11 l16 -2 Z" fill="#ffd43b" ${thin(5)}/>`,
+  accent: `<rect x="262" y="816" width="218" height="20" fill="#e03131"/><rect x="262" y="690" width="218" height="0" fill="none"/><path d="M300 690 H342 M400 690 H442" stroke="#e03131" stroke-width="12" stroke-linecap="round"/>`,
+});
+
 // the eight from the sketch, by name
 export const OUTFITS = {
   후드티: hoodie(),

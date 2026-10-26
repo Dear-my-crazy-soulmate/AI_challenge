@@ -48,6 +48,7 @@ interface Layers {
   front?: string;
   marks: [string, [number, number]][];
   floats?: string;
+  extra?: string;
   ground?: string;
   medal?: string;
 }
@@ -62,21 +63,21 @@ function dress(l: Layers): string {
   const body = parts.body.replace(/<rect x="256"[^>]*\/>/, outfit.garment);
   return `${l.look.back ?? ""}${parts.tailLegs}${armsHold(outfit.sleeve)}${body}${l.accent ?? l.look.outfit.accent}${l.medal ?? ""}
     ${parts.mane}${marksOf(l.marks)}${parts.ears}${parts.face}${khuLogo(outfit.khu)}
-    ${l.face ?? ""}${l.head ?? ""}${at(l.front ?? l.look.front, 371, 830, 0.84)}${handsFront}${l.floats ?? ""}${l.ground ?? ""}`;
+    ${l.face ?? ""}${l.head ?? ""}${at(l.front ?? l.look.front, 371, 830, 0.84)}${handsFront}${l.floats ?? ""}${l.extra ? at(l.extra, 602, 612, 1.12) : ""}${l.ground ?? ""}`;
 }
 
 const lookOf = (dept: string): Look | undefined => LOOKS[DEPT_LOOK[dept]];
 export const isFusionDept = (dept: string) => FUSION_LOOKS.has(DEPT_LOOK[dept]);
 
 function single(look: Look, fusion = false): string {
-  return dress({ look, marks: markSet([look.mark]), head: look.head, face: look.face, ground: look.ground, medal: fusion ? MEDAL_STAR : undefined });
+  return dress({ look, marks: markSet([look.mark]), head: look.head, face: look.face, ground: look.ground, extra: look.extra, medal: fusion ? MEDAL_STAR : undefined });
 }
 
 function double(A: Look, B: Look): string {
   return dress({
     look: A, garment: B.outfit, accent: A.outfit.accent,
     marks: markSet([A.mark, B.mark]), head: A.head, face: B.face, front: A.front,
-    floats: at(B.front, FLOAT_R[0], FLOAT_R[1], 0.78), ground: A.ground ?? B.ground,
+    floats: at(B.float ?? B.front, FLOAT_R[0], FLOAT_R[1], 0.78), ground: A.ground ?? B.ground,
   });
 }
 
@@ -84,7 +85,7 @@ function minor(A: Look, B: Look): string {
   const marks = markSet([A.mark]).map((m, i): [string, [number, number]] => (i === 3 || i === 5 ? [B.mark, m[1]] : m));
   return dress({
     look: A, marks, head: A.head, face: A.face, ground: A.ground,
-    floats: at(B.front, FLOAT_R[0] + 4, FLOAT_R[1] + 4, 0.52),
+    floats: at(B.float ?? B.front, FLOAT_R[0] + 4, FLOAT_R[1] + 4, 0.52),
   });
 }
 

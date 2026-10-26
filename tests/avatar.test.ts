@@ -38,6 +38,24 @@ describe("department looks", () => {
   });
 });
 
+describe("how different the characters are", () => {
+  it("gives (almost) every department its own drawing; only the two 환경 and two 식물/스마트팜 pairs share one", () => {
+    const drawings = new Set(depts.map((d) => avatarSvg(d.dept)));
+    expect(drawings.size).toBe(depts.length - 2);
+  });
+  it("makes the eight language departments clearly different, each with its own greeting", () => {
+    const langs = ["프랑스어학과", "스페인어학과", "러시아어학과", "중국어학과", "일본어학과", "한국어학과", "영미어문전공", "영미문화전공"];
+    expect(new Set(langs.map((d) => avatarSvg(d))).size).toBe(8);
+    const greetings = ["Bonjour", "¡Hola!", "Привет", "你好", "こんにちは", "안녕!", "Hello", "Hi!"];
+    langs.forEach((d, i) => expect(avatarSvg(d)).toContain(`>${greetings[i]}</text>`));
+  });
+  it("keeps the 체육학과 about sports in general, not soccer", () => {
+    const pe = avatarSvg("체육학과");
+    expect(pe).toContain("#f08c00"); // basketball
+    expect(pe).not.toContain('d="M116 874 L142 892'); // the old soccer-ball pentagon
+  });
+});
+
 describe("avatarSvg", () => {
   it("draws every department alone as clean SVG, both crops", () => {
     for (const d of depts) {
