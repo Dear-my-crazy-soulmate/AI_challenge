@@ -105,11 +105,8 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
         <ul className="flex flex-col overflow-hidden rounded-[20px] border border-edge bg-card">
           {visible.map((d) => (
             <li key={d.dept} className="border-t border-line-2 first:border-t-0">
-              <Link href={deptHref(d.dept)} className="box-border flex min-h-14 items-center gap-3 px-4 py-3 active:bg-paper">
-                <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-                  <span className="text-pretty text-[15px] font-semibold">{d.dept}</span>
-                  <span className="text-xs text-mute">{d.college}</span>
-                </span>
+              <Link href={deptHref(d.dept)} title={d.college} className="box-border flex min-h-11 items-center justify-between gap-3 px-4 py-2 active:bg-paper">
+                <span className="min-w-0 text-pretty text-[15px] font-semibold leading-snug">{d.dept}</span>
                 <span className={`whitespace-nowrap text-xs font-semibold ${stats.has(d.dept) ? "text-accent-deep" : "text-faint"}`}>{countText(d.dept)}</span>
               </Link>
             </li>
