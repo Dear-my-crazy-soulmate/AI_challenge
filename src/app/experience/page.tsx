@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 
 import depts from "../../../data/curated/credits_global.json";
-import courses from "../../../data/curated/2026/courses.json";
-import microdegrees from "../../../data/curated/2026/microdegrees.json";
 import sample from "../../../data/seed/quiz_sample.json";
 import DeptMap from "@/components/DeptMap";
 import QuizApp from "@/components/QuizApp";
 import QuizFromUrl from "@/components/QuizFromUrl";
 import { buildEdges, layout, strongest } from "@/lib/deptMap";
+import { catalogs, mapAsOf, mapDepts, mapMicrodegrees } from "@/lib/deptMapData";
 import { showableMajors } from "@/lib/quiz";
 import type { QuizSet } from "@/lib/quiz";
 
@@ -16,17 +15,8 @@ const majors = showableMajors(sample as unknown as QuizSet);
 const deptNames = (depts as { dept: string }[]).map((d) => d.dept);
 
 // The 학과 지도 is worked out once, while the page is built: closeness from the 2026 curriculum book, then positions.
-const mapDepts = (depts as { dept: string; college: string }[]).map(({ dept, college }) => ({ dept, college }));
-const catalogs = Object.fromEntries(
-  Object.entries((courses as { depts: Record<string, { catalog: { name: string }[] }> }).depts).map(([d, v]) => [d, v.catalog.map((c) => c.name)]),
-);
-const mds = (microdegrees as { microdegrees: { name: string; dept: string; courses: { offered_by: string | null }[] }[] }).microdegrees.map((m) => ({
-  name: m.name,
-  host: m.dept,
-  from: m.courses.map((c) => c.offered_by).filter((x): x is string => !!x),
-}));
-const allEdges = buildEdges(mapDepts, catalogs, mds);
-const map = <DeptMap nodes={layout(mapDepts, allEdges)} edges={strongest(allEdges, 5)} asOf={(courses as { as_of: string }).as_of} />;
+const allEdges = buildEdges(mapDepts, catalogs, mapMicrodegrees);
+const map = <DeptMap nodes={layout(mapDepts, allEdges)} edges={strongest(allEdges, 5)} asOf={mapAsOf} />;
 
 export default function ExperiencePage() {
   // The page stays static; the ?major= query is read in the browser.

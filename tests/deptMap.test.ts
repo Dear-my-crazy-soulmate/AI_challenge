@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import credits from "../data/curated/credits_global.json";
-import courses from "../data/curated/2026/courses.json";
-import microdegrees from "../data/curated/2026/microdegrees.json";
 import { buildEdges, layout, neighborsOf, SIZE, strongest } from "../src/lib/deptMap";
 import type { MapDept, MapMicrodegree } from "../src/lib/deptMap";
+import { catalogs, mapDepts, mapMicrodegrees } from "../src/lib/deptMapData";
 
 const depts: MapDept[] = [
   { dept: "A", college: "공대" },
@@ -27,6 +25,11 @@ describe("buildEdges", () => {
     const same = Object.fromEntries(many.map((d) => [d.dept, ["미분 적분학"]]));
     expect(buildEdges(many, same, []).every((e) => e.shared === 0)).toBe(true);
     expect(buildEdges(depts, { A: ["미분 적분학"], B: ["미분적분학"] }, []).find((e) => e.a === "A" && e.b === "B")!.shared).toBe(1);
+  });
+  it("treats a course tagged with a department code as the same course", () => {
+    const e = buildEdges(depts, { A: ["딥러닝(CSE)"], B: ["딥러닝"] }, []).find((x) => x.a === "A" && x.b === "B")!;
+    expect(e.shared).toBe(1);
+    expect(buildEdges(depts, { A: ["졸업논문 (인공지능)"], B: ["졸업논문 (우주)"] }, []).find((x) => x.a === "A" && x.b === "B")!.shared).toBe(0); // only upper-case codes are stripped
   });
   it("links a micro-degree's host to the departments whose courses it uses, and skips unknown ones", () => {
     const mds: MapMicrodegree[] = [{ name: "MD1", host: "A", from: ["C", "없는학과", "A"] }];
@@ -56,16 +59,13 @@ describe("layout", () => {
 });
 
 describe("with the real 2026 data", () => {
-  const real = (credits as { dept: string; college: string }[]).map(({ dept, college }) => ({ dept, college }));
-  const byDept = Object.fromEntries(
-    Object.entries((courses as { depts: Record<string, { catalog: { name: string }[] }> }).depts).map(([k, v]) => [k, v.catalog.map((c) => c.name)]),
-  );
-  const mds = (microdegrees as { microdegrees: { name: string; dept: string; courses: { offered_by: string | null }[] }[] }).microdegrees.map((m) => ({
-    name: m.name,
-    host: m.dept,
-    from: m.courses.map((c) => c.offered_by).filter((x): x is string => !!x),
-  }));
-  const edges = buildEdges(real, byDept, mds);
+  const real = mapDepts;
+  const edges = buildEdges(real, catalogs, mapMicrodegrees);
+  it("puts 인공지능학과's neighbors by shared courses, including 인공지능반도체 and 우주인공지능", () => {
+    const ai = neighborsOf("인공지능학과", edges);
+    expect(ai.find((e) => e.a === "인공지능반도체" || e.b === "인공지능반도체")?.shared).toBeGreaterThan(0);
+    expect(ai.find((e) => e.a === "우주인공지능" || e.b === "우주인공지능")?.shared).toBeGreaterThan(0);
+  });
   it("links almost every department, and the layout has no broken numbers", () => {
     const lonely = real.filter((d) => neighborsOf(d.dept, edges).length === 0).map((d) => d.dept);
     expect(lonely).toEqual(["글로벌엔지니어링", "글로벌문화기술"]); // 융합전공 with no shared courses or micro-degrees stay alone rather than get a made-up link
