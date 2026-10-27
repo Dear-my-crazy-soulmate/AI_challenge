@@ -10213,6 +10213,596 @@
     }
    }
   },
+  "인공지능학과": {
+   "section": "인공지능학과",
+   "college": "소프트웨어융합대학",
+   "catalog_pages": [
+    436,
+    437
+   ],
+   "catalog": [
+    {
+     "code": "AI1003",
+     "name": "인공지능수학",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 436
+    },
+    {
+     "code": "AMTH1004",
+     "name": "선형대수",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 436
+    },
+    {
+     "code": "AMTH1009",
+     "name": "미분적분학",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 436
+    },
+    {
+     "code": "EE211",
+     "name": "확률및랜덤변수",
+     "credits": 3,
+     "category": "전공기초",
+     "page": 436
+    },
+    {
+     "code": "AI1001",
+     "name": "인공지능개론",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "AI1002",
+     "name": "인공지능프로그래밍",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "AI3001",
+     "name": "고급딥러닝",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "AI3002",
+     "name": "인공지능과윤리",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "AI4003",
+     "name": "졸업논문(인공지능)",
+     "credits": 0,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE103",
+     "name": "객체지향프로그래밍",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE204",
+     "name": "자료구조",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE301",
+     "name": "운영체제",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE304",
+     "name": "알고리즘",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE331",
+     "name": "딥러닝",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE340",
+     "name": "실전기계학습",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE405",
+     "name": "졸업프로젝트",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "CSE406",
+     "name": "캡스톤디자인",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "SWCON104",
+     "name": "웹/파이선프로그래밍",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "SWCON253",
+     "name": "기계학습",
+     "credits": 3,
+     "category": "전공필수",
+     "page": 436
+    },
+    {
+     "code": "AI3003",
+     "name": "자연언어학습",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "AI3004",
+     "name": "빅데이터마이닝",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "AI3005",
+     "name": "정보검색",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "AI3008",
+     "name": "설명및신뢰가능한AI",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "AI4006",
+     "name": "독립심화학습(인공지능)1",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "AI4007",
+     "name": "독립심화학습(인공지능)2",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE201",
+     "name": "이산구조",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE203",
+     "name": "컴퓨터구조",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE224",
+     "name": "UI/UX프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE305",
+     "name": "데이터베이스",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE322",
+     "name": "컴파일러",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE324",
+     "name": "메타버스시스템",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE327",
+     "name": "소프트웨어공학",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE330",
+     "name": "SW스타트업비즈니스",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE334",
+     "name": "SW스타트업프로젝트",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE426",
+     "name": "영상처리",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE428",
+     "name": "컴퓨터그래픽스",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 436
+    },
+    {
+     "code": "CSE430",
+     "name": "메타버스테이터처리",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE431",
+     "name": "인간-컴퓨터상호작용",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE434",
+     "name": "빅데이터프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE438",
+     "name": "최신기술콜로키움1",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE441",
+     "name": "컴퓨터비젼",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE442",
+     "name": "블록체인",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE443",
+     "name": "AI네트워킹",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "CSE450",
+     "name": "모바일/웹서비스 프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON103",
+     "name": "디자인적사고",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON256",
+     "name": "데이터분석입문",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON221",
+     "name": "마이크로서비스 프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON302",
+     "name": "최신기술콜로키움2",
+     "credits": 2,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON331",
+     "name": "로봇프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON372",
+     "name": "응용데이터분석",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON491",
+     "name": "인공지능과 게임프로그래밍",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON493",
+     "name": "자연언어처리",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON494",
+     "name": "영상분석과패턴인식",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    },
+    {
+     "code": "SWCON495",
+     "name": "강화학습",
+     "credits": 3,
+     "category": "전공선택",
+     "page": 437
+    }
+   ],
+   "programs": {
+    "single": {
+     "status": "verified",
+     "source": "catalog",
+     "page": null,
+     "groups": [
+      {
+       "category": "전공기초",
+       "credits": 12,
+       "rule": "all",
+       "courses": [
+        "AI1003",
+        "AMTH1004",
+        "AMTH1009",
+        "EE211"
+       ],
+       "course_credits": 12
+      },
+      {
+       "category": "전공필수",
+       "credits": 42,
+       "rule": "all",
+       "courses": [
+        "AI1001",
+        "AI1002",
+        "AI3001",
+        "AI3002",
+        "AI4003",
+        "CSE103",
+        "CSE204",
+        "CSE301",
+        "CSE304",
+        "CSE331",
+        "CSE340",
+        "CSE405",
+        "CSE406",
+        "SWCON104",
+        "SWCON253"
+       ],
+       "course_credits": 42
+      },
+      {
+       "category": "전공선택",
+       "credits": 27,
+       "rule": "choose",
+       "courses": [
+        "AI3003",
+        "AI3004",
+        "AI3005",
+        "AI3008",
+        "AI4006",
+        "AI4007",
+        "CSE201",
+        "CSE203",
+        "CSE224",
+        "CSE305",
+        "CSE322",
+        "CSE324",
+        "CSE327",
+        "CSE330",
+        "CSE334",
+        "CSE426",
+        "CSE428",
+        "CSE430",
+        "CSE431",
+        "CSE434",
+        "CSE438",
+        "CSE441",
+        "CSE442",
+        "CSE443",
+        "CSE450",
+        "SWCON103",
+        "SWCON256",
+        "SWCON221",
+        "SWCON302",
+        "SWCON331",
+        "SWCON372",
+        "SWCON491",
+        "SWCON493",
+        "SWCON494",
+        "SWCON495"
+       ],
+       "course_credits": 103
+      }
+     ],
+     "rules": [
+      {
+       "page": 432,
+       "text": "제4조(전공 이수) ① 인공지능학과의 단일전공과정을 이수하고자 하는 학생은 [표1]에 명시된 전공기초, 전공필수, 전공선택 교과 목을 반드시 이수하여야 한다."
+      },
+      {
+       "page": 433,
+       "text": "[표1] 단일전공 전공과목 편성표"
+      },
+      {
+       "page": 434,
+       "text": "제9조(졸업이수요건) ① 단일전공과정 : 인공지능학과 학생으로서 단일전공자는 전공기초 12학점, 전공필수 42학점, 전공선택 27 학점 이상 이수하여야 한다. 전공필수에서는 SW필수에서 21학점, AI필수에서 21학점 이상을 포함하여야 하며, 전공선택에서는 SW선택 9학점, AI선택 18학점 이상을 포함하여야 한다."
+      }
+     ],
+     "problems": []
+    },
+    "double": {
+     "status": "verified",
+     "source": "program_table",
+     "page": 433,
+     "groups": [
+      {
+       "category": "전공기초",
+       "credits": 12,
+       "rule": "all",
+       "courses": [
+        "EE211",
+        "AI1003",
+        "AMTH1009",
+        "AMTH1004"
+       ],
+       "course_credits": 12
+      },
+      {
+       "category": "전공필수",
+       "credits": 30,
+       "rule": "all",
+       "courses": [
+        "AI4003",
+        "AI1002",
+        "AI3002",
+        "CSE340",
+        "CSE405",
+        "CSE406",
+        "AI3001",
+        "CSE204",
+        "CSE304",
+        "SWCON253",
+        "CSE331"
+       ],
+       "course_credits": 30
+      },
+      {
+       "category": "전공선택",
+       "credits": 9,
+       "rule": "choose",
+       "courses": [
+        "AI1001",
+        "CSE103",
+        "CSE301",
+        "SWCON104",
+        "AI3003",
+        "AI3004",
+        "AI3005",
+        "AI3008",
+        "AI4006",
+        "AI4007",
+        "CSE201",
+        "CSE203",
+        "CSE224",
+        "CSE305",
+        "CSE322",
+        "CSE324",
+        "CSE327",
+        "CSE330",
+        "CSE334",
+        "CSE426",
+        "CSE428",
+        "CSE430",
+        "CSE431",
+        "CSE434",
+        "CSE438",
+        "CSE441",
+        "CSE442",
+        "CSE443",
+        "CSE450",
+        "SWCON103",
+        "SWCON256",
+        "SWCON221",
+        "SWCON302",
+        "SWCON331",
+        "SWCON372",
+        "SWCON491",
+        "SWCON493",
+        "SWCON494",
+        "SWCON495"
+       ],
+       "course_credits": 115
+      }
+     ],
+     "rules": [
+      {
+       "page": 432,
+       "text": "③ 인공지능학과 다전공과정을 이수하는 학생은 [표2]에서 지정한 전공기초, 전공필수 교과목을 반드시 이수하여야 하며, [표3]에 명시된 타학과 과목들을 인공지능학과 전공기초 과목으로 대체 인정받을 수 있다."
+      },
+      {
+       "page": 433,
+       "text": "[표2] 다전공 전공과목 편성표"
+      },
+      {
+       "page": 434,
+       "text": "② 다전공과정 : 인공지능학과 학생으로서 타전공을 다전공과정으로 이수하거나, 타학과 학생으로서 인공지능전공을 다전공과정 으로 이수하는 학생은 전공기초 12학점, 전공필수 30학점, 전공선택 9학점 이상 이수하여야 한다. 전공필수에서는 SW필수 12학점, AI필수 18학점 이상을 포함하여야 하며, 전공선택에는 SW선택 3학점, AI선택 6학점 이상을 포함하여야 한다."
+      }
+     ],
+     "problems": []
+    }
+   }
+  },
   "소프트웨어융합학과": {
    "section": "소프트웨어융합학과",
    "college": "소프트웨어융합대학",
@@ -36837,8 +37427,7 @@
   }
  },
  "missing_depts": [
-  "글로벌문화기술",
-  "인공지능학과"
+  "글로벌문화기술"
  ],
  "section_notes": {
   "기계공학부": [
@@ -36857,9 +37446,6 @@
   ],
   "산업경영공학과": [
    "warn NO_CREDITS p4 SWCON104 no credits after SWCON104 (‘)"
-  ],
-  "인공지능학과": [
-   "error EMPTY_CATALOG  no rows parsed on pages [5]"
   ],
   "응용수학과": [
    "warn NO_CREDITS p7 AMTH1009 no credits after AMTH1009 (Ⅶ. 대학별 전공교육과정 미분적분학()"

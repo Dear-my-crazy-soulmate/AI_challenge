@@ -89,6 +89,12 @@ class CatalogTests(unittest.TestCase):
     def test_rules_page_mentioning_table_is_skipped(self):
         self.assertEqual(table_pages(["규정 [별표1] 참조", CATALOG]), [2])
 
+    def test_rules_page_with_codes_and_a_citation_is_not_the_table(self):
+        # 인공지능학과 p.434: a substitution table (6 codes) plus "[별표1]에 나열되지 않은" in a sentence
+        rules = "[표3] 대체 이수\nMATH1001 a\nMATH1002 b\nAMTH1009 c\nAMTH1004 d\nMATH2111 e\nMATH2112 f\n② [별표1]에 나열되지 않은 과목"
+        self.assertEqual(table_pages([rules, CATALOG]), [2])
+        self.assertEqual(len(parse_catalog([rules, CATALOG])[0]), 7)
+
     def test_missing_table_is_an_error(self):
         _, issues = parse_catalog(["no table here"])
         self.assertEqual(issues[0]["code"], "NO_CATALOG")

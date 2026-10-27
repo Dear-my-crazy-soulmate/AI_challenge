@@ -157,7 +157,7 @@ python -m venv .venv
 원본 PDF는 저장소에 없습니다(`data/raw/`는 git 제외). 팀 채널에서 `2026경희대 교육과정.pdf`를 받아 `data/raw/`에 넣은 뒤 실행합니다.
 
 ```bash
-PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py          # 책을 학과별로 분리
+.venv/Scripts/python -I scripts/pipeline/book.py                              # 책을 학과별로 분리 (PIPELINE_YEAR 없이: 있으면 data/work/2026/2026에 저장돼 다음 단계가 못 찾음)
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book_credits.py  # 책 기본구조표 → 학점
 .venv/Scripts/python -I scripts/pipeline/overview.py                         # 책 학점으로 교체·검증
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py      # 과목 데이터 생성

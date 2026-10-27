@@ -21,6 +21,8 @@ from paths import WORK_DIR, use_utf8_stdout  # noqa: E402
 CODE = re.compile(r"(?<![A-Za-z0-9])([A-Z]{2,6}\d{3,5}[A-Z]?)(?![A-Za-z0-9])")
 # "[별표1]", or track tables "[별표1-1]", "[별표1-2]" (연극영화학과) that continue each other.
 TABLE_START = re.compile(r"\[별표\s*1(?:-\d+)?\]")
+# The table's own heading: "[별표1]" alone on its line (optionally with its title), not a rule that cites it.
+TABLE_HEADING = re.compile(r"^[ \t]*\[별표\s*1(?:-\d+)?\][ \t]*(?:교육과정\s*편성표)?[ \t\r]*$", re.M)  # pdftotext may end lines with \r\n
 TABLE_END = re.compile(r"\[별표\s*[2-9]\d*(?:-\d+)?\]")
 CATEGORY = {"기초": "전공기초", "필수": "전공필수", "선택": "전공선택"}
 # Words of the 이수구분 column that can end up in front of a name.
@@ -43,10 +45,11 @@ def _starts_new_appendix(text: str) -> bool:
 def table_pages(raw: list[str]) -> list[int]:
     """1-based pages of the [별표1] table: the first page carrying the heading
     and course codes, then following pages while they still list codes."""
-    start = next(
-        (i for i, t in enumerate(raw, start=1) if TABLE_START.search(t) and len(CODE.findall(t)) >= MIN_CODES),
-        None,
-    )
+    def first(pattern: re.Pattern) -> int | None:
+        return next((i for i, t in enumerate(raw, start=1) if pattern.search(t) and len(CODE.findall(t)) >= MIN_CODES), None)
+
+    # A rules page can cite "[별표1]" in a sentence and list codes too (인공지능학과 [표3]); the heading wins.
+    start = first(TABLE_HEADING) or first(TABLE_START)
     if start is None:
         return []
     pages = [start]
@@ -91,7 +94,7 @@ def parse_catalog(raw: list[str]) -> tuple[list[dict], list[dict]]:
     for page in pages:
         text = raw[page - 1]
         if page == pages[0]:
-            text = text[TABLE_START.search(text).start() :]
+            text = text[(TABLE_HEADING.search(text) or TABLE_START.search(text)).start() :]
         end = TABLE_END.search(text)
         if end:
             text = text[: end.start()]

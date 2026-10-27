@@ -75,10 +75,17 @@ describe("minor and other departments", () => {
   });
 
   it("department without course data still gets credits", () => {
-    const r = ok(buildCoursePlan({ primary: "체육학과", second: "인공지능학과", kind: "double" }, credits, data, rules));
+    const r = ok(buildCoursePlan({ primary: "체육학과", second: "글로벌문화기술", kind: "double" }, credits, data, rules));
     expect(r.second.status).toBe("no_courses");
     expect(r.second.groups).toEqual([]);
+    expect(r.totals.secondCredits).toBe(46);
+  });
+
+  it("인공지능학과 has its courses from the book's [별표1] and its credits match the overview", () => {
+    const r = ok(buildCoursePlan({ primary: "체육학과", second: "인공지능학과", kind: "double" }, credits, data, rules));
+    expect(r.second.status).toBe("verified");
     expect(r.totals.secondCredits).toBe(51);
+    expect(r.second.groups.map((g) => g.credits)).toEqual([12, 30, 9]);
   });
 
   it("passes through credit-level errors", () => {
