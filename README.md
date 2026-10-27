@@ -33,7 +33,7 @@
 
 - 과목 정보가 없는 학과: **인공지능학과, 글로벌문화기술** (편성표 형식이 달라 자동 추출 실패). 학점은 나옵니다.
 - "학과 확인 필요" 상태: 한 편성표에 여러 전공이 섞인 **기계공학부(3개 전공), 환경학및환경공학과(2개 전공)**, 과목 학점 합이 필요 학점과 다른 일부 학과
-- 학점 개요(`credits_global.json`)는 공식 사이트에서 받은 표 기준이며, 교육과정 책의 기본구조표(p.121~122)와 다른 곳이 있습니다(화학공학과·전자공학과·컴퓨터공학과 단일전공, 부전공 7건의 "타전공 인정학점" 칸). 책 기준으로 바꾸는 작업이 남아 있습니다.
+- 학점은 교육과정 책의 "전공별 교육과정 기본구조표"(p.121~122)를 기준으로 합니다. 예전 학점 개요(`overview_all.json`)와 다른 곳은 경고(`BOOK_DIFFERS`)로 남겨 두었습니다. 책 숫자로도 합이 맞지 않는 **융합바이오·신소재공학과 부전공**(필수 15 + 선택 "-" ≠ 21)은 "검증 미통과"로 제외합니다.
 - 마이크로디그리 60개 중 7개는 책에 학수번호가 빠졌거나 표가 깨져 "학과 확인 필요"입니다.
 
 ## 설계 원칙
@@ -62,17 +62,18 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │   ├── raw/                      # 교육과정 PDF (git 제외, 팀 채널에서 받기)
 │   ├── extracted/                # 사람/LLM이 구조화한 원본 (overview_all.json 등)
 │   └── curated/                  # 앱이 쓰는 검증된 데이터
-│       ├── credits_global.json   # 국제캠 학과별 단일·다전공·부전공 학점
+│       ├── credits_global.json   # 국제캠 학과별 단일·다전공·부전공 학점 (책 기본구조표 기준)
 │       └── 2026/
 │           ├── courses.json      # 학과별 교과목 편성표와 과정별 과목 그룹
 │           ├── major_rules.json  # 다전공·부전공·MD 공통 규칙 (쪽 번호·원문 포함)
 │           └── microdegrees.json # 마이크로디그리 과목 목록
 ├── scripts/pipeline/             # 데이터 준비 (Python, 앱 런타임에는 안 씀)
 │   ├── book.py                   # 교육과정 책을 목차 기준으로 학과별 분리
+│   ├── book_credits.py           # 책의 기본구조표(p.121~122) → 학과별 학점
 │   ├── catalog.py                # [별표1] 교육과정 편성표 → 과목 목록
 │   ├── programs.py               # 과정별 과목 그룹 + 학점 대조 → courses.json
 │   ├── microdegrees.py           # 마이크로디그리 → microdegrees.json
-│   ├── overview.py               # 학점 개요 검증 → credits_global.json
+│   ├── overview.py               # 책 학점으로 교체·검증 → credits_global.json
 │   └── ingest·detect·parse_table·schema·build·plan.py  # 학과별 PDF용 이전 파이프라인 (인공지능학과·철학과)
 ├── public/sw.js                  # 서비스 워커 (오프라인)
 ├── src/
@@ -139,7 +140,7 @@ npm test        # Vitest 테스트
 2. `스마트팜과학과` → 다전공 → `원예생명공학과`: 같은 단과대학·같은 전공기초라 원예생명공학과 전공기초 6학점 면제
 3. `체육학과` → 다전공 → `응용수학과`: "일부 선택 이수", "아래 과목 중 선택", 학과 규정 원문
 4. `환경학및환경공학과 (환경학)` → 다전공: 목록에 `(환경공학)`이 나오지 않음 (금지 조합)
-5. `컴퓨터공학과` → 부전공 → `전자공학과`: 검증 미통과 안내
+5. `컴퓨터공학과` → 부전공 → `융합바이오·신소재공학과`: 검증 미통과 안내 (`전자공학과` 부전공은 책 기준으로 정상 표시)
 6. `컴퓨터공학과` → 마이크로디그리 → `빅데이터 분석`: 9학점 모두 이수, 2과목에 "본전공에도 있음"
 
 화면이 이상하면 주소, 선택한 조합, 화면 캡처를 함께 공유합니다.
@@ -156,12 +157,15 @@ python -m venv .venv
 원본 PDF는 저장소에 없습니다(`data/raw/`는 git 제외). 팀 채널에서 `2026경희대 교육과정.pdf`를 받아 `data/raw/`에 넣은 뒤 실행합니다.
 
 ```bash
-.venv/Scripts/python -I scripts/pipeline/overview.py                         # 학점 개요 검증
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book.py          # 책을 학과별로 분리
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book_credits.py  # 책 기본구조표 → 학점
+.venv/Scripts/python -I scripts/pipeline/overview.py                         # 책 학점으로 교체·검증
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py      # 과목 데이터 생성
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/microdegrees.py  # 마이크로디그리 데이터 생성
 PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py       # 파이프라인 테스트
 ```
+
+기본구조표에서 칸이 병합돼 자동으로 못 읽는 행(전자공학과·반도체공학과 다전공의 "전공기초+전공필수 30")은 `data/extracted/2026/credit_notes.json`에 쪽 번호와 원문 줄을 붙여 사람이 적어 둡니다.
 
 `(.venv)` 활성화는 필요 없습니다. 위처럼 `.venv/Scripts/python`을 직접 쓰면 됩니다. 앱(`npm run dev`)은 가상환경과 관계없이 실행됩니다.
 
