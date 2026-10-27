@@ -50,7 +50,8 @@
 Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(manifest + 서비스 워커)
 데이터 준비: Python 3 + pydantic, `pdftotext`
 
-예정: Supabase(Postgres, Auth, pgvector), LLM은 ChatKHU 우선(연동 방식 확인 전까지 `src/lib/llm/`에 mock으로 개발).
+로그인: Supabase Auth + `profiles` 테이블(RLS). 환경변수가 없으면 이 기기 브라우저에만 저장하는 예시 로그인으로 자동 전환됩니다.
+예정: Supabase pgvector(RAG), LLM은 ChatKHU 우선(연동 방식 확인 전까지 `src/lib/llm/`에 mock으로 개발).
 
 ## 폴더 구조
 
@@ -87,7 +88,11 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │   ├── components/               # MajorPlanner(화면), ServiceWorker
 │   └── lib/
 │       ├── rules/                # credits·courses·majorRules·microdegrees (순수 함수)
-│       └── llm/, rag/, safety/, supabase/   # 예정 (비어 있음)
+│       ├── auth/                 # 로그인: supabase.ts(실제 계정) / mock.ts(기기 저장), 같은 AuthService 인터페이스
+│       ├── supabase/client.ts    # Supabase 클라이언트 (환경변수 없으면 null)
+│       ├── safety/               # 입력 검사, 개인정보를 LLM에 보내지 않는 forLlm
+│       └── llm/, rag/            # 예정 (비어 있음)
+├── supabase/migrations/          # DB 스키마 SQL (Supabase SQL Editor에서 실행)
 └── tests/
     ├── rules/                    # Vitest
     └── pipeline/                 # Python unittest
@@ -145,7 +150,30 @@ npm test        # Vitest 테스트
 
 화면이 이상하면 주소, 선택한 조합, 화면 캡처를 함께 공유합니다.
 
-### 3. 데이터 파이프라인 실행 (데이터를 다시 만들 때만)
+### 3. 로그인 서버(Supabase) 연결
+
+환경변수를 넣지 않으면 로그인은 **이 기기 브라우저에만 저장되는 예시 로그인**으로 동작합니다(다른 기기에서는 로그인 불가). 실제 계정을 쓰려면 한 번만 설정합니다.
+
+1. https://supabase.com 에서 New project (지역: Seoul `ap-northeast-2` 권장)
+2. **SQL Editor** → New query → `supabase/migrations/0001_profiles.sql` 내용을 붙여 넣고 Run
+   (프로필 테이블, 본인 행만 읽고 쓰는 RLS, 회원 탈퇴 함수가 만들어집니다)
+3. **Authentication → Sign In / Providers → Email**에서 시연용으로 **Confirm email 끄기**
+   (켜 두면 가입 후 메일의 링크를 눌러야 로그인됩니다. 앱은 두 경우 모두 처리합니다)
+4. **Project Settings → API**의 Project URL과 **anon(public) key**를 프로젝트 루트의 `.env.local`에 넣습니다(커밋 금지)
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   ```
+
+5. 배포 사이트: Vercel → Project → Settings → Environment Variables에 같은 두 값을 넣고 다시 배포
+
+`service_role` 키는 앱 어디에도 넣지 않습니다. 회원 탈퇴도 anon 키 + DB 함수(`delete_own_account`)로 처리합니다.
+무료 플랜은 7일 동안 접속이 없으면 일시정지되므로, 본선 전에 대시보드에서 켜져 있는지 확인합니다.
+
+**계정 관리 (MY → 계정)**: 이메일 변경, 비밀번호 변경, 로그아웃, 회원 탈퇴. 모두 현재 비밀번호를 다시 확인합니다.
+
+### 4. 데이터 파이프라인 실행 (데이터를 다시 만들 때만)
 
 교육과정 PDF에서 `data/curated/`를 다시 만드는 Python 스크립트입니다. Windows에서는 `pdftotext`가 들어 있는 **Git Bash**에서 실행합니다(macOS: `brew install poppler`).
 
