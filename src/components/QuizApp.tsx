@@ -5,6 +5,7 @@
 // Which questions show and how they are graded lives in src/lib/quiz.ts.
 import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
+import type { ReactNode } from "react";
 
 import Avatar from "@/components/Avatar";
 import { primaryButton, secondaryButton } from "@/components/Field";
@@ -35,11 +36,14 @@ export default function QuizApp({
   majors,
   deptNames,
   initialMajor,
+  map,
 }: {
   majors: QuizMajor[];
   deptNames: string[]; // departments the calculator knows, so the report only links to real combinations
   initialMajor?: string | null;
+  map?: ReactNode; // the 학과 지도, shown next to the questions on the pick screen
 }) {
+  const [view, setView] = useState<"quiz" | "map">("quiz");
   const { profile } = useAuth();
   const [major, setMajor] = useState<QuizMajor | null>(() => majors.find((m) => m.major === initialMajor) ?? null);
   const [stage, setStage] = useState<Stage>(major ? "q" : "pick");
@@ -121,7 +125,26 @@ export default function QuizApp({
         <span className="w-11 text-right text-[13px] tabular-nums text-mute">{label}</span>
       </div>
 
-      {stage === "pick" && (
+      {stage === "pick" && map && (
+        <div role="tablist" aria-label="체험 보기" className="grid grid-cols-2 gap-1 rounded-2xl bg-sand p-1">
+          {(["quiz", "map"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              role="tab"
+              aria-selected={view === v}
+              onClick={() => setView(v)}
+              className={`h-10 rounded-xl text-sm font-bold ${view === v ? "bg-white text-accent-deep shadow-[0_1px_3px_rgba(28,27,24,.12)]" : "text-mute"}`}
+            >
+              {v === "quiz" ? "문제 풀기" : "학과 지도"}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {stage === "pick" && view === "map" && map}
+
+      {stage === "pick" && view === "quiz" && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2.5">
             <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
