@@ -3,7 +3,7 @@
 //   so a combination you already looked at still opens offline.
 // - Static files (/_next/static, icons): cache first; their names change per build.
 // Bump VERSION to drop old caches after a change to this file.
-const VERSION = "v8";
+const VERSION = "v7";
 const PAGES = `pages-${VERSION}`;
 const STATIC = `static-${VERSION}`;
 const START = ["/", "/onboarding", "/experience", "/community", "/profile"];

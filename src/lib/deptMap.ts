@@ -28,8 +28,7 @@ const COMMON_DF = 6; // a course listed by more than this many departments (calc
 const COLLEGE_W = 0.5;
 const MD_W = 2;
 export const SIZE = 1000;
-// "딥러닝(CSE)" and "딥러닝" are the same course: the book tags some course names with the offering department's code
-const norm = (s: string) => s.replace(/\s/g, "").replace(/\([A-Z]{2,}\)$/, "");
+const norm = (s: string) => s.replace(/\s/g, "");
 
 export function buildEdges(depts: MapDept[], courses: Record<string, string[]>, mds: MapMicrodegree[]): MapEdge[] {
   const names = new Set(depts.map((d) => d.dept));
