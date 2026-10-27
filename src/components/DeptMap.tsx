@@ -14,6 +14,22 @@ const PALETTE = ["#7aa2f7", "#f7768e", "#9ece6a", "#e0af68", "#bb9af7", "#7dcfff
 const FUSION = "융합전공";
 const TOP = 5;
 const PAD = 70;
+const START_K = 0.9;
+const MIN_K = 0.25;
+const MAX_K = 3.5;
+const TAP_SLOP = 8; // px of finger travel that still counts as a tap
+
+interface View {
+  cx: number;
+  cy: number;
+  k: number;
+}
+const clamp = (k: number) => Math.min(MAX_K, Math.max(MIN_K, k));
+/** zoom by f keeping the map point under (qx, qy), measured from the view's center in px, where it is */
+const zoomAt = (v: View, f: number, qx: number, qy: number): View => {
+  const k = clamp(v.k * f);
+  return { cx: v.cx + qx / v.k - qx / k, cy: v.cy + qy / v.k - qy / k, k };
+};
 
 const reasons = (e: MapEdge) =>
   [e.shared > 0 && `같은 과목 ${e.shared}개`, e.microdegrees.length > 0 && `마이크로디그리 ${e.microdegrees.length === 1 ? e.microdegrees[0] : `${e.microdegrees.length}개`}`, e.sameCollege && "같은 단과대학"].filter(
@@ -37,18 +53,71 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
   const w = Math.max(...nodes.map((n) => n.x)) + PAD - x0;
   const h = Math.max(...nodes.map((n) => n.y)) + PAD - y0;
 
-  // open with the map centered on the student's own department
-  useEffect(() => {
-    const n = mine ? byName.get(mine) : undefined;
-    const el = box.current;
-    if (el) el.scrollTo({ left: (n ? n.x - x0 : w / 2) - el.clientWidth / 2, top: (n ? n.y - y0 : h / 2) - el.clientHeight / 2 });
-  }, [mine, byName, x0, y0, w, h]);
+  // The view is a center point (cx, cy) on the map and a zoom k; null until the student first moves or zooms it.
+  const mineNode = mine ? byName.get(mine) : undefined;
+  const startX = mineNode?.x ?? x0 + w / 2;
+  const startY = mineNode?.y ?? y0 + h / 2;
+  const [user, setUser] = useState<View | null>(null);
+  const view = user ?? { cx: startX, cy: startY, k: START_K };
+  const move = (f: (v: View) => View) => setUser((p) => f(p ?? { cx: startX, cy: startY, k: START_K }));
 
+  const pts = useRef(new Map<number, { x: number; y: number }>());
+  const moved = useRef(0); // how far this touch travelled; a long drag must not count as a tap on a dot
+  const centre = () => {
+    const r = box.current!.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height };
+  };
+
+  const onDown = (e: React.PointerEvent) => {
+    if (pts.current.size === 0) moved.current = 0;
+    pts.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  };
+  const onMove = (e: React.PointerEvent) => {
+    const prev = pts.current.get(e.pointerId);
+    if (!prev) return;
+    const cur = { x: e.clientX, y: e.clientY };
+    const other = [...pts.current].find(([id]) => id !== e.pointerId)?.[1];
+    pts.current.set(e.pointerId, cur);
+    if (!other) {
+      moved.current += Math.abs(cur.x - prev.x) + Math.abs(cur.y - prev.y);
+      if (moved.current > TAP_SLOP) move((v) => ({ ...v, cx: v.cx - (cur.x - prev.x) / v.k, cy: v.cy - (cur.y - prev.y) / v.k }));
+      return;
+    }
+    // two fingers: zoom by how the distance changed and follow the middle point
+    moved.current = TAP_SLOP + 1;
+    const c = centre();
+    const f = Math.hypot(cur.x - other.x, cur.y - other.y) / (Math.hypot(prev.x - other.x, prev.y - other.y) || 1);
+    const mid = { x: (cur.x + other.x) / 2, y: (cur.y + other.y) / 2 };
+    const was = { x: (prev.x + other.x) / 2, y: (prev.y + other.y) / 2 };
+    move((v) => {
+      const z = zoomAt(v, f, mid.x - c.x, mid.y - c.y);
+      return { ...z, cx: z.cx - (mid.x - was.x) / z.k, cy: z.cy - (mid.y - was.y) / z.k };
+    });
+  };
+  const onUp = (e: React.PointerEvent) => void pts.current.delete(e.pointerId);
+
+  // mouse wheel zooms toward the pointer; it needs a non-passive listener to stop the page from scrolling
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const wheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const r = el.getBoundingClientRect();
+      const f = Math.exp(-e.deltaY * 0.0015);
+      setUser((p) => zoomAt(p ?? { cx: startX, cy: startY, k: START_K }, f, e.clientX - r.left - r.width / 2, e.clientY - r.top - r.height / 2));
+    };
+    el.addEventListener("wheel", wheel, { passive: false });
+    return () => el.removeEventListener("wheel", wheel);
+  }, [startX, startY]);
+
+  const fit = () => {
+    const c = centre();
+    setUser({ cx: x0 + w / 2, cy: y0 + h / 2, k: clamp(Math.min(c.w / w, c.h / h)) });
+  };
   const pick = (d: string) => {
     setSel(d);
     const n = byName.get(d);
-    const el = box.current;
-    if (n && el) el.scrollTo({ left: n.x - x0 - el.clientWidth / 2, top: n.y - y0 - el.clientHeight / 2, behavior: "smooth" });
+    if (n) move((v) => ({ cx: n.x, cy: n.y, k: Math.max(v.k, 1) }));
   };
   const node = sel ? byName.get(sel) : undefined;
 
@@ -60,11 +129,26 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
           <br />
           한눈에 둘러봐요
         </h2>
-        <p className="text-sm leading-normal text-ink-2">관련 있는 학과는 가까이 모여 있어요. 점을 누르면 가까운 학과와 이유를 볼 수 있어요. 손가락으로 밀어서 둘러보세요.</p>
+        <p className="text-sm leading-normal text-ink-2">관련 있는 학과는 가까이 모여 있어요. 점을 누르면 가까운 학과와 이유를 볼 수 있어요. 손가락으로 끌어서 움직이고, 두 손가락으로 확대·축소해 보세요.</p>
       </div>
 
-      <div ref={box} className="h-[430px] touch-pan-x touch-pan-y overflow-auto rounded-3xl bg-[#0f1020]" aria-label="학과 지도">
-        <svg width={w} height={h} viewBox={`${x0} ${y0} ${w} ${h}`} className="block max-w-none">
+      <div className="relative">
+        <div
+          ref={box}
+          aria-label="학과 지도"
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerCancel={onUp}
+          onPointerLeave={onUp}
+          className="relative h-[430px] touch-none select-none overflow-hidden rounded-3xl bg-[#0f1020]"
+        >
+          <svg
+            width={1}
+            height={1}
+            className="absolute left-1/2 top-1/2 overflow-visible"
+            style={{ transform: `scale(${view.k}) translate(${-view.cx}px, ${-view.cy}px)`, transformOrigin: "0 0" }}
+          >
           {edges.map((e) => {
             const a = byName.get(e.a)!;
             const b = byName.get(e.b)!;
@@ -79,6 +163,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
                 stroke={on ? "#ffffff" : "#5b6b8c"}
                 strokeOpacity={on ? 0.9 : sel ? 0.12 : 0.3}
                 strokeWidth={on ? 2.5 : 1}
+                vectorEffect="non-scaling-stroke"
               />
             );
           })}
@@ -92,7 +177,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
                 tabIndex={0}
                 aria-label={`${n.dept} (${n.college})`}
                 aria-pressed={active}
-                onClick={() => setSel(n.dept)}
+                onClick={() => moved.current <= TAP_SLOP && setSel(n.dept)}
                 onKeyDown={(ev) => (ev.key === "Enter" || ev.key === " ") && setSel(n.dept)}
                 opacity={dim ? 0.3 : 1}
                 className="cursor-pointer outline-none"
@@ -106,7 +191,21 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
               </g>
             );
           })}
-        </svg>
+          </svg>
+        </div>
+        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
+          {[
+            ["확대", "+", () => move((v) => zoomAt(v, 1.4, 0, 0))],
+            ["축소", "−", () => move((v) => zoomAt(v, 1 / 1.4, 0, 0))],
+          ].map(([label, text, run]) => (
+            <button key={label as string} type="button" aria-label={label as string} onClick={run as () => void} className="h-10 w-10 rounded-full bg-white/15 text-xl font-bold leading-none text-white active:bg-white/30">
+              {text as string}
+            </button>
+          ))}
+          <button type="button" onClick={fit} className="h-10 rounded-full bg-white/15 px-3 text-xs font-bold text-white active:bg-white/30">
+            전체
+          </button>
+        </div>
       </div>
 
       <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 text-[11px] text-mute" aria-label="단과대학 색">
