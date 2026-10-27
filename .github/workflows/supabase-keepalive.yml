@@ -1,0 +1,33 @@
+# Backup for the Vercel cron (/api/keepalive): ping Supabase directly every 3 days,
+# so the free project is not paused for inactivity even if the Vercel side fails.
+# Needs two repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL       e.g. https://xxxx.supabase.co
+#   SUPABASE_ANON_KEY  the public (publishable / anon) key -- never the service_role key
+name: Supabase keepalive
+
+on:
+  schedule:
+    - cron: "0 0 */3 * *" # 09:00 KST every 3 days
+  workflow_dispatch: # "Run workflow" button for a manual check
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Query the profiles table once
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::SUPABASE_URL / SUPABASE_ANON_KEY secrets are not set"
+            exit 1
+          fi
+          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+            "${SUPABASE_URL%/}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "Supabase answered HTTP $status"
+          [ "$status" = "200" ]
