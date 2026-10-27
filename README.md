@@ -93,6 +93,8 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │       ├── safety/               # 입력 검사, 개인정보를 LLM에 보내지 않는 forLlm
 │       └── llm/, rag/            # 예정 (비어 있음)
 ├── supabase/migrations/          # DB 스키마 SQL (Supabase SQL Editor에서 실행)
+├── vercel.json                   # Vercel Cron (Supabase 일시정지 예방)
+├── .github/workflows/            # GitHub Actions (일시정지 예방 백업)
 └── tests/
     ├── rules/                    # Vitest
     └── pipeline/                 # Python unittest
@@ -102,7 +104,7 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 
 ### 1. 앱 실행 (화면만 볼 때)
 
-필요한 것: Git, Node.js(LTS). Python 가상환경과 `.env.local`은 지금은 필요 없습니다. 앱이 쓰는 데이터(`data/curated/`)는 저장소에 들어 있습니다.
+필요한 것: Git, Node.js(LTS). Python 가상환경은 필요 없습니다. 앱이 쓰는 데이터(`data/curated/`)는 저장소에 들어 있습니다.
 
 ```bash
 git clone https://github.com/Dear-my-crazy-soulmate/AI_challenge.git
@@ -111,6 +113,22 @@ npm install
 npm run dev     # 터미널에 Local / Network 주소가 나옵니다
 npm test        # Vitest 테스트
 ```
+
+#### 팀원 PC에서 실제 로그인까지 쓰려면 (`.env.local`)
+
+`.env.local`은 git에 올리지 않으므로 **각자 PC에 직접 만듭니다.** 없으면 앱은 켜지지만 로그인이 "이 기기에만 저장되는 예시 로그인"이 됩니다.
+
+1. `AI_challenge` 폴더(`package.json`이 있는 곳)에 `.env.local` 파일을 새로 만듭니다.
+2. 팀 비공개 채널에서 받은 값으로 아래 두 줄을 채웁니다(Supabase URL과 공개 키).
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
+   ```
+
+3. `npm run dev`를 **다시 시작**합니다. 로그인 화면 아래에 "계정은 서버에 저장돼서 다른 기기에서도 로그인할 수 있어요"가 보이면 성공입니다.
+
+`service_role`/`sb_secret_` 키는 받지도 넣지도 않습니다. `CRON_SECRET`은 배포(Vercel)에만 필요하고 팀원 PC에는 필요 없습니다.
 
 브라우저에서 **http://localhost:3000** 을 엽니다. 개발 모드(`npm run dev`)에서는 서비스 워커가 꺼져 있습니다. 앱 설치·오프라인 동작은 `npm run build` 후 `npm run start`로 실행하거나 배포 주소에서 확인합니다.
 
@@ -169,7 +187,16 @@ npm test        # Vitest 테스트
 5. 배포 사이트: Vercel → Project → Settings → Environment Variables에 같은 두 값을 넣고 다시 배포
 
 `service_role` 키는 앱 어디에도 넣지 않습니다. 회원 탈퇴도 anon 키 + DB 함수(`delete_own_account`)로 처리합니다.
-무료 플랜은 7일 동안 접속이 없으면 일시정지되므로, 본선 전에 대시보드에서 켜져 있는지 확인합니다.
+**일시정지 예방**: Supabase 무료 프로젝트는 약 7일 동안 DB 요청이 없으면 일시정지됩니다. 두 겹으로 막습니다.
+
+| 방식 | 주기 | 파일 | 한 번만 할 설정 |
+|---|---|---|---|
+| Vercel Cron → `/api/keepalive` | 매일 03시(KST) 무렵 | `vercel.json`, `src/app/api/keepalive/route.ts` | Vercel 환경변수 `CRON_SECRET`(16자 이상 무작위 문자열, **Sensitive**로) 추가 후 Redeploy |
+| GitHub Actions (백업) | 3일마다 | `.github/workflows/supabase-keepalive.yml` | GitHub 저장소 Settings → Secrets and variables → Actions에 `SUPABASE_URL`, `SUPABASE_ANON_KEY`(공개 키) 추가 |
+
+- `/api/keepalive`는 `CRON_SECRET`이 맞는 요청(Vercel Cron)에만 응답하고, `profiles` 테이블에 작은 조회 한 번만 합니다(RLS 때문에 데이터는 나오지 않음).
+- 확인: Vercel → Settings → **Cron Jobs**에서 실행 기록, GitHub → **Actions** → Supabase keepalive → **Run workflow**로 바로 실행해 볼 수 있습니다.
+- 그래도 멈출 수 있으니 본선(11/10) 전에 Supabase 대시보드에서 프로젝트가 켜져 있는지 한 번 확인합니다.
 
 **계정 관리 (MY → 계정)**: 이메일 변경, 비밀번호 변경, 로그아웃, 회원 탈퇴. 모두 현재 비밀번호를 다시 확인합니다.
 
