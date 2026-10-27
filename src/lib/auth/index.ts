@@ -1,10 +1,13 @@
 "use client";
 
-// The one place that decides which AuthService the app uses.
-// Swap createMockAuth for a Supabase-backed service here when Supabase is connected.
+// The one place that decides which AuthService the app uses:
+// Supabase (real accounts) when NEXT_PUBLIC_SUPABASE_URL / _ANON_KEY are set,
+// otherwise the in-browser stand-in, so the demo still works without a server.
 import { useMemo, useSyncExternalStore } from "react";
 
+import { getSupabase } from "../supabase/client";
 import { createMockAuth } from "./mock";
+import { createSupabaseAuth } from "./supabase";
 import type { AuthService, AuthState } from "./types";
 
 // Storage can be blocked (private mode): fall back to memory so screens still work for this visit.
@@ -26,7 +29,10 @@ function browserStore() {
 
 let service: AuthService | null = null;
 export function getAuth(): AuthService {
-  service ??= createMockAuth(browserStore());
+  if (!service) {
+    const sb = getSupabase();
+    service = sb ? createSupabaseAuth(sb) : createMockAuth(browserStore());
+  }
   return service;
 }
 

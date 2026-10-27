@@ -58,11 +58,23 @@ export function createMockAuth(store: KeyValueStore): AuthService {
 
   const sessionId = () => store.getItem(SESSION);
 
+  const currentUser = () => read<User[]>(USERS, []).find((u) => u.id === sessionId());
+  /** The signed-in user if the password matches, else an error result. */
+  async function verify(password: string): Promise<User | AuthResult> {
+    const user = currentUser();
+    if (!user) return fail("로그인이 필요해요.");
+    if (user.hash !== (await hash(user.email, password))) return fail("현재 비밀번호가 맞지 않아요.");
+    return user;
+  }
+  const isUser = (x: User | AuthResult): x is User => "hash" in x;
+
   return {
+    kind: "device",
     getSnapshot() {
       const id = sessionId();
       if (!id) return "out";
-      return JSON.stringify({ id, profile: withDefaults(read<Record<string, Partial<Profile>>>(PROFILES, {})[id]) });
+      const email = read<User[]>(USERS, []).find((u) => u.id === id)?.email;
+      return JSON.stringify({ id, email, profile: withDefaults(read<Record<string, Partial<Profile>>>(PROFILES, {})[id]) });
     },
     subscribe(onChange) {
       listeners.add(onChange);
@@ -79,8 +91,8 @@ export function createMockAuth(store: KeyValueStore): AuthService {
     parse(snapshot): AuthState {
       if (snapshot === "out" || snapshot === "") return { signedIn: false, profile: null };
       try {
-        const s = JSON.parse(snapshot) as { profile: Profile | null };
-        return { signedIn: true, profile: s.profile };
+        const s = JSON.parse(snapshot) as { profile: Profile | null; email?: string };
+        return { signedIn: true, profile: s.profile, ...(s.email ? { email: s.email } : {}) };
       } catch {
         return { signedIn: false, profile: null };
       }
@@ -103,14 +115,44 @@ export function createMockAuth(store: KeyValueStore): AuthService {
       emit();
       return { ok: true };
     },
-    signOut() {
+    async signOut() {
       store.removeItem(SESSION);
       emit();
     },
-    saveProfile(profile) {
+    async saveProfile(profile) {
       const id = sessionId();
       if (!id) return fail("로그인이 필요해요.");
       write(PROFILES, { ...read<Record<string, Profile>>(PROFILES, {}), [id]: profile });
+      emit();
+      return { ok: true };
+    },
+    async changePassword(currentPassword, newPassword) {
+      const user = await verify(currentPassword);
+      if (!isUser(user)) return user;
+      const next = await hash(user.email, newPassword);
+      write(USERS, read<User[]>(USERS, []).map((u) => (u.id === user.id ? { ...u, hash: next } : u)));
+      emit();
+      return { ok: true };
+    },
+    async changeEmail(currentPassword, newEmail) {
+      const user = await verify(currentPassword);
+      if (!isUser(user)) return user;
+      const users = read<User[]>(USERS, []);
+      if (users.some((u) => u.email === newEmail && u.id !== user.id)) return fail("이미 가입된 이메일이에요.");
+      // the hash includes the email, so it is rebuilt with the same password
+      const next = await hash(newEmail, currentPassword);
+      write(USERS, users.map((u) => (u.id === user.id ? { ...u, email: newEmail, hash: next } : u)));
+      emit();
+      return { ok: true };
+    },
+    async deleteAccount(currentPassword) {
+      const user = await verify(currentPassword);
+      if (!isUser(user)) return user;
+      write(USERS, read<User[]>(USERS, []).filter((u) => u.id !== user.id));
+      const profiles = read<Record<string, Profile>>(PROFILES, {});
+      delete profiles[user.id];
+      write(PROFILES, profiles);
+      store.removeItem(SESSION);
       emit();
       return { ok: true };
     },

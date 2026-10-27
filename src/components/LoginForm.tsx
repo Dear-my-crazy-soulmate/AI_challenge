@@ -39,7 +39,7 @@ export default function LoginForm() {
           <Link href="/profile" className={primaryButton}>
             내 정보 보기
           </Link>
-          <button type="button" onClick={() => auth.signOut()} className={secondaryButton}>
+          <button type="button" onClick={() => void auth.signOut()} className={secondaryButton}>
             로그아웃
           </button>
         </div>

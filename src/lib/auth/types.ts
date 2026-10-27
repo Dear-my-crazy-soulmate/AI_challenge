@@ -18,14 +18,20 @@ export const GRADES: readonly Grade[] = [1, 2, 3, 4];
 export const MAX_INTERESTS = 5;
 export const MAX_NAME = 20;
 
-export type AuthResult = { ok: true } | { ok: false; message: string };
+/** ok with a notice: done, but the user has to act (e.g. click a confirmation mail). */
+export type AuthResult = { ok: true; notice?: string } | { ok: false; message: string };
 
 export interface AuthState {
   signedIn: boolean;
   profile: Profile | null;
+  email?: string; // set while signed in
 }
 
+/** "server": real accounts (Supabase), usable from any device. "device": stand-in kept in this browser. */
+export type AuthKind = "server" | "device";
+
 export interface AuthService {
+  readonly kind: AuthKind;
   /** Stable string that changes whenever the state changes (for useSyncExternalStore). */
   getSnapshot(): string;
   subscribe(onChange: () => void): () => void;
@@ -33,6 +39,10 @@ export interface AuthService {
   parse(snapshot: string): AuthState;
   signUp(email: string, password: string, profile: Profile): Promise<AuthResult>;
   signIn(email: string, password: string): Promise<AuthResult>;
-  signOut(): void;
-  saveProfile(profile: Profile): AuthResult;
+  signOut(): Promise<void>;
+  saveProfile(profile: Profile): Promise<AuthResult>;
+  /** Account management. Each asks for the current password again before changing anything. */
+  changePassword(currentPassword: string, newPassword: string): Promise<AuthResult>;
+  changeEmail(currentPassword: string, newEmail: string): Promise<AuthResult>;
+  deleteAccount(currentPassword: string): Promise<AuthResult>;
 }

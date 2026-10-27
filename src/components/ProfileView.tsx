@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import AccountSettings from "@/components/AccountSettings";
+import type { AccountAction } from "@/components/AccountSettings";
 import Avatar from "@/components/Avatar";
 import BrandMark from "@/components/BrandMark";
 import DeptPicker from "@/components/DeptPicker";
@@ -47,13 +49,17 @@ function Editor({ profile, depts, onDone }: { profile: Profile; depts: DeptOptio
   const [personal, setPersonal] = useState({ name: profile.name, studentId: profile.studentId, grade: profile.grade });
   const [error, setError] = useState("");
 
-  function save() {
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
     const main = primary[0] ?? "";
     // The character follows the major, unless it was changed to another department's earlier.
     const avatar = !profile.avatar || profile.avatar === profile.primary ? main : profile.avatar;
     const checked = checkProfile({ primary: main, interests, avatar: avatar || null, ...personal }, depts.map((d) => d.dept));
     if (!checked.ok) return setError(checked.message);
-    const r = auth.saveProfile(checked.value);
+    setBusy(true);
+    const r = await auth.saveProfile(checked.value);
+    setBusy(false);
     if (!r.ok) return setError(r.message);
     // A goal was worked out for the old 본전공, so it no longer applies.
     if (main !== profile.primary) clearGoal();
@@ -84,8 +90,8 @@ function Editor({ profile, depts, onDone }: { profile: Profile; depts: DeptOptio
       />
       <ErrorNote message={error} />
       <div className="flex flex-col gap-2">
-        <button type="button" onClick={save} disabled={primary.length === 0} className={primaryButton}>
-          저장하기
+        <button type="button" onClick={save} disabled={busy || primary.length === 0} className={primaryButton}>
+          {busy ? "저장하는 중…" : "저장하기"}
         </button>
         <button type="button" onClick={onDone} className={secondaryButton}>
           취소
@@ -98,11 +104,13 @@ function Editor({ profile, depts, onDone }: { profile: Profile; depts: DeptOptio
 
 function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const router = useRouter();
-  const { auth } = useAuth();
+  const { auth, email } = useAuth();
   const goal = useGoal();
   const [editing, setEditing] = useState(false);
+  const [account, setAccount] = useState<AccountAction | null>(null);
 
   if (editing) return <Editor profile={profile} depts={depts} onDone={() => setEditing(false)} />;
+  if (account) return <AccountSettings action={account} onDone={() => setAccount(null)} />;
 
   const college = depts.find((d) => d.dept === profile.primary)?.college ?? "";
   const stats = [
@@ -147,17 +155,29 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
           href={goalHref}
         />
         {goal && <Row label="목표 지우기" onClick={clearGoal} />}
+      </section>
+
+      <h2 className="px-1 pt-2 text-sm font-bold">계정</h2>
+      <section className="overflow-hidden rounded-[22px] border border-edge bg-card">
+        <Row label="이메일" right={email ?? ""} onClick={() => setAccount("email")} />
+        <Row label="비밀번호 변경" onClick={() => setAccount("password")} />
         <Row
           label="로그아웃"
           tone="text-accent-deep"
-          onClick={() => {
-            auth.signOut();
+          onClick={async () => {
+            await auth.signOut();
             router.push("/");
           }}
         />
+        <Row label="회원 탈퇴" tone="text-mute" onClick={() => setAccount("delete")} />
       </section>
 
-      <p className="px-1 text-xs leading-normal text-mute">기록은 이 기기에만 저장돼요. 출처: 2026 경희대 교육과정.</p>
+      <p className="px-1 text-xs leading-normal text-mute">
+        {auth.kind === "server"
+          ? "계정과 프로필은 서버에, 목표와 최근 계산은 이 기기에 저장돼요."
+          : "기록은 이 기기에만 저장돼요."}{" "}
+        출처: 2026 경희대 교육과정.
+      </p>
       <SampleLoginNote />
     </>
   );

@@ -28,6 +28,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
   const [interests, setInterests] = useState<string[]>([]);
   const [personal, setPersonal] = useState<Personal>({ name: "", studentId: "", grade: 1 });
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
 
   function next(e: FormEvent) {
@@ -57,7 +58,22 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
       setError(r.message);
       return setStep(1);
     }
+    // e.g. the server sent a confirmation mail: stay here and say what to do next
+    if (r.notice) return setNotice(r.notice);
     router.push("/");
+  }
+
+  if (notice) {
+    return (
+      <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
+        <ScreenHeader title="가입하기" />
+        <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">거의 다 됐어요</h2>
+        <p className="text-[15px] leading-[1.55] text-ink-2">{notice}</p>
+        <Link href="/login" className={primaryButton}>
+          로그인하러 가기
+        </Link>
+      </main>
+    );
   }
 
   if (ready && signedIn) {
