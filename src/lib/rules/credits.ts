@@ -13,7 +13,7 @@ export interface CreditIssue {
 }
 
 export type CreditProgram =
-  | { available: true; status: "ok"; 기초: number; 필수: number; 선택: number; 계: number }
+  | { available: true; status: "ok"; 기초: number; 필수: number; 선택: number; 계: number; combined?: boolean }
   | { available: false; status: "ok" }
   | { available: null; status: "needs_review" };
 
@@ -39,6 +39,7 @@ export interface CreditBreakdown {
   필수: number;
   선택: number;
   계: number;
+  combined?: boolean; // 기초 holds 전공기초 and 전공필수 together (merged cell in the book's credit table)
 }
 
 export type CreditUnavailableReason =
@@ -107,7 +108,7 @@ function lookup(data: CreditData, name: string, kind: ProgramKind): Lookup {
     };
   }
   if (!p.available) return { error: unavailable("NOT_OFFERED", `${name}에는 ${KIND_LABEL[kind]} 과정이 없습니다.`) };
-  return { dept, breakdown: { dept: name, kind, 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계 } };
+  return { dept, breakdown: { dept: name, kind, 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계, ...(p.combined ? { combined: true } : {}) } };
 }
 
 function warningsOf(data: CreditData, dept: CreditDept, kinds: ProgramKind[]): CreditWarning[] {

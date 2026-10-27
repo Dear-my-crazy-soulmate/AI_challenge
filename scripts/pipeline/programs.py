@@ -93,6 +93,7 @@ def credit_sum(rows: list[dict]) -> int:
 
 
 CATEGORIES = (("전공기초", "기초"), ("전공필수", "필수"), ("전공선택", "선택"))
+COMBINED = "전공기초·전공필수"  # one credit number for both (merged cell in the credit table)
 RULE_ITEM = re.compile(r"^\s*(제\s*\d+\s*조|[①-⑳]|\d\))")
 KIND_WORD = {"single": "단일전공", "double": "다전공", "minor": "부전공"}
 MAX_RULES = 6
@@ -125,10 +126,22 @@ def make_groups(pool: list[dict], credits: dict | None, required: list[dict] | N
     required given (program table): its 기초/필수 rows are taken as printed.
     Otherwise the catalog rows of each category are candidates and the rule
     follows from credits: equal -> all, more -> choose, fewer -> unknown.
+    When the credit table merges 전공기초 and 전공필수 into one number
+    (credits["combined"]), both categories form one "전공기초·전공필수" group.
     """
     groups, problems = [], []
     have = credits is not None and credits.get("available")
+    combined = have and credits.get("combined")
+    if combined:
+        rows = [r for r in (required if required is not None else pool) if r["category"] in REQUIRED]
+        want, got = credits["기초"], credit_sum(rows)
+        rule = "all" if got == want else "choose" if got > want else "unknown"
+        if rule == "unknown":
+            problems.append(f"{COMBINED}: listed courses add up to {got}, credit table says {want}")
+        groups.append({"category": COMBINED, "credits": want, "rule": rule, "courses": [r["code"] for r in rows], "course_credits": got})
     for cat, part in CATEGORIES:
+        if combined and cat != "전공선택":
+            continue
         want = credits[part] if have else None
         if required is not None and cat != "전공선택":
             rows = [r for r in required if r["category"] == cat]

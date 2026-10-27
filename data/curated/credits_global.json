@@ -3,7 +3,7 @@
     "college": "공과대학",
     "dept": "기계공학",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -37,7 +37,7 @@
     "college": "공과대학",
     "dept": "지능로봇공학",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -71,7 +71,7 @@
     "college": "공과대학",
     "dept": "항공우주모빌리티",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -105,7 +105,7 @@
     "college": "공과대학",
     "dept": "산업경영공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -139,7 +139,7 @@
     "college": "공과대학",
     "dept": "원자력공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -173,7 +173,7 @@
     "college": "공과대학",
     "dept": "화학공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -181,9 +181,9 @@
         "available": true,
         "status": "ok",
         "기초": 21,
-        "필수": 19,
+        "필수": 18,
         "선택": 39,
-        "계": 79
+        "계": 78
       },
       "double": {
         "available": true,
@@ -207,7 +207,7 @@
     "college": "공과대학",
     "dept": "신소재공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -241,7 +241,7 @@
     "college": "공과대학",
     "dept": "사회기반시스템공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -275,7 +275,7 @@
     "college": "공과대학",
     "dept": "건축공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -309,7 +309,7 @@
     "college": "공과대학",
     "dept": "환경학및환경공학과 (환경학)",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -343,7 +343,7 @@
     "college": "공과대학",
     "dept": "환경학및환경공학과 (환경공학)",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -377,7 +377,7 @@
     "college": "공과대학",
     "dept": "건축학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -411,7 +411,7 @@
     "college": "전자정보대학",
     "dept": "전자공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -419,9 +419,9 @@
         "available": true,
         "status": "ok",
         "기초": 25,
-        "필수": 26,
+        "필수": 23,
         "선택": 28,
-        "계": 79
+        "계": 76
       },
       "double": {
         "available": true,
@@ -429,11 +429,16 @@
         "기초": 30,
         "필수": 0,
         "선택": 21,
-        "계": 51
+        "계": 51,
+        "combined": true
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 9,
+        "선택": 12,
+        "계": 21
       }
     }
   },
@@ -441,7 +446,7 @@
     "college": "전자정보대학",
     "dept": "반도체공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -459,7 +464,8 @@
         "기초": 30,
         "필수": 0,
         "선택": 21,
-        "계": 51
+        "계": 51,
+        "combined": true
       },
       "minor": {
         "available": true,
@@ -475,7 +481,7 @@
     "college": "전자정보대학",
     "dept": "생체의공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -509,7 +515,7 @@
     "college": "소프트웨어융합대학",
     "dept": "컴퓨터공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -517,8 +523,8 @@
         "available": true,
         "status": "ok",
         "기초": 12,
-        "필수": 42,
-        "선택": 27,
+        "필수": 39,
+        "선택": 30,
         "계": 81
       },
       "double": {
@@ -543,7 +549,7 @@
     "college": "소프트웨어융합대학",
     "dept": "인공지능학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -573,7 +579,7 @@
     "college": "소프트웨어융합대학",
     "dept": "소프트웨어융합학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -607,7 +613,7 @@
     "college": "응용과학대학",
     "dept": "응용수학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -641,7 +647,7 @@
     "college": "응용과학대학",
     "dept": "응용물리학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -675,7 +681,7 @@
     "college": "응용과학대학",
     "dept": "응용화학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -709,7 +715,7 @@
     "college": "응용과학대학",
     "dept": "우주과학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -743,7 +749,7 @@
     "college": "생명과학대학",
     "dept": "스마트팜과학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -777,7 +783,7 @@
     "college": "생명과학대학",
     "dept": "식물·환경신소재공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -811,7 +817,7 @@
     "college": "생명과학대학",
     "dept": "식품생명공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -832,8 +838,12 @@
         "계": 48
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 15,
+        "선택": 6,
+        "계": 21
       }
     }
   },
@@ -841,7 +851,7 @@
     "college": "생명과학대학",
     "dept": "원예생명공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -875,7 +885,7 @@
     "college": "생명과학대학",
     "dept": "유전생명공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -896,8 +906,12 @@
         "계": 48
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 15,
+        "선택": 6,
+        "계": 21
       }
     }
   },
@@ -905,7 +919,7 @@
     "college": "생명과학대학",
     "dept": "한방생명공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -926,8 +940,12 @@
         "계": 48
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 15,
+        "선택": 6,
+        "계": 21
       }
     }
   },
@@ -935,7 +953,7 @@
     "college": "생명과학대학",
     "dept": "융합바이오·신소재공학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -956,12 +974,8 @@
         "계": 48
       },
       "minor": {
-        "available": true,
-        "status": "ok",
-        "기초": 6,
-        "필수": 15,
-        "선택": 0,
-        "계": 21
+        "available": null,
+        "status": "needs_review"
       }
     }
   },
@@ -969,7 +983,7 @@
     "college": "국제대학",
     "dept": "국제학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -990,8 +1004,12 @@
         "계": 39
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 6,
+        "선택": 15,
+        "계": 21
       }
     }
   },
@@ -999,7 +1017,7 @@
     "college": "국제대학",
     "dept": "아시아학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.121",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1020,8 +1038,12 @@
         "계": 38
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": true,
+        "status": "ok",
+        "기초": 0,
+        "필수": 12,
+        "선택": 9,
+        "계": 21
       }
     }
   },
@@ -1029,7 +1051,7 @@
     "college": "외국어대학",
     "dept": "프랑스어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1063,7 +1085,7 @@
     "college": "외국어대학",
     "dept": "스페인어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1097,7 +1119,7 @@
     "college": "외국어대학",
     "dept": "러시아어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1131,7 +1153,7 @@
     "college": "외국어대학",
     "dept": "중국어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1165,7 +1187,7 @@
     "college": "외국어대학",
     "dept": "일본어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1199,7 +1221,7 @@
     "college": "외국어대학",
     "dept": "한국어학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1233,7 +1255,7 @@
     "college": "외국어대학",
     "dept": "영미어문전공",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1267,7 +1289,7 @@
     "college": "외국어대학",
     "dept": "영미문화전공",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1301,7 +1323,7 @@
     "college": "예술·디자인대학",
     "dept": "산업디자인학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1335,7 +1357,7 @@
     "college": "예술·디자인대학",
     "dept": "시각디자인학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1369,7 +1391,7 @@
     "college": "예술·디자인대학",
     "dept": "환경조경디자인학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1403,7 +1425,7 @@
     "college": "예술·디자인대학",
     "dept": "의류디자인학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1437,7 +1459,7 @@
     "college": "예술·디자인대학",
     "dept": "디지털콘텐츠학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1471,7 +1493,7 @@
     "college": "예술·디자인대학",
     "dept": "도예학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1505,7 +1527,7 @@
     "college": "예술·디자인대학",
     "dept": "연극영화학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1539,7 +1561,7 @@
     "college": "예술·디자인대학",
     "dept": "포스트모던음악학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1573,7 +1595,7 @@
     "college": "체육대학",
     "dept": "체육학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1607,7 +1629,7 @@
     "college": "체육대학",
     "dept": "스포츠의학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1641,7 +1663,7 @@
     "college": "체육대학",
     "dept": "골프산업학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1675,7 +1697,7 @@
     "college": "체육대학",
     "dept": "스포츠지도학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1709,7 +1731,7 @@
     "college": "체육대학",
     "dept": "태권도학과",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1743,7 +1765,7 @@
     "college": "융합전공",
     "dept": "글로벌엔지니어링",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1758,8 +1780,8 @@
       "double": {
         "available": true,
         "status": "ok",
-        "기초": 0,
-        "필수": 6,
+        "기초": 6,
+        "필수": 0,
         "선택": 33,
         "계": 39
       },
@@ -1773,7 +1795,7 @@
     "college": "융합전공",
     "dept": "글로벌문화기술",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1803,7 +1825,7 @@
     "college": "융합전공",
     "dept": "4D아트",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1829,7 +1851,7 @@
     "college": "융합전공",
     "dept": "아트&테크놀로지",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1855,7 +1877,7 @@
     "college": "융합전공",
     "dept": "K-퍼포밍아트",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1885,7 +1907,7 @@
     "college": "융합전공",
     "dept": "실감미디어",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1902,8 +1924,8 @@
         "계": 42
       },
       "minor": {
-        "available": null,
-        "status": "needs_review"
+        "available": false,
+        "status": "ok"
       }
     }
   },
@@ -1911,7 +1933,7 @@
     "college": "융합전공",
     "dept": "양자정보",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1937,7 +1959,7 @@
     "college": "융합전공",
     "dept": "우주인공지능",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1963,7 +1985,7 @@
     "college": "융합전공",
     "dept": "첨단바이오신소재",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -1993,7 +2015,7 @@
     "college": "융합전공",
     "dept": "첨단종자푸드테크",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -2023,7 +2045,7 @@
     "college": "융합전공",
     "dept": "인공지능반도체",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {
@@ -2049,7 +2071,7 @@
     "college": "융합전공",
     "dept": "웨어러블디자인테크놀로지",
     "campus": "국제",
-    "source_url": "TODO",
+    "source_url": "2026경희대 교육과정.pdf p.122",
     "as_of": "2026학년도 교육과정",
     "checked_on": "2026-10-17",
     "programs": {

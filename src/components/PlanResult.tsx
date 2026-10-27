@@ -13,6 +13,7 @@ export interface Breakdown {
   필수: number;
   선택: number;
   계: number;
+  combined?: boolean; // 기초 is 전공기초 and 전공필수 together
 }
 
 type Status = ProgramCourses["status"];
@@ -31,13 +32,17 @@ interface Row {
 }
 
 function creditRows(b: Breakdown): Row[] {
-  return (
-    [
-      ["전공기초", b.기초],
-      ["전공필수", b.필수],
-      ["전공선택", b.선택],
-    ] as const
-  ).map(([k, v]) => ({ k, v, ratio: b.계 ? v / b.계 : 0 }));
+  const rows: [string, number][] = b.combined
+    ? [
+        ["전공기초·전공필수", b.기초],
+        ["전공선택", b.선택],
+      ]
+    : [
+        ["전공기초", b.기초],
+        ["전공필수", b.필수],
+        ["전공선택", b.선택],
+      ];
+  return rows.map(([k, v]) => ({ k, v, ratio: b.계 ? v / b.계 : 0 }));
 }
 
 function groupRule(rule: CourseGroup["rule"]): string {

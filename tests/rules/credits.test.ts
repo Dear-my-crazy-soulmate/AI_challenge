@@ -29,16 +29,31 @@ describe("컴퓨터공학과 (본전공)", () => {
     expect(r.warnings.map((w) => w.code)).toContain("NULL_AS_ZERO");
   });
 
-  it("reports unconfirmed source URLs", () => {
+  it("cites the curriculum book's credit table as the source", () => {
     const r = ok(buildCreditPlan({ primary: "컴퓨터공학과", second: "체육학과", kind: "double" }, real));
-    expect(r.warnings.filter((w) => w.code === "SOURCE_UNCONFIRMED")).toHaveLength(2);
+    expect(r.warnings.filter((w) => w.code === "SOURCE_UNCONFIRMED")).toHaveLength(0);
+    expect(r.sources["컴퓨터공학과"].sourceUrl).toBe("2026경희대 교육과정.pdf p.121");
+    expect(r.sources["체육학과"].sourceUrl).toBe("2026경희대 교육과정.pdf p.122");
     expect(r.sources["체육학과"].asOf).toBe("2026학년도 교육과정");
+  });
+
+  it("uses the book's numbers where the old overview was wrong", () => {
+    // book p.121: 컴퓨터공학과 단일 12/39/30 = 81 (overview had 필수 42, 선택 27)
+    const r = ok(buildCreditPlan({ primary: "컴퓨터공학과", second: "전자공학과", kind: "minor" }, real));
+    expect(r.primary).toMatchObject({ 기초: 12, 필수: 39, 선택: 30, 계: 81 });
+    // 전자공학과 minor: the "3" was 타전공 인정학점, not 전공기초 -> 9 + 12 = 21 now verifies
+    expect(r.second).toMatchObject({ 기초: 0, 필수: 9, 선택: 12, 계: 21 });
+  });
+
+  it("keeps the merged 기초+필수 credits of 전자공학과 다전공", () => {
+    const r = ok(buildCreditPlan({ primary: "컴퓨터공학과", second: "전자공학과", kind: "double" }, real));
+    expect(r.second).toMatchObject({ 기초: 30, 선택: 21, 계: 51, combined: true });
   });
 });
 
 describe("unavailable results", () => {
   it("minor that failed verification is not provided", () => {
-    const r = buildCreditPlan({ primary: "컴퓨터공학과", second: "전자공학과", kind: "minor" }, real);
+    const r = buildCreditPlan({ primary: "컴퓨터공학과", second: "융합바이오·신소재공학과", kind: "minor" }, real);
     expect(reason(r)).toBe("NOT_VERIFIED");
     if (!r.available) expect(r.message).toContain("SUM_MISMATCH");
   });
@@ -78,7 +93,7 @@ describe("listCreditOptions", () => {
 
   it("excludes itself, unverified and not-offered programs", () => {
     expect(opts.some((o) => o.dept === "컴퓨터공학과")).toBe(false);
-    expect(opts.some((o) => o.dept === "전자공학과" && o.kind === "minor")).toBe(false);
+    expect(opts.some((o) => o.dept === "융합바이오·신소재공학과" && o.kind === "minor")).toBe(false);
     expect(opts.some((o) => o.dept === "인공지능학과" && o.kind === "minor")).toBe(false);
     expect(opts.some((o) => o.dept === "양자정보" && o.kind === "double")).toBe(true);
   });

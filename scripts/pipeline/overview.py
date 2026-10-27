@@ -1,7 +1,12 @@
 """Credit overview: validate per-department credit totals and export Global campus data.
 
 Input : data/extracted/overview_all.json (official site, copied as is)
+        data/extracted/<year>/credits_book.json + credit_notes.json (the curriculum
+        book's own table "전공별 교육과정 기본구조표", written by book_credits.py)
 Output: data/curated/credits_global.json, data/curated/credits_global_issues.json
+
+The book is the source of truth: where it lists a department its numbers
+replace the overview's, and every difference is kept as a BOOK_DIFFERS warning.
 
 Run with the project venv:  .venv/Scripts/python -I scripts/pipeline/overview.py
 
@@ -18,6 +23,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paths import CURATED_DIR, EXTRACTED_DIR, use_utf8_stdout  # noqa: E402
 
 SOURCE_FILE = EXTRACTED_DIR / "overview_all.json"
+YEAR = 2026
+BOOK_FILE = EXTRACTED_DIR / str(YEAR) / "credits_book.json"
+NOTES_FILE = EXTRACTED_DIR / str(YEAR) / "credit_notes.json"
+BOOK_SOURCE = f"{YEAR}경희대 교육과정.pdf"
 OUT_FILE = CURATED_DIR / "credits_global.json"
 ISSUES_FILE = CURATED_DIR / "credits_global_issues.json"
 
@@ -54,6 +63,8 @@ def is_global(row: dict) -> bool:
 def check_program(values: dict, where: str) -> tuple[dict, list[dict]]:
     """One program (single/double/minor) -> (exported record, issues)."""
     keys = (*PARTS, "계")
+    combined = bool(values.get("combined"))
+    values = {k: v for k, v in values.items() if k != "combined"}
     if set(values) != set(keys):
         return {"available": None, "status": "needs_review"}, [
             issue("error", "BAD_KEYS", f"keys {sorted(values)}", where)]
@@ -77,7 +88,10 @@ def check_program(values: dict, where: str) -> tuple[dict, list[dict]]:
 
     if any(i["level"] == "error" for i in issues):
         return {"available": None, "status": "needs_review"}, issues
-    return {"available": True, "status": "ok", **parts, "계": total}, issues
+    record = {"available": True, "status": "ok", **parts, "계": total}
+    if combined:
+        record["combined"] = True  # 기초 holds 전공기초 and 전공필수 together
+    return record, issues
 
 
 def check_dept(row: dict) -> tuple[dict, list[dict]]:
@@ -107,7 +121,35 @@ def check_dept(row: dict) -> tuple[dict, list[dict]]:
     return record, issues
 
 
-def build(rows: list[dict]) -> tuple[list[dict], dict]:
+def load_book() -> dict:
+    """dept -> {single, double, minor, page, line} from the book; {} if not built yet."""
+    if not BOOK_FILE.exists():
+        return {}
+    rows = json.loads(BOOK_FILE.read_text(encoding="utf-8"))["rows"]
+    if NOTES_FILE.exists():
+        notes = json.loads(NOTES_FILE.read_text(encoding="utf-8"))
+        rows.update({k: v for k, v in notes.items() if not k.startswith("_")})
+    return rows
+
+
+def apply_book(row: dict, book: dict) -> tuple[dict, list[dict]]:
+    """Replace a row's credits with the book's, warning about each difference."""
+    entry = book.get(row["dept"])
+    if entry is None:
+        return row, [issue("warn", "NOT_IN_BOOK", "credit table of the book has no row; overview values kept", row["dept"])]
+    new, issues = dict(row), []
+    for kind in KINDS:
+        values = entry[kind]
+        old = {k: row[kind][k] for k in (*PARTS, "계")}
+        fresh = {k: values[k] for k in (*PARTS, "계")}
+        if old != fresh:
+            issues.append(issue("warn", "BOOK_DIFFERS", f"overview {old} -> book {fresh} (p.{entry['page']})", f"{row['dept']}/{kind}"))
+        new[kind] = dict(values)
+    new["book_page"] = entry["page"]
+    return new, issues
+
+
+def build(rows: list[dict], book: dict | None = None) -> tuple[list[dict], dict]:
     names = [r["dept"] for r in rows]
     dupes = {n for n in names if names.count(n) > 1}
     if dupes:
@@ -116,7 +158,13 @@ def build(rows: list[dict]) -> tuple[list[dict], dict]:
     for row in rows:
         if not is_global(row):
             continue
+        book_issues: list[dict] = []
+        if book:
+            row, book_issues = apply_book(row, book)
         rec, iss = check_dept(row)
+        if book and "book_page" in row:
+            rec["source_url"] = f"{BOOK_SOURCE} p.{row['book_page']}"
+        iss = book_issues + iss
         records.append(rec)
         if iss:
             all_issues[row["dept"]] = iss
@@ -129,7 +177,10 @@ def build(rows: list[dict]) -> tuple[list[dict], dict]:
 def main() -> None:
     use_utf8_stdout()
     rows = json.loads(SOURCE_FILE.read_text(encoding="utf-8"))
-    records, issues = build(rows)
+    book = load_book()
+    if not book:
+        print(f"WARNING: {BOOK_FILE} not found, using the overview only (run book_credits.py)")
+    records, issues = build(rows, book)
     OUT_FILE.write_text(json.dumps(records, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     ISSUES_FILE.write_text(json.dumps(issues, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

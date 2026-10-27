@@ -82,7 +82,7 @@ describe("minor and other departments", () => {
   });
 
   it("passes through credit-level errors", () => {
-    const r = buildCoursePlan({ primary: "컴퓨터공학과", second: "전자공학과", kind: "minor" }, credits, data, rules);
+    const r = buildCoursePlan({ primary: "컴퓨터공학과", second: "융합바이오·신소재공학과", kind: "minor" }, credits, data, rules);
     expect(r.available ? "available" : r.reason).toBe("NOT_VERIFIED");
   });
 

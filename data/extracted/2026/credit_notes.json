@@ -1,0 +1,23 @@
+{
+ "_about": "Rows of the book's credit table (p121) that code cannot read alone because cells are merged. Values copied by a human from the line below; 'combined' means one credit number covers 전공기초 and 전공필수 together.",
+ "전자공학과": {
+  "page": 121,
+  "line": "전자공학과 130 25 23 28 76 6 30 21 51 3 9 12 21",
+  "why": "다전공 전공기초·전공필수 칸이 병합돼 30학점 하나만 인쇄됨. 시행세칙 제7조②(p311): '전공기초와 전공필수 30학점을 포함하여 전공학점 51학점 이상'",
+  "graduation": 130,
+  "single": {"기초": 25, "필수": 23, "선택": 28, "계": 76},
+  "double": {"기초": 30, "필수": null, "선택": 21, "계": 51, "combined": true},
+  "minor": {"기초": null, "필수": 9, "선택": 12, "계": 21},
+  "recognized": {"single": 6, "minor": 3}
+ },
+ "반도체공학과": {
+  "page": 121,
+  "line": "반도체공학과 130 25 29 25 79 6 30 21 51 9 12 21",
+  "why": "다전공 전공기초·전공필수 칸이 병합돼 30학점 하나만 인쇄되고, 부전공 타전공인정 칸은 비어 있음",
+  "graduation": 130,
+  "single": {"기초": 25, "필수": 29, "선택": 25, "계": 79},
+  "double": {"기초": 30, "필수": null, "선택": 21, "계": 51, "combined": true},
+  "minor": {"기초": null, "필수": 9, "선택": 12, "계": 21},
+  "recognized": {"single": 6, "minor": null}
+ }
+}

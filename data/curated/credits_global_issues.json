@@ -42,6 +42,12 @@
   "화학공학과": [
     {
       "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "화학공학과/single",
+      "msg": "overview {'기초': 21, '필수': 19, '선택': 39, '계': 79} -> book {'기초': 21, '필수': 18, '선택': 39, '계': 78} (p.121)"
+    },
+    {
+      "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "화학공학과/minor",
       "msg": "기초 is null, read as 0"
@@ -116,15 +122,27 @@
   "전자공학과": [
     {
       "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "전자공학과/single",
+      "msg": "overview {'기초': 25, '필수': 26, '선택': 28, '계': 79} -> book {'기초': 25, '필수': 23, '선택': 28, '계': 76} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "전자공학과/minor",
+      "msg": "overview {'기초': 3, '필수': 9, '선택': 12, '계': 21} -> book {'기초': None, '필수': 9, '선택': 12, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "전자공학과/double",
       "msg": "필수 is null, read as 0"
     },
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
       "where": "전자공학과/minor",
-      "msg": "{'기초': 3, '필수': 9, '선택': 12} sums to 24, 계 is 21"
+      "msg": "기초 is null, read as 0"
     }
   ],
   "반도체공학과": [
@@ -156,6 +174,12 @@
     }
   ],
   "컴퓨터공학과": [
+    {
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "컴퓨터공학과/single",
+      "msg": "overview {'기초': 12, '필수': 42, '선택': 27, '계': 81} -> book {'기초': 12, '필수': 39, '선택': 30, '계': 81} (p.121)"
+    },
     {
       "level": "warn",
       "code": "NULL_AS_ZERO",
@@ -227,10 +251,16 @@
   ],
   "식품생명공학과": [
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
       "where": "식품생명공학과/minor",
-      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+      "msg": "overview {'기초': 6, '필수': 15, '선택': 6, '계': 21} -> book {'기초': None, '필수': 15, '선택': 6, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "식품생명공학과/minor",
+      "msg": "기초 is null, read as 0"
     }
   ],
   "원예생명공학과": [
@@ -243,42 +273,84 @@
   ],
   "유전생명공학과": [
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
       "where": "유전생명공학과/minor",
-      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+      "msg": "overview {'기초': 6, '필수': 15, '선택': 6, '계': 21} -> book {'기초': None, '필수': 15, '선택': 6, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "유전생명공학과/minor",
+      "msg": "기초 is null, read as 0"
     }
   ],
   "한방생명공학과": [
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
       "where": "한방생명공학과/minor",
-      "msg": "{'기초': 6, '필수': 15, '선택': 6} sums to 27, 계 is 21"
+      "msg": "overview {'기초': 6, '필수': 15, '선택': 6, '계': 21} -> book {'기초': None, '필수': 15, '선택': 6, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "한방생명공학과/minor",
+      "msg": "기초 is null, read as 0"
     }
   ],
   "융합바이오·신소재공학과": [
     {
       "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "융합바이오·신소재공학과/minor",
+      "msg": "overview {'기초': 6, '필수': 15, '선택': None, '계': 21} -> book {'기초': None, '필수': 15, '선택': None, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "융합바이오·신소재공학과/minor",
+      "msg": "기초 is null, read as 0"
+    },
+    {
+      "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "융합바이오·신소재공학과/minor",
       "msg": "선택 is null, read as 0"
+    },
+    {
+      "level": "error",
+      "code": "SUM_MISMATCH",
+      "where": "융합바이오·신소재공학과/minor",
+      "msg": "{'기초': 0, '필수': 15, '선택': 0} sums to 15, 계 is 21"
     }
   ],
   "국제학과": [
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
       "where": "국제학과/minor",
-      "msg": "{'기초': 3, '필수': 6, '선택': 15} sums to 24, 계 is 21"
+      "msg": "overview {'기초': 3, '필수': 6, '선택': 15, '계': 21} -> book {'기초': None, '필수': 6, '선택': 15, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "국제학과/minor",
+      "msg": "기초 is null, read as 0"
     }
   ],
   "아시아학과": [
     {
-      "level": "error",
-      "code": "SUM_MISMATCH",
+      "level": "warn",
+      "code": "BOOK_DIFFERS",
       "where": "아시아학과/minor",
-      "msg": "{'기초': 3, '필수': 12, '선택': 9} sums to 24, 계 is 21"
+      "msg": "overview {'기초': 3, '필수': 12, '선택': 9, '계': 21} -> book {'기초': None, '필수': 12, '선택': 9, '계': 21} (p.121)"
+    },
+    {
+      "level": "warn",
+      "code": "NULL_AS_ZERO",
+      "where": "아시아학과/minor",
+      "msg": "기초 is null, read as 0"
     }
   ],
   "프랑스어학과": [
@@ -590,6 +662,12 @@
   "글로벌엔지니어링": [
     {
       "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "글로벌엔지니어링/double",
+      "msg": "overview {'기초': None, '필수': 6, '선택': 33, '계': 39} -> book {'기초': 6, '필수': None, '선택': 33, '계': 39} (p.122)"
+    },
+    {
+      "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "글로벌엔지니어링/single",
       "msg": "기초 is null, read as 0"
@@ -598,7 +676,7 @@
       "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "글로벌엔지니어링/double",
-      "msg": "기초 is null, read as 0"
+      "msg": "필수 is null, read as 0"
     }
   ],
   "4D아트": [
@@ -628,6 +706,12 @@
   "실감미디어": [
     {
       "level": "warn",
+      "code": "BOOK_DIFFERS",
+      "where": "실감미디어/minor",
+      "msg": "overview {'기초': 6, '필수': None, '선택': None, '계': None} -> book {'기초': None, '필수': None, '선택': None, '계': None} (p.122)"
+    },
+    {
+      "level": "warn",
       "code": "NULL_AS_ZERO",
       "where": "실감미디어/double",
       "msg": "기초 is null, read as 0"
@@ -637,24 +721,6 @@
       "code": "NULL_AS_ZERO",
       "where": "실감미디어/double",
       "msg": "필수 is null, read as 0"
-    },
-    {
-      "level": "warn",
-      "code": "NULL_AS_ZERO",
-      "where": "실감미디어/minor",
-      "msg": "필수 is null, read as 0"
-    },
-    {
-      "level": "warn",
-      "code": "NULL_AS_ZERO",
-      "where": "실감미디어/minor",
-      "msg": "선택 is null, read as 0"
-    },
-    {
-      "level": "error",
-      "code": "MISSING_TOTAL",
-      "where": "실감미디어/minor",
-      "msg": "계 is null"
     }
   ],
   "첨단바이오신소재": [

@@ -4466,7 +4466,7 @@
    ],
    "programs": {
     "single": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
@@ -4487,8 +4487,8 @@
       },
       {
        "category": "전공필수",
-       "credits": 19,
-       "rule": "unknown",
+       "credits": 18,
+       "rule": "all",
        "courses": [
         "CHE232",
         "CHE234",
@@ -4545,9 +4545,7 @@
        "text": "② 단일전공과정 : 화학공학과 학생으로서 단일전공자는 전공기초 21학점, 전공필수 18학점을 포함하여 전공학점 78학점 이상 이수하여야 한다."
       }
      ],
-     "problems": [
-      "전공필수: listed courses add up to 18, credit table says 19"
-     ]
+     "problems": []
     },
     "double": {
      "status": "choose",
@@ -8129,7 +8127,7 @@
    ],
    "programs": {
     "single": {
-     "status": "check",
+     "status": "choose",
      "source": "catalog",
      "page": null,
      "groups": [
@@ -8152,8 +8150,8 @@
       },
       {
        "category": "전공필수",
-       "credits": 26,
-       "rule": "unknown",
+       "credits": 23,
+       "rule": "all",
        "courses": [
         "EE201",
         "EE202",
@@ -8199,19 +8197,17 @@
        "text": "제23조(타전공과목 인정) ① 단일전공자에 한하여 동일계열 또는 타계열의 전공과목도 전공심화를 위하여 6학점까지 수강할 수 있으며, 수강한 과목은 전공선택 학점으로 인정한다. 다전공자의 경우 3학점까지 전공선택 학점으로 인정한다."
       }
      ],
-     "problems": [
-      "전공필수: listed courses add up to 23, credit table says 26"
-     ]
+     "problems": []
     },
     "double": {
-     "status": "check",
+     "status": "choose",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
+       "category": "전공기초·전공필수",
        "credits": 30,
-       "rule": "unknown",
+       "rule": "choose",
        "courses": [
         "AMTH1001",
         "AMTH1003",
@@ -8221,9 +8217,18 @@
         "APHY1003",
         "EE211",
         "EE213",
-        "SWCON104"
+        "SWCON104",
+        "EE201",
+        "EE202",
+        "EE203",
+        "EE206",
+        "EE207",
+        "EE209",
+        "EE210",
+        "EE486",
+        "EE497"
        ],
-       "course_credits": 27
+       "course_credits": 50
       },
       {
        "category": "전공선택",
@@ -8265,36 +8270,17 @@
        "text": "제23조(타전공과목 인정) ① 단일전공자에 한하여 동일계열 또는 타계열의 전공과목도 전공심화를 위하여 6학점까지 수강할 수 있으며, 수강한 과목은 전공선택 학점으로 인정한다. 다전공자의 경우 3학점까지 전공선택 학점으로 인정한다."
       }
      ],
-     "problems": [
-      "전공기초: listed courses add up to 27, credit table says 30"
-     ]
+     "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "choose",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "AMTH1001",
-        "AMTH1003",
-        "AMTH1004",
-        "AMTH1009",
-        "APHY1002",
-        "APHY1003",
-        "EE211",
-        "EE213",
-        "SWCON104"
-       ],
-       "course_credits": 27
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 9,
+       "rule": "choose",
        "courses": [
         "EE201",
         "EE202",
@@ -8310,8 +8296,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 12,
+       "rule": "choose",
        "courses": [
         "CSE203",
         "CSE302",
@@ -8340,11 +8326,7 @@
        "text": "④ 부전공과정 : 전자공학을 부전공과정으로 이수하고자 하는 학생은 전공필수 9학점, 전공선택 12학점을 포함하여 전공학점 21 학점 이상을 이수하여야 한다. 단, 타학과 학생이 전자공학을 부전공할 경우는 선수과목을 적용하지 않는다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -8616,14 +8598,14 @@
      "problems": []
     },
     "double": {
-     "status": "check",
+     "status": "choose",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
+       "category": "전공기초·전공필수",
        "credits": 30,
-       "rule": "unknown",
+       "rule": "choose",
        "courses": [
         "AMTH1001",
         "AMTH1003",
@@ -8633,9 +8615,20 @@
         "APHY1003",
         "EE211",
         "EE213",
-        "SWCON104"
+        "SWCON104",
+        "EE201",
+        "EE202",
+        "EE203",
+        "EE206",
+        "EE207",
+        "EE209",
+        "EE210",
+        "EE321",
+        "EE371",
+        "SE4001",
+        "SE4002"
        ],
-       "course_credits": 27
+       "course_credits": 56
       },
       {
        "category": "전공선택",
@@ -8663,9 +8656,7 @@
        "text": "제9조(선수과목의 지정) 반도체공학과의 전공과목은 [별표4]와 같이 선수과목에 따라 이수하여야 한다. 단, 전과, 편입생의 경우 전과, 편입 후 1년 동안 이수체계 전공기초 선수과목-후수과목(전공필수)에 한하여 동일 학기에 수강신청이 가능하다. 단, 타학과 학생이 반도체공학을 다전공(부전공)할 경우는 선수과목을 적용하지 않는다."
       }
      ],
-     "problems": [
-      "전공기초: listed courses add up to 27, credit table says 30"
-     ]
+     "problems": []
     },
     "minor": {
      "status": "choose",
@@ -9843,7 +9834,7 @@
    ],
    "programs": {
     "single": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
@@ -9861,8 +9852,8 @@
       },
       {
        "category": "전공필수",
-       "credits": 42,
-       "rule": "unknown",
+       "credits": 39,
+       "rule": "all",
        "courses": [
         "CSE103",
         "CSE203",
@@ -9883,7 +9874,7 @@
       },
       {
        "category": "전공선택",
-       "credits": 27,
+       "credits": 30,
        "rule": "choose",
        "courses": [
         "AI1002",
@@ -9970,9 +9961,7 @@
        "text": "② 2009년 이후 2017년 이전 입학생 중 컴퓨터공학과 단일전공과정과 다전공과정의 졸업 이수 요건을 전공기초 21학점으로"
       }
      ],
-     "problems": [
-      "전공필수: listed courses add up to 39, credit table says 42"
-     ]
+     "problems": []
     },
     "double": {
      "status": "verified",
@@ -15434,29 +15423,14 @@
      "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "BIO101",
-        "APCH1121",
-        "AMTH1009",
-        "APHY1004",
-        "AMTH1005",
-        "BIO102",
-        "APCH1122"
-       ],
-       "course_credits": 21
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 15,
+       "rule": "all",
        "courses": [
         "FSB231",
         "FSB242",
@@ -15469,8 +15443,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 6,
+       "rule": "choose",
        "courses": [
         "BIO105",
         "FSB221",
@@ -15515,11 +15489,7 @@
        "text": "제6조(부전공이수학점) ① 식품생명공학과를 부전공과정으로 이수하고자 하는 자는 전공필수 15학점을 포함하여 전공학점 21학점 이상을 이수하여야 한다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -16615,28 +16585,14 @@
      "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "BIO101",
-        "BIO102",
-        "APCH1121",
-        "APCH1122",
-        "GEN103",
-        "GEN101"
-       ],
-       "course_credits": 18
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 15,
+       "rule": "all",
        "courses": [
         "GEN212",
         "GEN211",
@@ -16649,8 +16605,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 6,
+       "rule": "choose",
        "courses": [
         "GEN201",
         "GEN203",
@@ -16698,11 +16654,7 @@
        "text": "제6조(부전공이수학점) ① 유전생명공학과를 부전공과정으로 이수하고자 하는 자는 전공필수 15학점을 포함하여 전공학점 21학점 이상을 이수하여야 한다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -17111,29 +17063,14 @@
      "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "choose",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "BIO101",
-        "APCH1121",
-        "BIO102",
-        "APCH1122",
-        "APHY1004",
-        "AMTH1005",
-        "AMTH1009"
-       ],
-       "course_credits": 21
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 15,
+       "rule": "choose",
        "courses": [
         "OMB203",
         "OMB301",
@@ -17151,8 +17088,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 6,
+       "rule": "choose",
        "courses": [
         "OMB204",
         "OMB211",
@@ -17181,11 +17118,7 @@
        "text": "제6조(부전공이수학점) ① 한방생명공학과(전공)를 부전공과정으로 이수하고자 하는 자는 전공필수 15학점을 포함하여 전공학점 21학점 이상을 이수하여야 한다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -17811,14 +17744,14 @@
      "problems": []
     },
     "minor": {
-     "status": "choose",
+     "status": "check",
      "source": "catalog",
      "page": null,
      "groups": [
       {
        "category": "전공기초",
-       "credits": 6,
-       "rule": "choose",
+       "credits": null,
+       "rule": "unknown",
        "courses": [
         "BIO101",
         "APCH1121",
@@ -17832,8 +17765,8 @@
       },
       {
        "category": "전공필수",
-       "credits": 15,
-       "rule": "choose",
+       "credits": null,
+       "rule": "unknown",
        "courses": [
         "CBM205",
         "CBM203",
@@ -17846,6 +17779,57 @@
         "CBM407"
        ],
        "course_credits": 24
+      },
+      {
+       "category": "전공선택",
+       "credits": null,
+       "rule": "unknown",
+       "courses": [
+        "CBM208",
+        "CBM207",
+        "CBM213",
+        "CBM214",
+        "CBM201",
+        "CBM209",
+        "CBM204",
+        "CBM206",
+        "CBM202",
+        "CBM212",
+        "CBM308",
+        "CBM310",
+        "CBM306",
+        "CBM316",
+        "CBM319",
+        "CBM309",
+        "CBM304",
+        "CBM323",
+        "CBM318",
+        "CBM303",
+        "CBM313",
+        "CBM315",
+        "CBM301",
+        "CBM314",
+        "CBM324",
+        "CBM403",
+        "CBM317",
+        "CBM402",
+        "CBM406",
+        "CBM305",
+        "CBM320",
+        "CBM404",
+        "CBM405",
+        "CBM401",
+        "CBM408",
+        "CBM321",
+        "CBM322",
+        "CBM325",
+        "CBM326",
+        "CBM327",
+        "CBM328",
+        "CBM329",
+        "BIO105"
+       ],
+       "course_credits": 123
       }
      ],
      "rules": [
@@ -17854,7 +17838,11 @@
        "text": "제6조(부전공이수학점) ① 융합바이오·신소재공학과(전공)를 부전공과정으로 이수하고자 하는 자는 전공필수 15학점을 포함하여 전공학점 21학점 이상을 이수하여야 한다."
       }
      ],
-     "problems": []
+     "problems": [
+      "전공기초: no verified credit data",
+      "전공필수: no verified credit data",
+      "전공선택: no verified credit data"
+     ]
     }
    }
   },
@@ -18685,26 +18673,14 @@
      "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "IS1001",
-        "IS1002",
-        "IS1003",
-        "IS1004"
-       ],
-       "course_credits": 12
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 6,
+       "rule": "all",
        "courses": [
         "IS2508",
         "IS2204",
@@ -18714,8 +18690,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 15,
+       "rule": "choose",
        "courses": [
         "IS1011",
         "IS3301",
@@ -18802,11 +18778,7 @@
        "text": "제10조(부전공이수학점) ① 국제학전공을 부전공과정으로 이수하고자 하는 학생은 전공필수 6학점을 포함하여 전공학점 21학점을 이수하여야 한다. 제5조의 규정에도 불구하고 대학원 또는 타전공에서 취득한 학점을 전공선택으로 인정하지 않는다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -19248,27 +19220,14 @@
      "problems": []
     },
     "minor": {
-     "status": "check",
+     "status": "verified",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공기초",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "AS1001",
-        "AS1002",
-        "AS1027",
-        "AS1006",
-        "AS1007"
-       ],
-       "course_credits": 11
-      },
-      {
        "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 12,
+       "rule": "all",
        "courses": [
         "AS2011",
         "AS2002",
@@ -19280,8 +19239,8 @@
       },
       {
        "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
+       "credits": 9,
+       "rule": "choose",
        "courses": [
         "AS3023",
         "AS3043",
@@ -19322,11 +19281,7 @@
        "text": "제9조(부전공이수학점) ① 아시아학 전공을 부전공과정으로 이수하고자 하는 학생은 전공필수 12학점을 포함하여 전공학점 21 학점을 이수하여야 한다. 제5조의 규정에도 불구하고 대학원 또는 타전공에서 취득한 학점을 전공선택으로 인정하지 않는다."
       }
      ],
-     "problems": [
-      "전공기초: no verified credit data",
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
+     "problems": []
     }
    }
   },
@@ -31485,23 +31440,16 @@
      "problems": []
     },
     "double": {
-     "status": "choose",
+     "status": "check",
      "source": "catalog",
      "page": null,
      "groups": [
       {
-       "category": "전공필수",
+       "category": "전공기초",
        "credits": 6,
-       "rule": "choose",
-       "courses": [
-        "GE2001",
-        "GE4001",
-        "GE402",
-        "GE2001",
-        "GE4001",
-        "GE402"
-       ],
-       "course_credits": 12
+       "rule": "unknown",
+       "courses": [],
+       "course_credits": 0
       },
       {
        "category": "전공선택",
@@ -31568,7 +31516,9 @@
        "text": "⑥ 본 전공을 다전공으로 이수하는 경우, 소속 학과(전공)에서 이수한 교과목과 본 전공의 교과목이 중복될 경우 교차 인정할 수 있는 최대인정학점 범위는 15학점 이내로 한다."
       }
      ],
-     "problems": []
+     "problems": [
+      "전공기초: listed courses add up to 0, credit table says 6"
+     ]
     }
    }
   },
@@ -33872,161 +33822,6 @@
       }
      ],
      "problems": []
-    },
-    "minor": {
-     "status": "check",
-     "source": "catalog",
-     "page": null,
-     "groups": [
-      {
-       "category": "전공필수",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "IM4104"
-       ],
-       "course_credits": 0
-      },
-      {
-       "category": "전공선택",
-       "credits": null,
-       "rule": "unknown",
-       "courses": [
-        "IM1101",
-        "IM2101",
-        "IM2102",
-        "IM3201",
-        "IM4101",
-        "IM4102",
-        "IM4103",
-        "SWCON211",
-        "SWCON212",
-        "SWCON312",
-        "SWCON311",
-        "SWCON313",
-        "SWCON314",
-        "SWCON492",
-        "CSE103",
-        "CSE104",
-        "CSE224",
-        "CSE426",
-        "CSE428",
-        "CSE431",
-        "CSE441",
-        "IM2201",
-        "IM2202",
-        "IM2203",
-        "IM2204",
-        "IM2205",
-        "IM2206",
-        "IM2207",
-        "IM3202",
-        "IM3203",
-        "IM3204",
-        "IM4201",
-        "IM4202",
-        "IM4203",
-        "IM4204",
-        "IM4205",
-        "IM4206",
-        "IM4209",
-        "IM2301",
-        "IM2302",
-        "IM2303",
-        "IM2706",
-        "IM2707",
-        "IM2708",
-        "IM2709",
-        "IM3301",
-        "IM3303",
-        "IM3304",
-        "IM3305",
-        "IM3306",
-        "IM3308",
-        "IM3309",
-        "IM3310",
-        "IM3311",
-        "IM3711",
-        "IM3712",
-        "IM4301",
-        "IM4302",
-        "IM1401",
-        "IM1402",
-        "IM1405",
-        "IM1406",
-        "IM1703",
-        "IM1704",
-        "IM2401",
-        "IM2402",
-        "IM2403",
-        "IM2404",
-        "IM1501",
-        "IM1502",
-        "IM2501",
-        "IM2502",
-        "IM2710",
-        "IM2711",
-        "IM3501",
-        "IM3502",
-        "IM3503",
-        "IM3504",
-        "IM3505",
-        "IM3506",
-        "IM3507",
-        "IM3508",
-        "IM3509",
-        "IM3510",
-        "IM3713",
-        "IM3714",
-        "IM4710",
-        "IM1601",
-        "IM2601",
-        "IM2602",
-        "IM2603",
-        "IM2604",
-        "IM2605",
-        "IM2607",
-        "IM2608",
-        "IM3601",
-        "IM3602",
-        "IM3603",
-        "IM3604",
-        "IM3605",
-        "IM3606",
-        "IM3607",
-        "IM3608",
-        "IM3610",
-        "IM4601",
-        "IM1705",
-        "IM1701",
-        "IM1702",
-        "IM2701",
-        "IM2702",
-        "IM2703",
-        "IM2704",
-        "IM2705",
-        "IM3701",
-        "IM3702",
-        "IM3703",
-        "IM3704",
-        "IM3705",
-        "IM3706",
-        "IM3707",
-        "IM4701",
-        "IM4702",
-        "IM4703",
-        "IM4704",
-        "IM4705",
-        "IM4706"
-       ],
-       "course_credits": 378
-      }
-     ],
-     "rules": [],
-     "problems": [
-      "전공필수: no verified credit data",
-      "전공선택: no verified credit data"
-     ]
     }
    }
   },

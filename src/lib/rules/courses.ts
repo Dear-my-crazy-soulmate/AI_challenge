@@ -6,7 +6,8 @@ import type { CreditData, CreditKind, CreditUnavailable, CreditWarning, ProgramK
 import { applyMajorRules, prohibitedReason } from "./majorRules";
 import type { AppliedMajorRules, MajorRules } from "./majorRules";
 
-export type CourseCategory = "전공기초" | "전공필수" | "전공선택";
+// "전공기초·전공필수": one group when the credit table merges both (전자공학과·반도체공학과 다전공).
+export type CourseCategory = "전공기초" | "전공필수" | "전공선택" | "전공기초·전공필수";
 export type GroupRule = "all" | "choose" | "unknown";
 export type ProgramStatus = "verified" | "choose" | "check";
 

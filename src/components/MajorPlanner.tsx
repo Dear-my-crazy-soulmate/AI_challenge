@@ -47,7 +47,7 @@ interface PickRow {
 
 function creditsOf(data: CreditData, dept: string, kind: ProgramKind): Breakdown | null {
   const p = data.depts.find((d) => d.dept === dept)?.programs[kind];
-  return p && p.available === true ? { 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계 } : null;
+  return p && p.available === true ? { 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계, combined: p.combined } : null;
 }
 
 const isMode = (m: string): m is Mode => (MODES as readonly string[]).includes(m);
