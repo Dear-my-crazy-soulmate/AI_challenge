@@ -8,10 +8,25 @@
 //   is taken once, so its credits count once in the total still to take.
 // Course counts: an "all" group needs every course not taken yet (a 0학점 졸업논문 too); a "choose"
 // group needs the fewest untaken courses whose credits cover what is left (largest first).
-import type { CatalogCourse, CourseGroup, CoursePlanOk, ProgramCourses } from "./courses";
+// 마이크로디그리 (applyTakenMd): the 본전공 stays a single major; a micro-degree course that is also
+// in the 본전공 counts for both (p.423 ③), so if both require it, it is taken once.
+import type { CoursePlanOk, GroupRule } from "./courses";
+import type { MicrodegreePlanOk } from "./microdegrees";
+
+interface CourseLike {
+  code: string;
+  credits: number;
+}
+/** A course group of a major (courses.ts) or a micro-degree's single list. */
+interface GroupInput {
+  category: string;
+  credits: number | null;
+  rule: GroupRule;
+  courses: CourseLike[];
+}
 
 export interface GroupProgress {
-  category: CourseGroup["category"];
+  category: string; // 전공기초 / 전공필수 / 전공선택 / 마이크로디그리
   need: number | null; // credits the group requires (null = unknown)
   taken: number; // credits of taken courses in the group, capped at `need`
   remaining: number | null;
@@ -45,7 +60,7 @@ export interface TakenProgress {
 }
 
 /** Fewest courses from `pool` whose credits reach `credits` (all of the pool if it cannot). */
-function fewestCourses(pool: CatalogCourse[], credits: number): number {
+function fewestCourses(pool: CourseLike[], credits: number): number {
   if (credits <= 0) return 0;
   let sum = 0;
   let n = 0;
@@ -59,7 +74,7 @@ function fewestCourses(pool: CatalogCourse[], credits: number): number {
 }
 
 function progress(
-  p: ProgramCourses,
+  p: { groups: GroupInput[] },
   total: number,
   taken: ReadonlySet<string>,
   exclude: ReadonlySet<string>,
@@ -112,6 +127,27 @@ export function applyTaken(plan: CoursePlanOk, taken: ReadonlySet<string>): Take
   const exempted = second.groups.reduce((s, g) => s + (g.exempt ? (g.need ?? 0) - g.taken : 0), 0);
   // still in both programs' remaining; taking it once covers both
   const sharedOnce = (overlap?.courses ?? []).filter((c) => !taken.has(c.code)).reduce((s, c) => s + c.credits, 0);
+  return combine(primary, second, sharedOnce, exempted);
+}
+
+/** 본전공 (single major) + one micro-degree. */
+export function applyTakenMd(plan: MicrodegreePlanOk, taken: ReadonlySet<string>): TakenProgress {
+  const none = new Set<string>();
+  const md = plan.microdegree;
+  const primary = progress(plan.primary, plan.primaryCredits, taken, none);
+  // credits unknown (a "학과 확인 필요" micro-degree): what its listed courses add up to, flagged as unknown
+  const list: GroupInput = { category: "마이크로디그리", credits: md.required_credits, rule: md.rule, courses: md.courses };
+  const second = progress({ groups: [list] }, md.required_credits ?? md.course_credits, taken, none);
+  // a course both require is in both remainders; it is taken once (p.423 ③: it counts for both)
+  const primaryTodo = new Set(primary.groups.flatMap((g) => g.todo));
+  const secondTodo = new Set(second.groups.flatMap((g) => g.todo));
+  const sharedOnce = md.courses
+    .filter((c) => primaryTodo.has(c.code) && secondTodo.has(c.code))
+    .reduce((s, c) => s + c.credits, 0);
+  return combine(primary, second, sharedOnce, 0);
+}
+
+function combine(primary: ProgramProgress, second: ProgramProgress, sharedOnce: number, exempted: number): TakenProgress {
   const required = new Set([...primary.groups, ...second.groups].flatMap((g) => g.todo)).size;
   const elective = [...primary.groups, ...second.groups]
     .filter((g) => g.todo.length === 0)

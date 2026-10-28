@@ -10,8 +10,8 @@ import type { ReactNode } from "react";
 
 import { ComboGuide } from "@/components/ComboGuide";
 import { useTaken } from "@/components/useTaken";
-import { applyTaken } from "@/lib/rules/taken";
-import type { ProgramProgress } from "@/lib/rules/taken";
+import { applyTaken, applyTakenMd } from "@/lib/rules/taken";
+import type { ProgramProgress, TakenProgress } from "@/lib/rules/taken";
 
 import type { CourseGroup, CoursePlanOk, ProgramCourses } from "@/lib/rules/courses";
 import type { MajorRules } from "@/lib/rules/majorRules";
@@ -186,7 +186,13 @@ interface TakenUi {
 /** Present only for a signed-in user: course rows then show a "들었어요" checkbox. */
 const TakenCtx = createContext<TakenUi | null>(null);
 
-function CourseList({ courses }: { courses: CourseGroup["courses"] }) {
+function CourseList({
+  courses,
+  badge,
+}: {
+  courses: { code: string; name: string; credits: number }[];
+  badge?: (code: string) => ReactNode; // e.g. "본전공에도 있음" on a micro-degree course
+}) {
   const t = useContext(TakenCtx);
   return (
     <ul className="flex flex-col gap-1">
@@ -206,6 +212,7 @@ function CourseList({ courses }: { courses: CourseGroup["courses"] }) {
               )}
               <span className={on ? "text-mute line-through" : ""}>
                 {c.name} <span className="text-xs text-mute">{c.code}</span>
+                {badge?.(c.code)}
                 {on && t?.notCounted.has(c.code) && <span className="ml-1 text-[11px] text-warn no-underline">부전공 미인정</span>}
               </span>
             </span>
@@ -398,6 +405,80 @@ function Source({ children }: { children: ReactNode }) {
   return <p className="mt-1 text-xs leading-normal text-mute">{children}</p>;
 }
 
+/** Taken courses of the signed-in user and what is left, for one result screen. */
+function useTakenProgress(calc: (codes: ReadonlySet<string>) => TakenProgress) {
+  const taken = useTaken();
+  const [error, setError] = useState("");
+  const progress = taken.enabled ? calc(taken.codes) : null;
+  const ui: TakenUi | null = taken.enabled
+    ? {
+        codes: taken.codes,
+        toggle: (code, on) => {
+          setError("");
+          void taken.setTaken(code, on).then((r) => {
+            if (!r.ok) setError(r.message);
+          });
+        },
+        notCounted: new Set(progress?.second.notCounted ?? []),
+      }
+    : null;
+  return { enabled: taken.enabled, progress, ui, error };
+}
+
+/** "남은 전공 학점 / 앞으로 들을 과목" box, or the sign-in link when nobody is signed in. */
+function TakenBox(p: {
+  t: ReturnType<typeof useTakenProgress>;
+  secondLabel: string;
+  secondName: string;
+  sharedWhat: string; // "두 전공에" / "본전공과 마이크로디그리에"
+  countsNote: string;
+}) {
+  const progress = p.t.progress;
+  if (!progress) {
+    return p.t.enabled === false ? (
+      <Link href="/login" className="rounded-[18px] bg-sand-2 px-[18px] py-3.5 text-sm leading-normal">
+        로그인하면 <b>들은 과목을 체크</b>해서 남은 학점과 과목 수를 계산할 수 있어요 ›
+      </Link>
+    ) : null;
+  }
+  const c = progress.remainingCourses;
+  return (
+    <div className="flex flex-col gap-1 rounded-[18px] border border-accent/30 bg-accent-soft px-[18px] py-4">
+      <span className="text-sm leading-normal">
+        들은 과목을 빼면 (본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {p.secondLabel} −
+        <b className="tabular-nums">{progress.second.taken}</b>)
+      </span>
+      <span className="text-[22px] font-bold tabular-nums text-accent-deep">남은 전공 학점 {progress.remaining}학점</span>
+      <span className="text-sm leading-normal">
+        앞으로 들을 과목 최소 <b className="tabular-nums">{c.total}</b>과목
+        <span className="text-mute">
+          {" "}
+          (꼭 들어야 할 과목 {c.required} + 선택 과목 최소 {c.elective})
+        </span>
+      </span>
+      {(progress.sharedOnce > 0 || progress.exempted > 0) && (
+        <span className="text-xs leading-normal text-ink-2">
+          공통 규칙 적용:
+          {progress.exempted > 0 && ` ${p.secondName} 전공기초 ${progress.exempted}학점 면제`}
+          {progress.exempted > 0 && progress.sharedOnce > 0 && " ·"}
+          {progress.sharedOnce > 0 && ` ${p.sharedWhat} 함께 있는 과목 ${progress.sharedOnce}학점은 한 번만 셌어요`}
+        </span>
+      )}
+      {c.unknown && (
+        <span className="text-xs leading-normal text-warn">
+          학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
+        </span>
+      )}
+      <span className="text-xs leading-normal text-mute">
+        {progress.taken === 0
+          ? "아래 과목 목록을 펼쳐 들은 과목에 체크하세요. 내 계정에 저장돼요."
+          : `체크한 과목은 내 계정에 저장돼요. ${p.countsNote}`}
+      </span>
+      {p.t.error && <span className="text-xs text-warn">{p.t.error}</span>}
+    </div>
+  );
+}
+
 /** 다전공 / 부전공 result. */
 export function PlanView({
   plan,
@@ -415,23 +496,10 @@ export function PlanView({
   const kind = plan.input.kind;
   const label = KIND_LABEL[kind];
   const min = plan.majorRules.minimumCredits;
-  const taken = useTaken();
-  const [takenError, setTakenError] = useState("");
-  const progress = taken.enabled ? applyTaken(plan, taken.codes) : null;
-  const ui: TakenUi | null = taken.enabled
-    ? {
-        codes: taken.codes,
-        toggle: (code, on) => {
-          setTakenError("");
-          void taken.setTaken(code, on).then((r) => {
-            if (!r.ok) setTakenError(r.message);
-          });
-        },
-        notCounted: new Set(progress?.second.notCounted ?? []),
-      }
-    : null;
+  const t = useTakenProgress((codes) => applyTaken(plan, codes));
+  const progress = t.progress;
   return (
-    <TakenCtx.Provider value={ui}>
+    <TakenCtx.Provider value={t.ui}>
     <div className="flex flex-col gap-3.5">
       <Hero
         headline={`${plan.primary.dept} + ${plan.second.dept}`}
@@ -451,47 +519,13 @@ export function PlanView({
           </span>
         </div>
       )}
-      {progress ? (
-        <div className="flex flex-col gap-1 rounded-[18px] border border-accent/30 bg-accent-soft px-[18px] py-4">
-          <span className="text-sm leading-normal">
-            들은 과목을 빼면 (본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {label} −
-            <b className="tabular-nums">{progress.second.taken}</b>)
-          </span>
-          <span className="text-[22px] font-bold tabular-nums text-accent-deep">남은 전공 학점 {progress.remaining}학점</span>
-          <span className="text-sm leading-normal">
-            앞으로 들을 과목 최소 <b className="tabular-nums">{progress.remainingCourses.total}</b>과목
-            <span className="text-mute">
-              {" "}
-              (꼭 들어야 할 과목 {progress.remainingCourses.required} + 선택 과목 최소 {progress.remainingCourses.elective})
-            </span>
-          </span>
-          {(progress.sharedOnce > 0 || progress.exempted > 0) && (
-            <span className="text-xs leading-normal text-ink-2">
-              공통 규칙 적용:
-              {progress.exempted > 0 && ` ${plan.second.dept} 전공기초 ${progress.exempted}학점 면제`}
-              {progress.exempted > 0 && progress.sharedOnce > 0 && " ·"}
-              {progress.sharedOnce > 0 && ` 두 전공에 함께 있는 과목 ${progress.sharedOnce}학점은 한 번만 셌어요`}
-            </span>
-          )}
-          {progress.remainingCourses.unknown && (
-            <span className="text-xs leading-normal text-warn">
-              학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
-            </span>
-          )}
-          <span className="text-xs leading-normal text-mute">
-            {progress.taken === 0
-              ? "아래 “과목·학과 규정 보기”에서 들은 과목에 체크하세요. 내 계정에 저장돼요."
-              : "체크한 과목은 내 계정에 저장돼요. 두 전공에 함께 있는 과목은 양쪽에 인정돼요(부전공은 본전공과 겹치면 미인정)."}
-          </span>
-          {takenError && <span className="text-xs text-warn">{takenError}</span>}
-        </div>
-      ) : (
-        taken.enabled === false && (
-          <Link href="/login" className="rounded-[18px] bg-sand-2 px-[18px] py-3.5 text-sm leading-normal">
-            로그인하면 <b>들은 과목을 체크</b>해서 남은 학점을 계산할 수 있어요 ›
-          </Link>
-        )
-      )}
+      <TakenBox
+        t={t}
+        secondLabel={label}
+        secondName={plan.second.dept}
+        sharedWhat="두 전공에"
+        countsNote="두 전공에 함께 있는 과목은 양쪽에 인정돼요(부전공은 본전공과 겹치면 미인정)."
+      />
       {/* signed in, the box above already applies these rules to what is left */}
       {!progress && min < plan.totals.total && (
         <div className="rounded-[18px] bg-sand-2 px-[18px] py-4 text-sm leading-normal">
@@ -565,7 +599,9 @@ export function MicrodegreeView({
   const known = md.required_credits;
   const also = new Set(plan.alsoInPrimary.map((c) => c.code));
   const scale = known || md.course_credits || 1;
+  const t = useTakenProgress((codes) => applyTakenMd(plan, codes));
   return (
+    <TakenCtx.Provider value={t.ui}>
     <div className="flex flex-col gap-3.5">
       <Hero
         headline={`${plan.primary.dept} + ${md.name}`}
@@ -578,6 +614,13 @@ export function MicrodegreeView({
       <SaveGoalButton a={actions} />
       <ComboGuide primary={plan.primary.dept} kind="md" second={plan.input.id} />
       {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
+      <TakenBox
+        t={t}
+        secondLabel="마이크로디그리"
+        secondName={md.name}
+        sharedWhat="본전공과 마이크로디그리에"
+        countsNote="본전공에도 있는 마이크로디그리 과목은 양쪽에 인정돼요."
+      />
       <ProgramCard
         role="본전공 · 단일전공"
         name={plan.primary.dept}
@@ -586,6 +629,7 @@ export function MicrodegreeView({
         tone="ink"
         foot="단일전공 기준"
         sum={plan.primaryCredits}
+        progress={t.progress?.primary}
       >
         <CourseDetails p={plan.primary} />
       </ProgramCard>
@@ -598,23 +642,17 @@ export function MicrodegreeView({
         labelWidth={104}
         foot={groupRule(md.rule)}
         sum={known ?? "?"}
+        progress={t.progress?.second}
       >
         {md.choice_note && <p className="text-xs leading-normal text-mute">{md.choice_note}</p>}
         <Problems items={md.problems} />
-        <Foldable summary="과목 코드 보기">
-          <ul className="flex flex-col gap-1">
-            {md.courses.map((c) => (
-              <li key={c.code} className="flex justify-between gap-2 rounded-lg bg-sand px-2.5 py-1.5 text-[13px]">
-                <span>
-                  {c.name} <span className="text-xs text-mute">{c.code}</span>
-                  {also.has(c.code) && (
-                    <span className="ml-1 rounded bg-ok-soft px-1 text-xs text-ok">본전공에도 있음</span>
-                  )}
-                </span>
-                <span className="whitespace-nowrap tabular-nums text-ink-2">{c.credits}학점</span>
-              </li>
-            ))}
-          </ul>
+        <Foldable summary={t.ui ? "과목 보기 · 들은 과목 체크" : "과목 코드 보기"}>
+          <CourseList
+            courses={md.courses}
+            badge={(code) =>
+              also.has(code) && <span className="ml-1 rounded bg-ok-soft px-1 text-xs text-ok no-underline">본전공에도 있음</span>
+            }
+          />
           <p className="text-xs text-mute">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
         </Foldable>
       </ProgramCard>
@@ -634,5 +672,6 @@ export function MicrodegreeView({
         출처: {plan.source.pdf} ({plan.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.
       </Source>
     </div>
+    </TakenCtx.Provider>
   );
 }

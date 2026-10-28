@@ -2,15 +2,19 @@ import { describe, expect, it } from "vitest";
 
 import courses from "../../data/curated/2026/courses.json";
 import majorRules from "../../data/curated/2026/major_rules.json";
+import microdegrees from "../../data/curated/2026/microdegrees.json";
 import depts from "../../data/curated/credits_global.json";
 import issues from "../../data/curated/credits_global_issues.json";
 import { buildCoursePlan } from "../../src/lib/rules/courses";
 import type { CourseData, CoursePlanOk } from "../../src/lib/rules/courses";
 import type { CreditData } from "../../src/lib/rules/credits";
 import type { MajorRules } from "../../src/lib/rules/majorRules";
-import { applyTaken } from "../../src/lib/rules/taken";
+import { buildMicrodegreePlan, listMicrodegrees } from "../../src/lib/rules/microdegrees";
+import type { MicrodegreeData, MicrodegreePlanOk } from "../../src/lib/rules/microdegrees";
+import { applyTaken, applyTakenMd } from "../../src/lib/rules/taken";
 
 const credits = { depts, issues } as unknown as CreditData;
+const mds = microdegrees as unknown as MicrodegreeData;
 const data = courses as unknown as CourseData;
 const rules = majorRules as unknown as MajorRules;
 
@@ -120,5 +124,36 @@ describe("applyTaken", () => {
     expect(r.second.taken).toBe(0);
     expect(r.second.notCounted).toContain(overlap.code);
     expect(r.primary.taken).toBeGreaterThan(0);
+  });
+});
+
+describe("applyTakenMd", () => {
+  function mdPlan(primary: string, name: string): MicrodegreePlanOk {
+    const md = listMicrodegrees(mds).find((m) => m.name === name)!;
+    const r = buildMicrodegreePlan({ primary, id: md.id }, credits, data, mds, rules);
+    if (!r.available) throw new Error(r.message);
+    return r;
+  }
+
+  it("all-course micro-degree: every untaken course, and a ticked one counts for the 본전공 too", () => {
+    const p = mdPlan("컴퓨터공학과", "빅데이터 분석");
+    const none = applyTakenMd(p, new Set());
+    expect(none.second).toMatchObject({ remaining: 9, remainingCourses: 3 });
+    expect(none.primary.remaining).toBe(p.primaryCredits);
+    const also = p.alsoInPrimary[0];
+    const after = applyTakenMd(p, new Set([also.code]));
+    expect(after.second).toMatchObject({ taken: 3, remaining: 6, remainingCourses: 2 });
+    expect(after.primary.taken).toBe(3); // p.423 ③: counts for both
+    // one course off the micro-degree list and one off the 본전공 전공선택 it also fills
+    expect(after.remainingCourses.total).toBe(none.remainingCourses.total - 2);
+  });
+
+  it("choose micro-degree: the fewest courses that cover its credits", () => {
+    const p = mdPlan("응용물리학과", "양자반도체");
+    expect(p.microdegree.rule).toBe("choose");
+    const r = applyTakenMd(p, new Set());
+    expect(r.second.remaining).toBe(p.microdegree.required_credits);
+    expect(r.second.remainingCourses).toBe(Math.ceil(p.microdegree.required_credits! / 3));
+    expect(r.second.groups[0].todo).toEqual([]);
   });
 });
