@@ -54,3 +54,6 @@ out/
 __pycache__/
 *.pyc
 .venv/
+
+# local preview of unapproved 체험 문제 (scripts/syllabus/export_quiz.py --preview)
+public/quiz-preview/

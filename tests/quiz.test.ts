@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import sample from "../data/seed/quiz_sample.json";
-import { feedbackFor, isCorrect, isShowable, reportTitle, scoreOf, showableMajors } from "../src/lib/quiz";
+import { feedbackFor, isCorrect, isShowable, pickQuestions, QUESTIONS_PER_ROUND, reportTitle, scoreOf, showableMajors } from "../src/lib/quiz";
 import type { QuizQuestion, QuizSet } from "../src/lib/quiz";
 import { parseBest, reaction, recordBest } from "../src/lib/quizProgress";
 
@@ -111,5 +111,35 @@ describe("quiz progress (stars and 쿠옹이's reactions)", () => {
     expect(reaction(true, 2)).toContain("2연속");
     expect(reaction(true, 3)).toContain("3연속");
     expect(reaction(false, 0)).toContain("괜찮아요");
+  });
+});
+
+describe("one round = 5 random questions from the department's pool", () => {
+  const pool = Array.from({ length: 12 }, (_, i) => q({ id: `q${i}`, status: "approved" }));
+  const seeded = (seed: number) => () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+
+  it("draws 5 different questions and leaves the pool alone", () => {
+    const before = pool.map((x) => x.id);
+    const got = pickQuestions(pool, QUESTIONS_PER_ROUND, seeded(1));
+    expect(got).toHaveLength(5);
+    expect(new Set(got.map((x) => x.id)).size).toBe(5);
+    expect(pool.map((x) => x.id)).toEqual(before);
+  });
+  it("gives a different draw next time, and the same draw for the same seed", () => {
+    const a = pickQuestions(pool, 5, seeded(1)).map((x) => x.id);
+    expect(pickQuestions(pool, 5, seeded(1)).map((x) => x.id)).toEqual(a);
+    const draws = new Set(Array.from({ length: 20 }, (_, i) => pickQuestions(pool, 5, seeded(i + 2)).map((x) => x.id).join()));
+    expect(draws.size).toBeGreaterThan(10);
+  });
+  it("uses the whole pool when it has fewer than 5, and never repeats an id", () => {
+    expect(pickQuestions(pool.slice(0, 3))).toHaveLength(3);
+    expect(pickQuestions([pool[0], pool[0], pool[1]])).toHaveLength(2);
+    expect(pickQuestions([])).toEqual([]);
+  });
+  it("shows unapproved questions only in preview", () => {
+    const draft = q({ status: "verified", is_sample: false });
+    expect(isShowable(draft)).toBe(false);
+    expect(isShowable(draft, true)).toBe(true);
+    expect(isShowable(q({ status: "approved" }))).toBe(true);
   });
 });

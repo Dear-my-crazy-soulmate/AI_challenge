@@ -14,6 +14,10 @@ export interface QuizQuestion {
   explanation: string;
   status: QuizStatus;
   is_sample: boolean;
+  // Questions made from a syllabus (data/drafts/quiz, scripts/syllabus) also carry where they come from:
+  flow?: string; // "🎓 …" one sentence on how the course continues
+  evidence?: { week: number; topic: string }; // the syllabus week the question was built from, quoted as printed
+  source?: { site: string; path: string; as_of: string };
 }
 
 export interface QuizMajor {
@@ -22,6 +26,20 @@ export interface QuizMajor {
   questions: QuizQuestion[];
 }
 
+/** public/quiz/index.json: one entry per department that has questions to show. */
+export interface QuizIndexEntry {
+  id: string;
+  dept: string;
+  college: string;
+  count: number;
+}
+
+/** One quiz round = this many questions, drawn at random from the department's pool. */
+export const QUESTIONS_PER_ROUND = 5;
+
+/** Where the exported question files live. Only approved questions are exported there; drafts are exported for local preview only. */
+export const quizBase = (preview: boolean) => (preview ? "/quiz-preview" : "/quiz");
+
 export interface QuizSet {
   is_sample: boolean;
   as_of: string;
@@ -29,13 +47,26 @@ export interface QuizSet {
   majors: QuizMajor[];
 }
 
-/** Approved questions, plus samples (which the screen labels "예시 데이터", CLAUDE.md rule 6). */
-export const isShowable = (q: QuizQuestion) => q.status === "approved" || q.is_sample === true;
+/**
+ * Approved questions, plus samples (which the screen labels "예시 데이터", CLAUDE.md rule 6).
+ * `preview` (a local check of unreviewed drafts, never set in production) also lets drafts through.
+ */
+export const isShowable = (q: QuizQuestion, preview = false) => q.status === "approved" || q.is_sample === true || preview;
+
+/** `n` different questions from the pool in random order (`rng` returns [0, 1); a seeded one makes this testable). Fewer if the pool is smaller. */
+export function pickQuestions(pool: QuizQuestion[], n = QUESTIONS_PER_ROUND, rng: () => number = Math.random): QuizQuestion[] {
+  const a = [...new Map(pool.map((q) => [q.id, q])).values()]; // one per id, the pool itself stays untouched
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a.slice(0, n);
+}
 
 /** Majors that still have at least one showable question, with only those questions. */
 export function showableMajors(set: QuizSet): QuizMajor[] {
   return set.majors
-    .map((m) => ({ ...m, questions: m.questions.filter(isShowable) }))
+    .map((m) => ({ ...m, questions: m.questions.filter((q) => isShowable(q)) }))
     .filter((m) => m.questions.length > 0);
 }
 
@@ -57,10 +88,10 @@ export function feedbackFor(major: string, questions: QuizQuestion[], picks: (nu
   const right = questions.filter((q, i) => isCorrect(q, picks[i])).map((q) => q.skill);
   const wrong = questions.filter((q, i) => !isCorrect(q, picks[i])).map((q) => q.skill);
   if (score === questions.length) {
-    return `${right.join("·")} 문제에서 개념을 정확히 짚었어요. ${major}의 입문 과목이 요구하는 사고방식과 잘 맞는 편이에요.`;
+    return `${right.join("·")} 문제에서 개념을 정확히 짚었어요. ${major} 수업에서 쓰는 사고방식과 잘 맞는 편이에요.`;
   }
   if (score >= 1) {
-    return `기본 개념은 잡혀 있어요. ${wrong.join("·")} 문제처럼 헷갈린 부분은 ${major} 1학년 과목에서 처음부터 다루니 걱정하지 않아도 돼요.`;
+    return `기본 개념은 잡혀 있어요. ${wrong.join("·")} 문제처럼 헷갈린 부분은 ${major}에서 수업으로 차근차근 배우는 내용이니 걱정하지 않아도 돼요.`;
   }
   return "처음 보는 내용이라 어려웠을 수 있어요. 점수보다 ‘더 알고 싶다’는 느낌이 들었는지 떠올려 보세요.";
 }

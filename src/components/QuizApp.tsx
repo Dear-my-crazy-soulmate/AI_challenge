@@ -4,18 +4,23 @@
 // 쿠옹이 dressed for the major cheers along, and the best result per major is kept as stars on this device.
 // Which questions show and how they are graded lives in src/lib/quiz.ts.
 import Link from "next/link";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 
 import Avatar from "@/components/Avatar";
 import { primaryButton, secondaryButton } from "@/components/Field";
 import { useAuth } from "@/lib/auth";
-import { feedbackFor, isCorrect, reportTitle, scoreOf } from "@/lib/quiz";
-import type { QuizMajor } from "@/lib/quiz";
+import { feedbackFor, isCorrect, isShowable, pickQuestions, QUESTIONS_PER_ROUND, quizBase, reportTitle, scoreOf } from "@/lib/quiz";
+import type { QuizIndexEntry, QuizMajor, QuizQuestion } from "@/lib/quiz";
 import { parseBest, reaction, readBestRaw, recordBest, saveBest, subscribeBest } from "@/lib/quizProgress";
 
 type Stage = "pick" | "q" | "report";
-const LETTERS = "ABCD";
+const LETTERS = "①②③④"; // the same marks the explanations use ("정답 ②")
+// Local look at questions nobody has approved yet (scripts/syllabus/export_quiz.py --preview). Never set in production.
+const PREVIEW = process.env.NEXT_PUBLIC_QUIZ_PREVIEW === "1";
+const BASE = quizBase(PREVIEW);
+const chip = (on: boolean) =>
+  `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
 const CONFETTI = ["bg-accent", "bg-ink", "bg-ok", "bg-accent-soft", "bg-chip"];
 
 const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
@@ -45,8 +50,14 @@ export default function QuizApp({
 }) {
   const [view, setView] = useState<"quiz" | "map">("quiz");
   const { profile } = useAuth();
-  const [major, setMajor] = useState<QuizMajor | null>(() => majors.find((m) => m.major === initialMajor) ?? null);
-  const [stage, setStage] = useState<Stage>(major ? "q" : "pick");
+  const [major, setMajor] = useState<QuizMajor | null>(null);
+  const [stage, setStage] = useState<Stage>("pick");
+  const [entries, setEntries] = useState<QuizIndexEntry[] | null>(null); // departments that have questions; null until the list is read
+  const [pool, setPool] = useState<QuizQuestion[]>([]); // every question of the chosen department; each round draws from it
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [text, setText] = useState("");
+  const [college, setCollege] = useState<string | null>(null);
   const [qi, setQi] = useState(0);
   const [sel, setSel] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -71,6 +82,48 @@ export default function QuizApp({
     setRevealed(false);
     top();
   };
+  const startSample = (m: QuizMajor) => {
+    setPool(m.questions);
+    start({ ...m, questions: pickQuestions(m.questions) });
+  };
+  async function startDept(e: QuizIndexEntry) {
+    setBusy(true);
+    setFailed(false);
+    try {
+      const data = (await (await fetch(`${BASE}/${e.id}.json`)).json()) as { dept: string; college: string; questions: QuizQuestion[] };
+      const p = data.questions.filter((q) => isShowable(q, PREVIEW));
+      if (p.length === 0) throw new Error("no showable question");
+      setPool(p);
+      start({ major: data.dept, college: data.college, questions: pickQuestions(p) });
+    } catch {
+      setFailed(true); // the screen keeps working: the list stays, and the student can try again
+    }
+    setBusy(false);
+  }
+  // another round of the same department: a new random draw from its pool
+  const again = () => major && start({ ...major, questions: pickQuestions(pool.length > 0 ? pool : major.questions) });
+
+  // The departments that have questions come from public/quiz/index.json (see scripts/syllabus/export_quiz.py).
+  // Without any (nothing approved yet), the screen falls back to the labelled sample questions.
+  useEffect(() => {
+    fetch(`${BASE}/index.json`)
+      .then((r) => (r.ok ? r.json() : []))
+      .catch(() => [])
+      .then((list: QuizIndexEntry[]) => {
+        setEntries(list);
+        if (!initialMajor) return;
+        const hit = list.find((e) => e.dept === initialMajor);
+        const sample = majors.find((m) => m.major === initialMajor);
+        if (hit) void startDept(hit);
+        else if (list.length === 0 && sample) startSample(sample);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reads the list once, when the screen opens
+  }, []);
+  const colleges = useMemo(() => [...new Set((entries ?? []).map((e) => e.college))], [entries]);
+  const needle = text.replace(/\s/g, "");
+  const rows = (entries ?? [])
+    .filter((e) => (!needle || e.dept.replace(/\s/g, "").includes(needle)) && (needle || !college || e.college === college))
+    .sort((a, b) => Number(b.dept === profile?.primary) - Number(a.dept === profile?.primary)); // the student's own department first
 
   const qs = major?.questions ?? [];
   const cur = stage === "q" ? qs[qi] : undefined;
@@ -144,7 +197,73 @@ export default function QuizApp({
 
       {stage === "pick" && view === "map" && map}
 
-      {stage === "pick" && view === "quiz" && (
+      {stage === "pick" && view === "quiz" && entries === null && <p className="px-1 py-6 text-center text-sm text-mute">학과를 불러오는 중이에요…</p>}
+
+      {stage === "pick" && view === "quiz" && entries !== null && entries.length > 0 && (
+        <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-2.5">
+            <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+              어떤 학과의
+              <br />
+              쿠옹이를 만나 볼까요?
+            </h2>
+            <p className="text-sm leading-normal text-ink-2">
+              문제 {QUESTIONS_PER_ROUND}개를 풀면 별을 모을 수 있어요. 풀 때마다 문제가 새로 뽑혀서, 다시 해도 다른 문제가 나와요.
+            </p>
+          </div>
+          <label className="flex h-10 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+            <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+            <input
+              type="search"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="학과 이름으로 검색"
+              aria-label="학과 검색"
+              className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
+            />
+          </label>
+          <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px]" role="group" aria-label="단과대학">
+            {[null, ...colleges].map((c) => (
+              <button key={c ?? "all"} type="button" aria-pressed={college === c} onClick={() => setCollege(c)} className={chip(college === c)}>
+                {c ?? "전체"}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {rows.map((e, i) => {
+              const b = best[e.dept];
+              return (
+                <button
+                  key={e.id}
+                  type="button"
+                  disabled={busy}
+                  onClick={() => startDept(e)}
+                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-[22px] border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
+                  style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}
+                >
+                  <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
+                    <Avatar dept={e.dept} variant="full" size={120} />
+                  </span>
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-[11px] text-mute">{e.college}</span>
+                    <span className="text-[15px] font-bold">{e.dept}</span>
+                  </span>
+                  <Stars got={b?.score ?? 0} of={QUESTIONS_PER_ROUND} className="text-lg leading-none" />
+                  <span className="text-[11px] font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
+                </button>
+              );
+            })}
+          </div>
+          {rows.length === 0 && <p className="rounded-2xl border border-line bg-white px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</p>}
+          {failed && <p role="alert" className="rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent-deep">문제를 불러오지 못했어요. 잠시 뒤에 다시 눌러 주세요.</p>}
+          <p className="px-1 text-xs leading-normal text-mute">
+            강의계획서의 주차별 내용을 읽고 AI가 만든 문제를 사람이 확인한 것이에요. 학교 공식 자료가 아니라 참고용이에요.
+            {PREVIEW && " (미리보기: 아직 확인하지 않은 문제도 보여요)"}
+          </p>
+        </div>
+      )}
+
+      {stage === "pick" && view === "quiz" && entries !== null && entries.length === 0 && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2.5">
             <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
@@ -163,7 +282,7 @@ export default function QuizApp({
                 <button
                   key={m.major}
                   type="button"
-                  onClick={() => start(m)}
+                  onClick={() => startSample(m)}
                   className="quiz-pop box-border flex flex-col items-center gap-2 rounded-[22px] border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97]"
                   style={{ animationDelay: `${i * 70}ms` }}
                 >
@@ -211,6 +330,7 @@ export default function QuizApp({
             <div className="flex items-center gap-2">
               <span className="rounded-xl bg-accent-soft px-2.5 py-[5px] text-xs font-semibold text-accent-deep">{cur.skill}</span>
               {cur.is_sample && <SampleTag className="text-xs" />}
+              {!cur.is_sample && cur.status !== "approved" && <span className="rounded-md bg-sand-2 px-[7px] py-0.5 text-xs font-semibold text-ink-2">확인 전 문제</span>}
             </div>
             <h2 className="text-pretty text-[21px] font-bold leading-[1.45] tracking-[-0.4px]">{cur.question}</h2>
             {cur.code && (
@@ -263,6 +383,12 @@ export default function QuizApp({
             <div className="quiz-pop flex flex-col gap-1.5 rounded-[18px] border border-edge bg-card px-[18px] py-4">
               <span className={`text-[15px] font-bold ${right ? "text-ok" : "text-accent"}`}>{right ? "정답이에요" : "아쉬워요"}</span>
               <span className="text-pretty text-sm leading-[1.6] text-ink-3">{cur.explanation}</span>
+              {cur.flow && <span className="mt-1 text-pretty text-sm leading-[1.6] text-ink-3">{cur.flow}</span>}
+              {cur.evidence && cur.source && (
+                <span className="mt-1 text-pretty text-[11px] leading-normal text-mute">
+                  근거: {cur.evidence.week}주차 &ldquo;{cur.evidence.topic}&rdquo; · 출처: {cur.source.path} ({cur.source.as_of})
+                </span>
+              )}
             </div>
           )}
           <button type="button" onClick={action} disabled={sel === null} className={`${primaryButton} mt-1`}>
@@ -315,7 +441,7 @@ export default function QuizApp({
           <section className="flex flex-col gap-2.5 rounded-[20px] border border-edge bg-card p-[18px]">
             <div className="flex items-center gap-2">
               <h3 className="text-[15px] font-bold">체험 피드백</h3>
-              <SampleTag className="text-[11px]" />
+              {qs.some((q) => q.is_sample) && <SampleTag className="text-[11px]" />}
             </div>
             <p className="text-pretty text-sm leading-[1.65] text-ink-3">{feedbackFor(major.major, qs, picks)}</p>
             <p className="text-xs leading-normal text-mute">점수는 참고 지표예요. 전공 적합성을 판정하지 않아요.</p>
@@ -345,11 +471,11 @@ export default function QuizApp({
             <Link href={calcHref} className={primaryButton}>
               {canCalc && profile ? `${profile.primary} + ${major.major} 학점 보기` : "다전공 계산기로 가기"}
             </Link>
-            <button type="button" onClick={() => start(major)} className={secondaryButton}>
-              한 번 더 도전하기
+            <button type="button" onClick={again} className={secondaryButton}>
+              새 문제로 한 번 더 도전하기
             </button>
             <button type="button" onClick={toPick} className={secondaryButton}>
-              다른 전공 체험하기
+              다른 학과 체험하기
             </button>
           </div>
         </div>
