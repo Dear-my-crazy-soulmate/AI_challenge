@@ -4,7 +4,7 @@ import credits from "../data/curated/credits_global.json";
 import seed from "../data/seed/community_sample.json";
 import { buildComment, buildPost } from "../src/lib/community/compose";
 import type { PostDraft } from "../src/lib/community/compose";
-import { isComment, isPost, mergeWithSeed, parseStored, withComment, withPost, withoutPost } from "../src/lib/community/local";
+import { isComment, isPost, mergeWithSeed, parseStored, sampleComments, withComment, withPost, withoutPost } from "../src/lib/community/local";
 import { highlights, newestFirst, statsByDept, tally } from "../src/lib/community/query";
 import { CATEGORIES } from "../src/lib/community/schema";
 import { CATEGORY_IDS } from "../src/lib/community/types";
@@ -178,5 +178,15 @@ describe("counting and summarizing by department", () => {
   });
   it("covers every category with at least one field that is required", () => {
     for (const c of CATEGORY_IDS) expect(CATEGORIES[c].fields.some((f) => f.required), c).toBe(true);
+  });
+});
+
+describe("sampleComments", () => {
+  it("keeps only this device's comments on sample posts (the server does not have those posts)", () => {
+    const at = "2026-10-29T00:00:00.000Z";
+    const badge = { primary: "컴퓨터공학과", grade: 1 as const };
+    const c = (id: string, postId: string): Comment => ({ id, postId, body: "좋아요", badge, createdAt: at, is_sample: false });
+    const device = { posts: [], comments: [c("c1", "sample-cs-1"), c("c2", "real-post")] };
+    expect(sampleComments(device, new Set(["sample-cs-1"])).map((x) => x.id)).toEqual(["c1"]);
   });
 });

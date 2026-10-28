@@ -60,6 +60,10 @@ export const mergeWithSeed = (seed: Stored, mine: Stored): Stored => ({
   comments: [...mine.comments, ...seed.comments],
 });
 
+/** Comments kept on this device for the sample posts, which the server does not have. */
+export const sampleComments = (device: Stored, sampleIds: ReadonlySet<string>): Comment[] =>
+  device.comments.filter((c) => sampleIds.has(c.postId));
+
 export const withPost = (s: Stored, post: Post): Stored => ({ ...s, posts: [...s.posts, { ...post, mine: true }] });
 export const withComment = (s: Stored, c: Comment): Stored => ({ ...s, comments: [...s.comments, { ...c, mine: true }] });
 /** Only your own posts can be removed; their comments go with them. */

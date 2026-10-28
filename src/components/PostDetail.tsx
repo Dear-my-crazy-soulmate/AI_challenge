@@ -7,7 +7,7 @@ import { useState } from "react";
 import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
 import { Area, ErrorNote, primaryButton, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
-import { getCommunityStore, useCommunity } from "@/components/useCommunity";
+import { commentStoreFor, getCommunityStore, isSamplePost, useCommunity } from "@/components/useCommunity";
 import { useAuth } from "@/lib/auth";
 import { buildComment } from "@/lib/community/compose";
 import { fmtDate } from "@/lib/community/format";
@@ -71,7 +71,7 @@ export default function PostDetail({ id }: { id: string | null }) {
     const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, newId("c"), new Date());
     if (!c.ok) return setError(c.message);
     setBusy(true);
-    const r = await getCommunityStore().addComment(c.value);
+    const r = await commentStoreFor(post.id).addComment(c.value);
     setBusy(false);
     if (!r.ok) return setError(r.message);
     setText("");
@@ -85,7 +85,7 @@ export default function PostDetail({ id }: { id: string | null }) {
   }
 
   async function removeComment(commentId: string) {
-    const r = await getCommunityStore().deleteComment(commentId);
+    const r = await commentStoreFor(post?.id ?? "").deleteComment(commentId);
     if (!r.ok) setError(r.message);
   }
 
@@ -163,6 +163,9 @@ export default function PostDetail({ id }: { id: string | null }) {
             <button type="button" onClick={send} disabled={busy || text.trim() === ""} className={primaryButton}>
               {busy ? "올리는 중…" : "댓글 올리기"}
             </button>
+            {isSamplePost(post.id) && getCommunityStore().kind === "server" && (
+              <p className="text-xs leading-normal text-mute">예시 글에 단 댓글은 이 기기에만 저장돼요. 직접 쓴 글의 댓글은 모두에게 보여요.</p>
+            )}
           </div>
         ) : (
           <Link href="/login" className={secondaryButton}>
