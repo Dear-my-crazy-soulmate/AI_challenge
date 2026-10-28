@@ -1,12 +1,13 @@
 "use client";
 
 // The calculator: 이수 형태 -> 희망 전공 -> 결과, one question per screen.
-// The 본전공 is the one from 내 정보 (entered at sign-up), so it is never asked here.
+// Signed in, the 본전공 is the one from 내 정보 (entered at sign-up). Not signed in, the student
+// picks it first, so anyone (a first visit, a judge) can calculate without an account.
 // All numbers come from src/lib/rules/ (credits through /api/plan and /api/microdegree for the result).
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import { primaryButton, secondaryButton } from "@/components/Field";
+import { primaryButton } from "@/components/Field";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
 import type { Breakdown, ResultActions } from "@/components/PlanResult";
 import { useGoal } from "@/components/useGoal";
@@ -109,6 +110,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
   const [step, setStep] = useState<Step>(start ? 4 : 2);
   const [linkPrimary, setLinkPrimary] = useState(start?.primary ?? ""); // 본전공 of a shared link, if any
+  const [guestPrimary, setGuestPrimary] = useState(""); // picked here when not signed in
   const [mode, setMode] = useState<Mode | null>(start?.mode ?? null);
   const [second, setSecond] = useState(start?.second ?? "");
   const [query, setQuery] = useState("");
@@ -132,7 +134,15 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
 
   const firsts = useMemo(() => singleDepts(data), [data]);
   const mine = firsts.find((d) => d.dept === profile?.primary);
-  const primary = linkPrimary || mine?.dept || "";
+  const primary = linkPrimary || mine?.dept || guestPrimary;
+  const ownPrimary = !!mine && !linkPrimary; // the chip then leads to 내 정보 instead of re-picking
+  const changePrimary = () => {
+    setLinkPrimary("");
+    setGuestPrimary("");
+    setMode(null);
+    setSecond("");
+    goto(2);
+  };
   const seconds = useMemo(
     () => (primary && (mode === "double" || mode === "minor") ? secondDepts(primary, mode, data, rules) : []),
     [primary, mode, data, rules],
@@ -195,9 +205,10 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
 
   // ---- 본전공 missing: not signed in, or the saved one has no single-major credits ----
   const needPrimary = step !== 4 && !primary;
+  const pickingPrimary = needPrimary && ready && !signedIn;
 
-  // ---- picker (step 3) ----
-  const picking = step === 3 && !needPrimary;
+  // ---- picker (본전공 when not signed in, or step 3) ----
+  const picking = (step === 3 && !needPrimary) || pickingPrimary;
 
   const isMdPick = step === 3 && mode === "microdegree";
   const q = query.trim().replace(/\s/g, "");
@@ -205,7 +216,22 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
 
   let rows: PickRow[] = [];
   let chips: string[] = [];
-  if (step === 3 && !isMdPick) {
+  if (pickingPrimary) {
+    chips = [...new Set(firsts.map((d) => d.college))];
+    const col = q ? null : college;
+    rows = firsts
+      .filter((d) => match(d.dept) && (!col || d.college === col))
+      .map((d) => ({
+        key: d.dept,
+        title: d.dept,
+        sub: d.college,
+        right: `단일전공 ${d.credits}학점`,
+        onPick: () => {
+          setGuestPrimary(d.dept);
+          goto(2);
+        },
+      }));
+  } else if (step === 3 && !isMdPick) {
     const list = seconds;
     chips = [...new Set(list.map((d) => d.college))];
     const col = q ? null : college;
@@ -237,7 +263,11 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         },
       }));
   }
-  const pickTitle = isMdPick ? "관심 있는 마이크로디그리를 골라 주세요" : `희망 ${MODE_LABEL[mode ?? "double"]}을 골라 주세요`;
+  const pickTitle = pickingPrimary
+    ? "본전공을 골라 주세요"
+    : isMdPick
+      ? "관심 있는 마이크로디그리를 골라 주세요"
+      : `희망 ${MODE_LABEL[mode ?? "double"]}을 골라 주세요`;
   const searchPlaceholder = isMdPick ? "이름이나 운영 학과로 검색" : "학과 이름으로 검색";
 
   // ---- kinds (step 2) ----
@@ -309,16 +339,28 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
 
       {(primary || crumbs.length > 0) && (
         <div className="flex flex-wrap gap-1.5">
-          {primary && (
-            <Link
-              href="/profile"
-              title="내 정보에서 바꿀 수 있어요"
-              className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] text-paper"
-            >
-              <span className="opacity-65">본전공</span>
-              <span className="font-semibold">{primary}</span>
-            </Link>
-          )}
+          {primary &&
+            (ownPrimary ? (
+              <Link
+                href="/profile"
+                title="내 정보에서 바꿀 수 있어요"
+                className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] text-paper"
+              >
+                <span className="opacity-65">본전공</span>
+                <span className="font-semibold">{primary}</span>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={changePrimary}
+                title="본전공 다시 고르기"
+                className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] text-paper"
+              >
+                <span className="opacity-65">본전공</span>
+                <span className="font-semibold">{primary}</span>
+                <span className="opacity-65">바꾸기</span>
+              </button>
+            ))}
           {crumbs.map((c) => (
             <button
               key={c.k}
@@ -336,6 +378,15 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       {picking && (
         <div className="flex flex-col gap-4">
           <h2 className="text-pretty text-2xl font-bold leading-[1.35] tracking-[-0.6px]">{pickTitle}</h2>
+          {pickingPrimary && (
+            <p className="-mt-2 text-[13px] leading-normal text-mute">
+              로그인하지 않아도 계산할 수 있어요.{" "}
+              <Link href="/login" className="font-semibold text-accent-deep underline">
+                로그인
+              </Link>
+              하면 내 본전공으로 바로 시작하고, 들은 과목을 체크해 남은 학점도 볼 수 있어요.
+            </p>
+          )}
           <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
             <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
             <input
@@ -389,13 +440,13 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         </div>
       )}
 
-      {needPrimary && (
+      {needPrimary && !pickingPrimary && (
         <div className="flex flex-col gap-3 pt-1">
           {!ready ? (
             <p className="text-sm text-mute" role="status">
               불러오는 중…
             </p>
-          ) : signedIn ? (
+          ) : (
             <>
               <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
                 내 본전공으로는
@@ -409,20 +460,6 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 내 정보 확인
               </Link>
             </>
-          ) : (
-            <>
-              <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
-                로그인하면
-                <br />내 본전공으로 계산해요
-              </h2>
-              <p className="text-sm leading-normal text-ink-2">가입할 때 적은 본전공을 기준으로 필요한 학점을 계산해 드려요.</p>
-              <Link href="/login" className={primaryButton}>
-                로그인
-              </Link>
-              <Link href="/signup" className={secondaryButton}>
-                가입하기
-              </Link>
-            </>
           )}
         </div>
       )}
@@ -434,7 +471,9 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               어떤 방식으로
               <br />더 공부할까요?
             </h2>
-            <span className="text-[13px] text-mute">본전공은 내 정보의 학과로 계산해요.</span>
+            <span className="text-[13px] text-mute">
+              {ownPrimary ? "본전공은 내 정보의 학과로 계산해요." : "본전공을 바꾸려면 위의 본전공을 누르세요."}
+            </span>
           </div>
           {kinds.map((k) => (
             <button
