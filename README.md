@@ -11,7 +11,8 @@
 | 기능 | 상태 | 내용 |
 |---|---|---|
 | 1. 전공 조합 계획 (`/onboarding`) | **동작** | 본전공 + 희망 다전공·부전공·마이크로디그리를 고르면 필요한 학점과 과목, 적용되는 학교 규칙을 보여 줌 |
-| 1-2. 제도 Q&A (RAG) | 준비 중 | 출처를 붙여 제도 질문에 답변 |
+| 1-1. AI 조합 설명 (ChatKHU) | **동작** | 계산 결과 아래에 이 조합의 강점, 이어질 수 있는 진로, 잘 맞는 학생을 ChatKHU가 설명. 근거는 책의 학과 소개·교육목표뿐이고 항목마다 쪽 번호. 학점은 다루지 않음 |
+| 1-2. 제도 Q&A | 준비 중 | 출처를 붙여 제도 질문에 답변 |
 | 2. AI 전공 체험 | 준비 중 | 입문 문제 → 자체 검증 → 사람 검수 → 캐시 |
 | 3. 커뮤니티 | 준비 중 | 전공별 후기·질문, AI 요약 (Supabase + RLS) |
 
@@ -29,9 +30,18 @@
 - **마이크로디그리**: 43개(여러 학과가 같이 운영하는 것은 하나로 합침)의 과목·학점, 본전공과 겹치는 과목 표시, 마이크로디그리 규칙
 - **앱(PWA)**: 홈 화면 설치, 앱 아이콘, 한 번 본 화면과 결과는 오프라인에서도 열림
 
+### AI 조합 설명이 동작하는 방식
+
+1. 학생이 고른 조합(이름만, 개인정보 없음)으로 서버가 두 학과의 책 원문(학과 소개·교육목적·교육목표, `data/curated/2026/dept_profiles.json`)과 과목 이름을 모읍니다. **학점 숫자는 ChatKHU에 보내지 않습니다.**
+2. ChatKHU(`claude-haiku-5-5`, BAZE API)가 정해진 JSON(한 줄 요약, 강점, 진로 방향, 잘 맞는 학생)으로 씁니다. 프롬프트: `src/lib/llm/prompts/comboGuide.v1.ts`
+3. 코드가 검사합니다(`src/lib/guide/verify.ts`): "학점"·취업률·연봉·%·"보장" 같은 표현, 원문에 없는 숫자, 원문에 없는 쪽 번호가 있으면 탈락
+4. 통과한 설명만 보여 주고, 탈락·키 없음·장애·호출 상한일 때는 책의 교육목적 원문을 그대로 보여 줍니다(화면이 멈추지 않음)
+5. 같은 조합은 다시 부르지 않습니다: 서버 메모리, Vercel CDN(30일), 브라우저 저장. 처음 만들 때 7~11초, 그 뒤 즉시. 하루 호출 상한과 방문자별 시간당 상한이 있습니다(`src/lib/guide/service.ts`)
+
 ### 알려진 한계
 
-- 과목 정보가 없는 학과: **인공지능학과, 글로벌문화기술** (편성표 형식이 달라 자동 추출 실패). 학점은 나옵니다.
+- 과목 정보가 없는 학과: **글로벌문화기술** (편성표 형식이 달라 자동 추출 실패). 학점은 나옵니다. (인공지능학과는 10/27에 해결)
+- AI 조합 설명은 책의 학과 소개에 기대므로, 소개 글이 짧은 학과는 설명도 짧아집니다. 기계공학부(3개 전공)·환경학및환경공학과(2개 전공)는 학부 소개를 함께 씁니다.
 - "학과 확인 필요" 상태: 한 편성표에 여러 전공이 섞인 **기계공학부(3개 전공), 환경학및환경공학과(2개 전공)**, 과목 학점 합이 필요 학점과 다른 일부 학과
 - 학점은 교육과정 책의 "전공별 교육과정 기본구조표"(p.121~122)를 기준으로 합니다. 예전 학점 개요(`overview_all.json`)와 다른 곳은 경고(`BOOK_DIFFERS`)로 남겨 두었습니다. 책 숫자로도 합이 맞지 않는 **융합바이오·신소재공학과 부전공**(필수 15 + 선택 "-" ≠ 21)은 "검증 미통과"로 제외합니다.
 - 마이크로디그리 60개 중 7개는 책에 학수번호가 빠졌거나 표가 깨져 "학과 확인 필요"입니다.
@@ -51,7 +61,7 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 데이터 준비: Python 3 + pydantic, `pdftotext`
 
 로그인: Supabase Auth + `profiles` 테이블(RLS). 환경변수가 없으면 이 기기 브라우저에만 저장하는 예시 로그인으로 자동 전환됩니다.
-예정: Supabase pgvector(RAG), LLM은 ChatKHU 우선(연동 방식 확인 전까지 `src/lib/llm/`에 mock으로 개발).
+LLM: ChatKHU(BAZE API Gateway, OpenAI 호환). 환경변수 `CHATKHU_API_KEY`·`CHATKHU_BASE_URL`(서버 전용)이 없으면 AI 카드는 책 원문을 대신 보여 줍니다. 테스트는 `src/lib/llm/mock.ts`로 하고 실제 API를 부르지 않습니다.
 
 ## 폴더 구조
 
@@ -67,7 +77,8 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │       └── 2026/
 │           ├── courses.json      # 학과별 교과목 편성표와 과정별 과목 그룹
 │           ├── major_rules.json  # 다전공·부전공·MD 공통 규칙 (쪽 번호·원문 포함)
-│           └── microdegrees.json # 마이크로디그리 과목 목록
+│           ├── microdegrees.json # 마이크로디그리 과목 목록
+│           └── dept_profiles.json # 학과 소개·교육목적·교육목표 원문 (AI 조합 설명의 근거)
 ├── scripts/pipeline/             # 데이터 준비 (Python, 앱 런타임에는 안 씀)
 │   ├── book.py                   # 교육과정 책을 목차 기준으로 학과별 분리
 │   ├── book_credits.py           # 책의 기본구조표(p.121~122) → 학과별 학점
@@ -75,6 +86,7 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │   ├── programs.py               # 과정별 과목 그룹 + 학점 대조 → courses.json
 │   ├── microdegrees.py           # 마이크로디그리 → microdegrees.json
 │   ├── overview.py               # 책 학점으로 교체·검증 → credits_global.json
+│   ├── profiles.py               # 학과 소개·교육목적·교육목표 → dept_profiles.json
 │   └── ingest·detect·parse_table·schema·build·plan.py  # 학과별 PDF용 이전 파이프라인 (인공지능학과·철학과)
 ├── public/sw.js                  # 서비스 워커 (오프라인)
 ├── src/
@@ -83,6 +95,7 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │   │   ├── onboarding/           # 전공 조합 계획 화면
 │   │   ├── api/plan/             # 다전공·부전공 계산 API
 │   │   ├── api/microdegree/      # 마이크로디그리 API
+│   │   ├── api/guide/            # AI 조합 설명 API (ChatKHU, 캐시·호출 상한·폴백)
 │   │   ├── manifest.ts, icons/   # 앱 설치 정보와 아이콘
 │   │   └── guide/, experience/, community/   # 기능 1-2·2·3 자리 (비어 있음)
 │   ├── components/               # MajorPlanner(화면), ServiceWorker
@@ -91,7 +104,8 @@ Next.js 16 (App Router, TypeScript) · Tailwind CSS · Vitest · Vercel · PWA(m
 │       ├── auth/                 # 로그인: supabase.ts(실제 계정) / mock.ts(기기 저장), 같은 AuthService 인터페이스
 │       ├── supabase/client.ts    # Supabase 클라이언트 (환경변수 없으면 null)
 │       ├── safety/               # 입력 검사, 개인정보를 LLM에 보내지 않는 forLlm
-│       └── llm/, rag/            # 예정 (비어 있음)
+│       ├── llm/                  # ChatKHU 호출(chatkhu.ts), 테스트용 mock.ts, 버전별 프롬프트(prompts/)
+│       └── guide/                # AI 조합 설명: 근거 모으기(facts)·검사(verify)·폴백·캐시(service)
 ├── supabase/migrations/          # DB 스키마 SQL (Supabase SQL Editor에서 실행)
 ├── vercel.json                   # Vercel Cron (Supabase 일시정지 예방)
 ├── .github/workflows/            # GitHub Actions (일시정지 예방 백업)
@@ -127,6 +141,8 @@ npm test        # Vitest 테스트
    ```
 
 3. `npm run dev`를 **다시 시작**합니다. 로그인 화면 아래에 "계정은 서버에 저장돼서 다른 기기에서도 로그인할 수 있어요"가 보이면 성공입니다.
+
+AI 조합 설명까지 직접 확인하려면 팀 크레딧을 쓰는 키(`CHATKHU_API_KEY`, `CHATKHU_BASE_URL`)도 필요합니다. 없어도 앱은 동작하고 AI 카드에 책 원문이 대신 나옵니다. 키는 비공개 채널로만 주고받고, 채팅·커밋에 붙이지 않습니다.
 
 `service_role`/`sb_secret_` 키는 받지도 넣지도 않습니다. `CRON_SECRET`은 배포(Vercel)에만 필요하고 팀원 PC에는 필요 없습니다.
 
@@ -222,6 +238,7 @@ PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/book_credits.py  # �
 .venv/Scripts/python -I scripts/pipeline/overview.py                         # 책 학점으로 교체·검증
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/programs.py      # 과목 데이터 생성
 PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/microdegrees.py  # 마이크로디그리 데이터 생성
+PIPELINE_YEAR=2026 .venv/Scripts/python -I scripts/pipeline/profiles.py      # 학과 소개·교육목표 (AI 조합 설명의 근거)
 PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py       # 파이프라인 테스트
 ```
 
@@ -248,7 +265,7 @@ PIPELINE_YEAR=2026 .venv/Scripts/python -I tests/pipeline/test_book.py       # �
 
 ## AI 활용 기록 (대회 서식4)
 
-LLM 프롬프트를 쓰기 시작하면 `docs/prompt-log.md`(아직 없음)를 만들어 바꿀 때마다 기록합니다: 단계, 모델, 프롬프트 버전, 문제점, 사람의 수정, 결과. API 키와 개인정보는 넣지 않습니다.
+프롬프트를 바꿀 때마다 [`docs/prompt-log.md`](./docs/prompt-log.md)에 기록합니다: 단계, 모델, 프롬프트 버전, 문제점, 사람의 수정, 결과. API 키와 개인정보는 넣지 않습니다. 실험 결과 원본은 `docs/experiments/`에 둡니다.
 
 ## 일정
 
