@@ -10,7 +10,8 @@ import ScreenHeader from "@/components/ScreenHeader";
 import { useGoal } from "@/components/useGoal";
 import { useAuth } from "@/lib/auth";
 import { buildPost } from "@/lib/community/compose";
-import { newId, update, withPost } from "@/lib/community/local";
+import { newId } from "@/lib/community/local";
+import { getCommunityStore } from "@/components/useCommunity";
 import { CATEGORIES, LOAD_LABEL } from "@/lib/community/schema";
 import type { FieldDef } from "@/lib/community/schema";
 import { CATEGORY_IDS, INFO_RELATIONS, LIMITS, RELATION_LABEL, TYPE_LABEL } from "@/lib/community/types";
@@ -87,6 +88,7 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   const dept = deptSel ?? start.dept ?? profile?.primary ?? null;
   // a good guess of how the writer relates to this department, which they can change
@@ -101,13 +103,16 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
     setValues({});
   }
 
-  function submit() {
+  async function submit() {
     if (!profile) return;
     if (!dept) return setError("어떤 학과 이야기인지 골라 주세요.");
     if (!relation) return setError("이 학과와 어떤 관계인지 골라 주세요.");
     const r = buildPost({ type, dept, category, relation, title, body, values }, { primary: profile.primary, grade: profile.grade }, depts.map((d) => d.dept), newId("p"), new Date());
     if (!r.ok) return setError(r.message);
-    if (!update((s) => withPost(s, r.value))) return setError("이 브라우저에서는 저장할 수 없어요. 시크릿 모드를 끄고 다시 시도해 주세요.");
+    setBusy(true);
+    const saved = await getCommunityStore().addPost(r.value);
+    setBusy(false);
+    if (!saved.ok) return setError(saved.message);
     router.push(`/community/post?id=${encodeURIComponent(r.value.id)}`);
   }
 
@@ -167,10 +172,14 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
       <Area label={isInfo ? "더 하고 싶은 말 (선택)" : "내용"} value={body} maxLength={LIMITS.body} onChange={(e) => setBody(e.target.value)} hint={isInfo ? undefined : "신청 조건이나 일정은 학교 공지로 확인한 내용만 적어 주세요."} />
 
       <ErrorNote message={error} />
-      <button type="button" onClick={submit} className={primaryButton}>
-        올리기
+      <button type="button" onClick={submit} disabled={busy} className={primaryButton}>
+        {busy ? "올리는 중…" : "올리기"}
       </button>
-      <p className="text-xs leading-normal text-mute">지금은 시연용이라 글이 이 기기의 브라우저에만 저장돼요. 다른 학생에게는 보이지 않아요.</p>
+      <p className="text-xs leading-normal text-mute">
+        {getCommunityStore().kind === "server"
+          ? "올린 글은 모든 학생에게 익명으로 보여요. 내 글은 언제든 지울 수 있어요."
+          : "지금은 시연용이라 글이 이 기기의 브라우저에만 저장돼요. 다른 학생에게는 보이지 않아요."}
+      </p>
     </main>
   );
 }

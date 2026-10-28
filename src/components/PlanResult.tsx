@@ -1,8 +1,16 @@
 // Result screens of the calculator (step 4): a dark total card, one card per program with
 // credit bars, the school-wide rules that apply, and the course lists folded inside each card.
 // Pure presentation: every number comes from src/lib/rules/ through /api/plan and /api/microdegree.
+// Signed-in users can tick the courses they already took; the remaining credits come from rules/taken.ts.
+"use client";
+
 import Link from "next/link";
+import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
+
+import { useTaken } from "@/components/useTaken";
+import { applyTaken } from "@/lib/rules/taken";
+import type { ProgramProgress } from "@/lib/rules/taken";
 
 import type { CourseGroup, CoursePlanOk, ProgramCourses } from "@/lib/rules/courses";
 import type { MajorRules } from "@/lib/rules/majorRules";
@@ -129,6 +137,7 @@ function ProgramCard(p: {
   labelWidth?: number;
   foot: string;
   sum: number | string;
+  progress?: ProgramProgress | null;
   children?: ReactNode;
 }) {
   const s = STATUS[p.status];
@@ -148,6 +157,7 @@ function ProgramCard(p: {
         <span className="text-mute">{p.foot}</span>
         <span className="font-bold tabular-nums">{p.sum}학점</span>
       </div>
+      <TakenLine p={p.progress ?? null} />
       {p.children}
     </section>
   );
@@ -167,18 +177,58 @@ function Foldable({ summary, children }: { summary: string; children: ReactNode 
   );
 }
 
+interface TakenUi {
+  codes: ReadonlySet<string>;
+  toggle: (code: string, on: boolean) => void;
+  notCounted: ReadonlySet<string>; // ticked but not counted here (minor overlap with the 본전공)
+}
+/** Present only for a signed-in user: course rows then show a "들었어요" checkbox. */
+const TakenCtx = createContext<TakenUi | null>(null);
+
 function CourseList({ courses }: { courses: CourseGroup["courses"] }) {
+  const t = useContext(TakenCtx);
   return (
     <ul className="flex flex-col gap-1">
-      {courses.map((c) => (
-        <li key={c.code} className="flex justify-between gap-2 rounded-lg bg-sand px-2.5 py-1.5 text-[13px]">
-          <span>
-            {c.name} <span className="text-xs text-mute">{c.code}</span>
-          </span>
-          <span className="whitespace-nowrap tabular-nums text-ink-2">{c.credits}학점</span>
-        </li>
-      ))}
+      {courses.map((c) => {
+        const on = t?.codes.has(c.code) ?? false;
+        const label = (
+          <>
+            <span className="flex min-w-0 items-center gap-2">
+              {t && (
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={(e) => t.toggle(c.code, e.target.checked)}
+                  aria-label={`${c.name} 들었어요`}
+                  className="h-4 w-4 flex-none accent-[var(--color-accent)]"
+                />
+              )}
+              <span className={on ? "text-mute line-through" : ""}>
+                {c.name} <span className="text-xs text-mute">{c.code}</span>
+                {on && t?.notCounted.has(c.code) && <span className="ml-1 text-[11px] text-warn no-underline">부전공 미인정</span>}
+              </span>
+            </span>
+            <span className="whitespace-nowrap tabular-nums text-ink-2">{c.credits}학점</span>
+          </>
+        );
+        return (
+          <li key={c.code} className={`rounded-lg px-2.5 py-1.5 text-[13px] ${on ? "bg-ok-soft" : "bg-sand"}`}>
+            {t ? <label className="flex cursor-pointer justify-between gap-2">{label}</label> : <div className="flex justify-between gap-2">{label}</div>}
+          </li>
+        );
+      })}
     </ul>
+  );
+}
+
+/** "들은 과목 n학점 · 남은 m학점" line under a program card, for signed-in users. */
+function TakenLine({ p }: { p: ProgramProgress | null }) {
+  if (!p) return null;
+  return (
+    <div className="flex justify-between gap-3 text-sm">
+      <span className="text-mute">들은 과목 {p.taken}학점 제외</span>
+      <span className="font-bold tabular-nums text-accent-deep">남은 {p.remaining}학점</span>
+    </div>
   );
 }
 
@@ -361,7 +411,23 @@ export function PlanView({
   const kind = plan.input.kind;
   const label = KIND_LABEL[kind];
   const min = plan.majorRules.minimumCredits;
+  const taken = useTaken();
+  const [takenError, setTakenError] = useState("");
+  const progress = taken.enabled ? applyTaken(plan, taken.codes) : null;
+  const ui: TakenUi | null = taken.enabled
+    ? {
+        codes: taken.codes,
+        toggle: (code, on) => {
+          setTakenError("");
+          void taken.setTaken(code, on).then((r) => {
+            if (!r.ok) setTakenError(r.message);
+          });
+        },
+        notCounted: new Set(progress?.second.notCounted ?? []),
+      }
+    : null;
   return (
+    <TakenCtx.Provider value={ui}>
     <div className="flex flex-col gap-3.5">
       <Hero
         headline={`${plan.primary.dept} + ${plan.second.dept}`}
@@ -380,6 +446,27 @@ export function PlanView({
           </span>
         </div>
       )}
+      {progress ? (
+        <div className="flex flex-col gap-1 rounded-[18px] border border-accent/30 bg-accent-soft px-[18px] py-4">
+          <span className="text-sm leading-normal">
+            들은 과목을 빼면 (본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {label} −
+            <b className="tabular-nums">{progress.second.taken}</b>)
+          </span>
+          <span className="text-[22px] font-bold tabular-nums text-accent-deep">남은 전공 학점 {progress.remaining}학점</span>
+          <span className="text-xs leading-normal text-mute">
+            {progress.taken === 0
+              ? "아래 “과목·학과 규정 보기”에서 들은 과목에 체크하세요. 내 계정에 저장돼요."
+              : "체크한 과목은 내 계정에 저장돼요. 두 전공에 함께 있는 과목은 양쪽에 인정돼요(부전공은 본전공과 겹치면 미인정)."}
+          </span>
+          {takenError && <span className="text-xs text-warn">{takenError}</span>}
+        </div>
+      ) : (
+        taken.enabled === false && (
+          <Link href="/login" className="rounded-[18px] bg-sand-2 px-[18px] py-3.5 text-sm leading-normal">
+            로그인하면 <b>들은 과목을 체크</b>해서 남은 학점을 계산할 수 있어요 ›
+          </Link>
+        )
+      )}
       {min < plan.totals.total && (
         <div className="rounded-[18px] bg-sand-2 px-[18px] py-4 text-sm leading-normal">
           공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소 <b className="tabular-nums">{min}</b>학점이에요.
@@ -393,6 +480,7 @@ export function PlanView({
         tone="ink"
         foot={`${kind === "double" ? "다전공" : "단일전공"} 기준`}
         sum={plan.totals.primaryCredits}
+        progress={progress?.primary}
       >
         <CourseDetails p={plan.primary} />
       </ProgramCard>
@@ -404,6 +492,7 @@ export function PlanView({
         tone="accent"
         foot={`${label} 기준`}
         sum={plan.totals.secondCredits}
+        progress={progress?.second}
       >
         <CourseDetails p={plan.second} />
       </ProgramCard>
@@ -428,6 +517,7 @@ export function PlanView({
         가져왔어요. 졸업요건은 학과 공식 안내로 최종 확인하세요.
       </Source>
     </div>
+    </TakenCtx.Provider>
   );
 }
 

@@ -7,11 +7,11 @@ import { useState } from "react";
 import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
 import { Area, ErrorNote, primaryButton, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
-import { useCommunity } from "@/components/useCommunity";
+import { getCommunityStore, useCommunity } from "@/components/useCommunity";
 import { useAuth } from "@/lib/auth";
 import { buildComment } from "@/lib/community/compose";
 import { fmtDate } from "@/lib/community/format";
-import { newId, update, withComment, withoutComment, withoutPost } from "@/lib/community/local";
+import { newId } from "@/lib/community/local";
 import { CATEGORIES, LOAD_LABEL } from "@/lib/community/schema";
 import type { FieldDef } from "@/lib/community/schema";
 import { LIMITS, TYPE_LABEL } from "@/lib/community/types";
@@ -33,18 +33,27 @@ const Row = ({ k, children }: { k: string; children: string }) => (
 
 export default function PostDetail({ id }: { id: string | null }) {
   const router = useRouter();
-  const { posts, comments } = useCommunity();
+  const { posts, comments, loading } = useCommunity();
   const { profile } = useAuth();
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   const post = posts.find((p) => p.id === id);
+  if (!post && loading) {
+    return (
+      <main className="flex flex-col gap-4 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
+        <ScreenHeader title="커뮤니티" backHref="/community" />
+        <p className="text-sm text-mute">글을 불러오는 중…</p>
+      </main>
+    );
+  }
   if (!post) {
     return (
       <main className="flex flex-col gap-4 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
         <ScreenHeader title="커뮤니티" backHref="/community" />
         <h2 className="text-xl font-bold">글을 찾을 수 없어요</h2>
-        <p className="text-sm text-mute">삭제되었거나 이 기기에 없는 글이에요.</p>
+        <p className="text-sm text-mute">삭제되었거나 없는 글이에요.</p>
         <Link href="/community" className={secondaryButton}>
           커뮤니티로
         </Link>
@@ -57,13 +66,27 @@ export default function PostDetail({ id }: { id: string | null }) {
   const rows = post.type === "info" && def ? def.fields.flatMap((f) => (post.fields[f.key] === undefined ? [] : [{ f, text: show(f, post.fields[f.key]) }])) : [];
   const deptHref = `/community/dept?name=${encodeURIComponent(post.dept)}`;
 
-  function send() {
+  async function send() {
     if (!profile || !post) return;
     const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, newId("c"), new Date());
     if (!c.ok) return setError(c.message);
-    if (!update((s) => withComment(s, c.value))) return setError("이 브라우저에서는 저장할 수 없어요.");
+    setBusy(true);
+    const r = await getCommunityStore().addComment(c.value);
+    setBusy(false);
+    if (!r.ok) return setError(r.message);
     setText("");
     setError("");
+  }
+
+  async function removePost(postId: string, back: string) {
+    const r = await getCommunityStore().deletePost(postId);
+    if (!r.ok) return setError(r.message);
+    router.push(back);
+  }
+
+  async function removeComment(commentId: string) {
+    const r = await getCommunityStore().deleteComment(commentId);
+    if (!r.ok) setError(r.message);
   }
 
   return (
@@ -104,10 +127,7 @@ export default function PostDetail({ id }: { id: string | null }) {
         {post.mine && (
           <button
             type="button"
-            onClick={() => {
-              update((s) => withoutPost(s, post.id));
-              router.push(deptHref);
-            }}
+            onClick={() => void removePost(post.id, deptHref)}
             className="h-11 text-sm font-semibold text-accent-deep"
           >
             내 글 삭제
@@ -127,7 +147,7 @@ export default function PostDetail({ id }: { id: string | null }) {
             <div className="flex items-center justify-between text-xs text-mute">
               <span>{fmtDate(c.createdAt)}</span>
               {c.mine && (
-                <button type="button" onClick={() => update((s) => withoutComment(s, c.id))} className="font-semibold text-accent-deep">
+                <button type="button" onClick={() => void removeComment(c.id)} className="font-semibold text-accent-deep">
                   삭제
                 </button>
               )}
@@ -140,8 +160,8 @@ export default function PostDetail({ id }: { id: string | null }) {
           <div className="flex flex-col gap-2">
             <Area label="댓글 쓰기" value={text} maxLength={LIMITS.comment} onChange={(e) => setText(e.target.value)} placeholder="경험이나 의견을 나눠 주세요" />
             <ErrorNote message={error} />
-            <button type="button" onClick={send} disabled={text.trim() === ""} className={primaryButton}>
-              댓글 올리기
+            <button type="button" onClick={send} disabled={busy || text.trim() === ""} className={primaryButton}>
+              {busy ? "올리는 중…" : "댓글 올리기"}
             </button>
           </div>
         ) : (
