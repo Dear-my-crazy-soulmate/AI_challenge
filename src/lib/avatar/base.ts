@@ -1,10 +1,10 @@
 // 쿠옹이 (the KHU lion mascot) drawn as SVG in a 742x970 box. Every look is built on this base,
 // so the character stays the same while clothes and props change. Pure string building, no DOM.
 export const K = "#000";
-export const TAN = "#C8A064";
-const RED = "#A30F14";
-const TAN_D = "#B5864A";
-const TAN_L = "#DDC39B";
+export const TAN = "#E3BE82";
+const RED = "#CE2229";
+const TAN_D = "#D0A263";
+const TAN_L = "#F4E2C4";
 const OUT = 22;
 
 export const stroke = (w = OUT) => `stroke="${K}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"`;
