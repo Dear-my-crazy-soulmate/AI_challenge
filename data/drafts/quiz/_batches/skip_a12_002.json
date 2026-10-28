@@ -1,0 +1,8 @@
+{
+ "KO4203": {"name": "한국여성문화", "reason": "전통·근대 여성사 사례 중심이라 확신 있게 맞다고 말할 사실을 찾지 못함"},
+ "KO4307": {"name": "한국문학교육론", "reason": "문학교육 이론과 장르별 교수법 중심이라 일상 궁금증과 이어지는 구체 주제를 못 찾음"},
+ "ELC103": {"name": "Critical Reading and Writing 1", "reason": "에세이 쓰기 연습과 동료 첨삭 위주"},
+ "ELC104": {"name": "Speech and Discussion 1", "reason": "발표·토론 위주 과목"},
+ "ELC203": {"name": "Speech and Discussion 2", "reason": "발표·토론 위주 과목"},
+ "ELC204": {"name": "Critical Reading and Writing 2", "reason": "교재 단원 따라 글쓰기 연습 위주"}
+}

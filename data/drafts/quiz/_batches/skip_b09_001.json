@@ -1,0 +1,9 @@
+{
+ "CA3011": {"name": "스튜디오웨어", "reason": "실기 위주이고 주별 내용이 '실기 및 개인별 critique'처럼 반복됨"},
+ "CA3022": {"name": "도자융합스튜디오", "reason": "작품 제작·발표 위주이고 주별 내용이 작품제작 반복"},
+ "CA3023": {"name": "도예설치기법", "reason": "주별 주제가 거의 없고 확신 있는 사실을 찾지 못함"},
+ "CA3026": {"name": "스터디투어", "reason": "팀 프로젝트·현장 판매 체험 위주의 실전형 수업"},
+ "CA4001": {"name": "SeniorProject I-A", "reason": "졸업작품 제작 과목"},
+ "CA4002": {"name": "SeniorProject I-B", "reason": "졸업작품 제작 과목"},
+ "CA4006": {"name": "SeniorProjectⅡ-A", "reason": "졸업작품·졸업전시 제작 과목"}
+}

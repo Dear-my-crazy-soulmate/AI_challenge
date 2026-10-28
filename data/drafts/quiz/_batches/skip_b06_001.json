@@ -1,0 +1,10 @@
+{
+ "AS3014": {"name": "High-Intermediate Korean 1", "reason": "읽기 교재 단원 나열뿐이라 일상 궁금증과 이어지는 구체 주제를 못 찾음"},
+ "AS3021": {"name": "Major Issues in Korean Politics and Society", "reason": "정치·사회 주제 소개만 있어 확신 있는 사실 문제를 만들기 어려움"},
+ "AS3024": {"name": "Independent Learning and Research (Asian Studies)", "reason": "독립 연구 과목, 계획서 내용 없음"},
+ "AS3028": {"name": "Intermediate Chinese Language I", "reason": "회화 상황 제목뿐이고 구체 주제가 없음"},
+ "AS3029": {"name": "Intermediate Chinese Language II", "reason": "회화 상황 제목뿐이고 구체 주제가 없음"},
+ "AS3030": {"name": "High-intermediate Chinese Language I", "reason": "교재 단원 제목뿐이고 HSK 연습 위주"},
+ "AS3031": {"name": "High-intermediate Chinese Language II", "reason": "회화 상황 제목뿐이고 구체 주제가 없음"},
+ "ESP207": {"name": "스페인어B1회화", "reason": "회화 연습·발표 위주, 구체 지식 주제를 못 찾음"}
+}

@@ -1,0 +1,8 @@
+{
+ "AS3043": {"name": "Contemporary Issues of Economics and Politics in Asia", "reason": "현장 답사·특강·발표 위주이고 구체 주제가 부족함"},
+ "AS4001": {"name": "Graduation Thesis(Asian Studies)", "reason": "졸업논문: 주별 내용 없음"},
+ "FLL2001": {"name": "빅데이터언어학", "reason": "주차별 주제가 없고 개요만 있음"},
+ "FR1011": {"name": "초급프랑스어1", "reason": "주별 내용이 Lesson 1~2 하나로 뭉쳐 있어 구체 주제를 못 찾음"},
+ "FR1013": {"name": "초급프랑스어회화1", "reason": "주별 내용이 Unité 번호뿐이라 구체 주제를 못 찾음"},
+ "FR1014": {"name": "초급프랑스어회화2", "reason": "주별 내용이 Unité 번호뿐이라 구체 주제를 못 찾음"}
+}

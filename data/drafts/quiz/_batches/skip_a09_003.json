@@ -1,0 +1,7 @@
+{
+ "IS3401": {"name": "American Politics and Economy", "reason": "계획서에 개요와 주별 내용이 비어 있음"},
+ "IS3402": {"name": "Chinese Politics and Economy", "reason": "주제가 장(chapter) 번호 위주여서 구체 주제를 알 수 없음"},
+ "IS3406": {"name": "North Korea and Inter-Korean Relations", "reason": "주제가 읽기 자료 목록 위주이고 구체 주제를 확신하기 어려움"},
+ "IS3408": {"name": "State and Society in East Asia", "reason": "주별 내용이 'Japan (1)' 같은 국가 이름만 반복됨"},
+ "IS3520": {"name": "Independent Learning & Research (International Studies)", "reason": "독립 연구 과목: 학생이 논문을 쓰는 과목"}
+}
