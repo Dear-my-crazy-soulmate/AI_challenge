@@ -222,13 +222,16 @@ function CourseList({ courses }: { courses: CourseGroup["courses"] }) {
   );
 }
 
-/** "들은 과목 n학점 · 남은 m학점" line under a program card, for signed-in users. */
+/** "들은 과목 n학점 · 남은 m학점 · k과목" line under a program card, for signed-in users. */
 function TakenLine({ p }: { p: ProgramProgress | null }) {
   if (!p) return null;
   return (
     <div className="flex justify-between gap-3 text-sm">
       <span className="text-mute">들은 과목 {p.taken}학점 제외</span>
-      <span className="font-bold tabular-nums text-accent-deep">남은 {p.remaining}학점</span>
+      <span className="font-bold tabular-nums text-accent-deep">
+        남은 {p.remaining}학점 · {p.coursesUnknown ? "최소 " : ""}
+        {p.remainingCourses}과목
+      </span>
     </div>
   );
 }
@@ -455,6 +458,18 @@ export function PlanView({
             <b className="tabular-nums">{progress.second.taken}</b>)
           </span>
           <span className="text-[22px] font-bold tabular-nums text-accent-deep">남은 전공 학점 {progress.remaining}학점</span>
+          <span className="text-sm leading-normal">
+            앞으로 들을 과목 최소 <b className="tabular-nums">{progress.remainingCourses.total}</b>과목
+            <span className="text-mute">
+              {" "}
+              (꼭 들어야 할 과목 {progress.remainingCourses.required} + 선택 과목 최소 {progress.remainingCourses.elective})
+            </span>
+          </span>
+          {progress.remainingCourses.unknown && (
+            <span className="text-xs leading-normal text-warn">
+              학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
+            </span>
+          )}
           <span className="text-xs leading-normal text-mute">
             {progress.taken === 0
               ? "아래 “과목·학과 규정 보기”에서 들은 과목에 체크하세요. 내 계정에 저장돼요."

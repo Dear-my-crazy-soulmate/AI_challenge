@@ -58,6 +58,37 @@ describe("applyTaken", () => {
     expect(r.second.taken).toBe(shared.credits);
   });
 
+  it("counts the courses still to take: every untaken required one, the fewest electives", () => {
+    const none = applyTaken(cs, new Set());
+    const basics = group(none.primary, "전공기초");
+    const csBasics = cs.primary.groups.find((g) => g.category === "전공기초")!;
+    expect(basics.remainingCourses).toBe(csBasics.courses.length); // "all": every course
+    const elective = group(none.primary, "전공선택");
+    expect(elective.todo).toEqual([]);
+    expect(elective.remainingCourses).toBe(Math.ceil(elective.need! / 3)); // 3학점 pool
+    const after = applyTaken(cs, new Set(["CSE204"]));
+    expect(group(after.primary, "전공필수").remainingCourses).toBe(group(none.primary, "전공필수").remainingCourses! - 1);
+    expect(after.remainingCourses.total).toBe(none.remainingCourses.total - 1);
+  });
+
+  it("keeps a 0학점 required course (졸업논문) on the list until it is ticked", () => {
+    const req = cs.primary.groups.find((g) => g.category === "전공필수")!;
+    const thesis = req.courses.find((c) => c.credits === 0)!;
+    const allButThesis = new Set(req.courses.filter((c) => c !== thesis).map((c) => c.code));
+    const g = group(applyTaken(cs, allButThesis).primary, "전공필수");
+    expect(g.remaining).toBe(0);
+    expect(g.todo).toEqual([thesis.code]);
+    expect(g.remainingCourses).toBe(1);
+  });
+
+  it("double major: a required course in both programs is one course to take, not two", () => {
+    const p = plan("컴퓨터공학과", "소프트웨어융합학과", "double");
+    const r = applyTaken(p, new Set());
+    const todo = [...r.primary.groups, ...r.second.groups].flatMap((g) => g.todo);
+    expect(r.remainingCourses.required).toBe(new Set(todo).size);
+    expect(r.remainingCourses.required).toBeLessThan(todo.length); // 자료구조, 알고리즘 등 shared
+  });
+
   it("minor: a course that is also in the 본전공 does not count for the minor", () => {
     const p = plan("컴퓨터공학과", "소프트웨어융합학과", "minor");
     const overlap = p.majorRules.minorOverlap!.courses[0];
