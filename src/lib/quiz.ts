@@ -15,6 +15,7 @@ export interface QuizQuestion {
   status: QuizStatus;
   is_sample: boolean;
   // Questions made from a syllabus (data/drafts/quiz, scripts/syllabus) also carry where they come from:
+  reviewed?: boolean; // false = approved in bulk but no person has read it yet; the screen says so
   flow?: string; // "🎓 …" one sentence on how the course continues
   evidence?: { week: number; topic: string }; // the syllabus week the question was built from, quoted as printed
   source?: { site: string; path: string; as_of: string };

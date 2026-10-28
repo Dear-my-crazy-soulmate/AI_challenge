@@ -145,6 +145,9 @@ def main() -> int:
     # passed every code check -> "verified"; a person reads it and lists its code in _approved.json -> "approved" (CLAUDE.md rule 7)
     approved_file = OUT / "_approved.json"
     approved = set(json.loads(approved_file.read_text(encoding="utf-8"))) if approved_file.exists() else set()
+    # "approved" can be given in bulk so the screen can be tried; `reviewed` is only for what a person has really read
+    reviewed_file = OUT / "_reviewed.json"
+    reviewed = set(json.loads(reviewed_file.read_text(encoding="utf-8"))) if reviewed_file.exists() else set()
     authored: dict[str, dict] = {}
     problems: dict[str, list[str]] = {}
     for f in batch_files():
@@ -183,7 +186,7 @@ def main() -> int:
                 final = arrange(q)
                 answers[final["answer"]] += 1 if dept == next(iter(listed[code])) else 0  # count each question once
                 questions.append({
-                    "id": f"q-{code}", "subjt_cd": code, "course": name, "category": cat, "status": "approved" if code in approved else "verified", "question": q["question"],
+                    "id": f"q-{code}", "subjt_cd": code, "course": name, "category": cat, "status": "approved" if code in approved else "verified", "reviewed": code in reviewed, "question": q["question"],
                     **final, "flow": q["flow"], "evidence": q["evidence"],
                     "source": {
                         "site": "https://sugang.khu.ac.kr", "path": f"종합시간표 조회 > 2026학년도 {plan['term_label']} > 학수번호 {code} 강의계획서",

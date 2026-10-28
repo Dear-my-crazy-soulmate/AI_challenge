@@ -257,7 +257,7 @@ export default function QuizApp({
           {rows.length === 0 && <p className="rounded-2xl border border-line bg-white px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</p>}
           {failed && <p role="alert" className="rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent-deep">문제를 불러오지 못했어요. 잠시 뒤에 다시 눌러 주세요.</p>}
           <p className="px-1 text-xs leading-normal text-mute">
-            강의계획서의 주차별 내용을 읽고 AI가 만든 문제를 사람이 확인한 것이에요. 학교 공식 자료가 아니라 참고용이에요.
+            강의계획서의 주차별 내용을 읽고 AI가 만든 문제예요. 사람이 아직 확인하지 못한 문제에는 ‘확인 전 문제’ 표시가 붙어요. 학교 공식 자료가 아니라 참고용이에요.
             {PREVIEW && " (미리보기: 아직 확인하지 않은 문제도 보여요)"}
           </p>
         </div>
@@ -330,7 +330,7 @@ export default function QuizApp({
             <div className="flex items-center gap-2">
               <span className="rounded-xl bg-accent-soft px-2.5 py-[5px] text-xs font-semibold text-accent-deep">{cur.skill}</span>
               {cur.is_sample && <SampleTag className="text-xs" />}
-              {!cur.is_sample && cur.status !== "approved" && <span className="rounded-md bg-sand-2 px-[7px] py-0.5 text-xs font-semibold text-ink-2">확인 전 문제</span>}
+              {!cur.is_sample && (cur.status !== "approved" || cur.reviewed === false) && <span className="rounded-md bg-sand-2 px-[7px] py-0.5 text-xs font-semibold text-ink-2">확인 전 문제</span>}
             </div>
             <h2 className="text-pretty text-[21px] font-bold leading-[1.45] tracking-[-0.4px]">{cur.question}</h2>
             {cur.code && (

@@ -58,6 +58,10 @@
 - [ ] Supabase 일시정지 예방 확인: Vercel `CRON_SECRET`, GitHub Secrets `SUPABASE_URL`·`SUPABASE_ANON_KEY`
 - [ ] 시연 시나리오 캐시, 발표 리허설(ChatKHU가 심사위원 입장에서 질문), 본선 전 Supabase 프로젝트가 켜져 있는지 확인
 
+## 체험 문제 검수 (제출 전에 해야 함)
+- [ ] 화면 확인용으로 코드 검증을 통과한 문제 약 800개를 한꺼번에 `approved`로 올림(`export_quiz.py --approve-all`). 사람이 읽고 확인한 문제는 `data/drafts/quiz/_reviewed.json`에 과목 코드를 올리고, 그 전까지 화면에 "확인 전 문제" 표시가 붙음. 제출(10/30 17시) 전에 훑어서 틀린 문제를 고치거나 `_approved.json`에서 빼고, 표시를 어떻게 할지 정할 것
+- [ ] 아직 쓰지 않은 과목 약 226개 (`packets.py next`로 확인)
+
 ## 매 단계 끝에
 - [ ] 프롬프트를 바꿨으면 `docs/prompt-log.md` 갱신 (AI가 틀렸고 사람이 고친 사례 포함)
 - [ ] 테스트 통과 확인 후 커밋
