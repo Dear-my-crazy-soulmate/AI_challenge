@@ -173,8 +173,10 @@ npm test        # Vitest 테스트
 환경변수를 넣지 않으면 로그인은 **이 기기 브라우저에만 저장되는 예시 로그인**으로 동작합니다(다른 기기에서는 로그인 불가). 실제 계정을 쓰려면 한 번만 설정합니다.
 
 1. https://supabase.com 에서 New project (지역: Seoul `ap-northeast-2` 권장)
-2. **SQL Editor** → New query → `supabase/migrations/0001_profiles.sql` 내용을 붙여 넣고 Run
-   (프로필 테이블, 본인 행만 읽고 쓰는 RLS, 회원 탈퇴 함수가 만들어집니다)
+2. **SQL Editor** → New query → `supabase/migrations/` 의 SQL을 **번호 순서대로** 붙여 넣고 Run
+   - `0001_profiles.sql`: 프로필 테이블, 본인 행만 읽고 쓰는 RLS, 회원 탈퇴 함수
+   - `0002_community_and_taken.sql`: 커뮤니티 글·댓글(누구나 읽기, 글쓴이 숨김, 본인 글만 삭제), 들은 과목(본인만)
+   - 뷰 관련 보안 경고가 뜨면 Run anyway (글쓴이를 숨기고 글을 공개하려는 의도된 구조)
 3. **Authentication → Sign In / Providers → Email**에서 시연용으로 **Confirm email 끄기**
    (켜 두면 가입 후 메일의 링크를 눌러야 로그인됩니다. 앱은 두 경우 모두 처리합니다)
 4. **Project Settings → API**의 Project URL과 **anon(public) key**를 프로젝트 루트의 `.env.local`에 넣습니다(커밋 금지)
@@ -197,6 +199,9 @@ npm test        # Vitest 테스트
 - `/api/keepalive`는 `CRON_SECRET`이 맞는 요청(Vercel Cron)에만 응답하고, `profiles` 테이블에 작은 조회 한 번만 합니다(RLS 때문에 데이터는 나오지 않음).
 - 확인: Vercel → Settings → **Cron Jobs**에서 실행 기록, GitHub → **Actions** → Supabase keepalive → **Run workflow**로 바로 실행해 볼 수 있습니다.
 - 그래도 멈출 수 있으니 본선(11/10) 전에 Supabase 대시보드에서 프로젝트가 켜져 있는지 한 번 확인합니다.
+
+**커뮤니티**: Supabase가 연결되면 글·댓글이 서버에 저장되어 모든 학생에게 익명으로 보입니다(연결 안 되면 이 기기에만 저장).
+**들은 과목**: 로그인하면 계산 결과의 과목 목록에 체크칸이 생기고, 체크한 과목 학점을 빼고 남은 전공 학점을 보여 줍니다(`src/lib/rules/taken.ts`, 계정에 저장).
 
 **계정 관리 (MY → 계정)**: 이메일 변경, 비밀번호 변경, 로그아웃, 회원 탈퇴. 모두 현재 비밀번호를 다시 확인합니다.
 
