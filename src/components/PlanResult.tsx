@@ -465,6 +465,14 @@ export function PlanView({
               (꼭 들어야 할 과목 {progress.remainingCourses.required} + 선택 과목 최소 {progress.remainingCourses.elective})
             </span>
           </span>
+          {(progress.sharedOnce > 0 || progress.exempted > 0) && (
+            <span className="text-xs leading-normal text-ink-2">
+              공통 규칙 적용:
+              {progress.exempted > 0 && ` ${plan.second.dept} 전공기초 ${progress.exempted}학점 면제`}
+              {progress.exempted > 0 && progress.sharedOnce > 0 && " ·"}
+              {progress.sharedOnce > 0 && ` 두 전공에 함께 있는 과목 ${progress.sharedOnce}학점은 한 번만 셌어요`}
+            </span>
+          )}
           {progress.remainingCourses.unknown && (
             <span className="text-xs leading-normal text-warn">
               학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
@@ -484,7 +492,8 @@ export function PlanView({
           </Link>
         )
       )}
-      {min < plan.totals.total && (
+      {/* signed in, the box above already applies these rules to what is left */}
+      {!progress && min < plan.totals.total && (
         <div className="rounded-[18px] bg-sand-2 px-[18px] py-4 text-sm leading-normal">
           공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소 <b className="tabular-nums">{min}</b>학점이에요.
         </div>

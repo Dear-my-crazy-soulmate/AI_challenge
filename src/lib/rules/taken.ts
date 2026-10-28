@@ -2,7 +2,10 @@
 // Pure functions over a CoursePlanOk (courses.ts). Rules applied (교육과정 p.115~118):
 // - a taken course counts toward the group of the program that lists it, up to the group's credits;
 // - 다전공: the same course code counts for both majors;
-// - 부전공: a course that is also in the 본전공 does not count for the minor.
+// - 부전공: a course that is also in the 본전공 does not count for the minor;
+// - the school-wide rules of majorRules.ts, so nothing taken gives the screen's 최소 학점:
+//   an exempted 전공기초 (same college and 기초) needs nothing, and a course both majors require
+//   is taken once, so its credits count once in the total still to take.
 // Course counts: an "all" group needs every course not taken yet (a 0학점 졸업논문 too); a "choose"
 // group needs the fewest untaken courses whose credits cover what is left (largest first).
 import type { CatalogCourse, CourseGroup, CoursePlanOk, ProgramCourses } from "./courses";
@@ -15,6 +18,7 @@ export interface GroupProgress {
   courses: string[]; // codes of taken courses counted here
   todo: string[]; // "all" group: codes still to take; other groups: none (any of the pool will do)
   remainingCourses: number | null; // courses still to take here (null = cannot tell)
+  exempt: boolean; // 전공기초 면제: nothing left to take here
 }
 
 export interface ProgramProgress {
@@ -31,7 +35,11 @@ export interface TakenProgress {
   primary: ProgramProgress;
   second: ProgramProgress;
   taken: number; // credits that count, both programs together
-  remaining: number; // major credits still to take, both programs together
+  remaining: number; // major credits still to take, both programs together, a shared course once
+  /** credits of untaken courses both majors require, counted once in `remaining` instead of twice */
+  sharedOnce: number;
+  /** 전공기초 credits of the second major that the exemption takes off (0 when none) */
+  exempted: number;
   /** courses still to take, both programs; a required course listed in both counts once */
   remainingCourses: { total: number; required: number; elective: number; unknown: boolean };
 }
@@ -50,7 +58,13 @@ function fewestCourses(pool: CatalogCourse[], credits: number): number {
   return n;
 }
 
-function progress(p: ProgramCourses, total: number, taken: ReadonlySet<string>, exclude: ReadonlySet<string>): ProgramProgress {
+function progress(
+  p: ProgramCourses,
+  total: number,
+  taken: ReadonlySet<string>,
+  exclude: ReadonlySet<string>,
+  exemptBasic = false,
+): ProgramProgress {
   const notCounted = new Set<string>();
   const groups = p.groups.map((g): GroupProgress => {
     const hits = g.courses.filter((c) => taken.has(c.code));
@@ -58,6 +72,9 @@ function progress(p: ProgramCourses, total: number, taken: ReadonlySet<string>, 
     hits.filter((c) => exclude.has(c.code)).forEach((c) => notCounted.add(c.code));
     const sum = counted.reduce((s, c) => s + c.credits, 0);
     const got = g.credits === null ? sum : Math.min(sum, g.credits);
+    const exempt = exemptBasic && g.category === "전공기초";
+    const base = { category: g.category, need: g.credits, taken: got, courses: counted.map((c) => c.code) };
+    if (exempt) return { ...base, remaining: 0, todo: [], remainingCourses: 0, exempt };
     const remaining = g.credits === null ? null : g.credits - got;
     const untaken = g.courses.filter((c) => !taken.has(c.code));
     const todo = g.rule === "all" ? untaken.map((c) => c.code) : [];
@@ -67,10 +84,12 @@ function progress(p: ProgramCourses, total: number, taken: ReadonlySet<string>, 
         : g.rule === "choose" && remaining !== null
           ? fewestCourses(untaken.filter((c) => !exclude.has(c.code)), remaining)
           : null;
-    return { category: g.category, need: g.credits, taken: got, remaining, courses: counted.map((c) => c.code), todo, remainingCourses };
+    return { ...base, remaining, todo, remainingCourses, exempt };
   });
   const got = groups.reduce((s, g) => s + g.taken, 0);
-  const remaining = Math.max(0, total - got);
+  // an exempted group needs nothing more than what was already taken in it
+  const waived = groups.reduce((s, g) => s + (g.exempt ? (g.need ?? 0) - g.taken : 0), 0);
+  const remaining = Math.max(0, total - got - waived);
   // credits the table asks for beyond what the groups cover cannot be turned into a course count
   const groupRemaining = groups.reduce((s, g) => s + (g.remaining ?? 0), 0);
   return {
@@ -87,8 +106,12 @@ export function applyTaken(plan: CoursePlanOk, taken: ReadonlySet<string>): Take
   const none = new Set<string>();
   const minorBlocked =
     plan.input.kind === "minor" ? new Set(plan.majorRules.minorOverlap?.courses.map((c) => c.code) ?? []) : none;
+  const { basicExemption, overlap } = plan.majorRules;
   const primary = progress(plan.primary, plan.totals.primaryCredits, taken, none);
-  const second = progress(plan.second, plan.totals.secondCredits, taken, minorBlocked);
+  const second = progress(plan.second, plan.totals.secondCredits, taken, minorBlocked, basicExemption !== null);
+  const exempted = second.groups.reduce((s, g) => s + (g.exempt ? (g.need ?? 0) - g.taken : 0), 0);
+  // still in both programs' remaining; taking it once covers both
+  const sharedOnce = (overlap?.courses ?? []).filter((c) => !taken.has(c.code)).reduce((s, c) => s + c.credits, 0);
   const required = new Set([...primary.groups, ...second.groups].flatMap((g) => g.todo)).size;
   const elective = [...primary.groups, ...second.groups]
     .filter((g) => g.todo.length === 0)
@@ -97,7 +120,9 @@ export function applyTaken(plan: CoursePlanOk, taken: ReadonlySet<string>): Take
     primary,
     second,
     taken: primary.taken + second.taken,
-    remaining: primary.remaining + second.remaining,
+    remaining: Math.max(0, primary.remaining + second.remaining - sharedOnce),
+    sharedOnce,
+    exempted,
     remainingCourses: {
       total: required + elective,
       required,

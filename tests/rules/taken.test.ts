@@ -81,6 +81,30 @@ describe("applyTaken", () => {
     expect(g.remainingCourses).toBe(1);
   });
 
+  it("double major: nothing taken leaves exactly the screen's 최소 학점 (shared courses once)", () => {
+    const p = plan("컴퓨터공학과", "소프트웨어융합학과", "double");
+    const none = applyTaken(p, new Set());
+    expect(none.remaining).toBe(p.majorRules.minimumCredits); // 84, not 102
+    expect(none.sharedOnce).toBe(p.majorRules.overlap!.credits);
+    // a shared course taken: 3학점 off each major, but only 3 off what is left to take
+    const shared = p.majorRules.overlap!.courses[0];
+    const after = applyTaken(p, new Set([shared.code]));
+    expect(after.primary.taken).toBe(shared.credits);
+    expect(after.second.taken).toBe(shared.credits);
+    expect(after.remaining).toBe(none.remaining - shared.credits);
+  });
+
+  it("double major: an exempted 전공기초 needs nothing, in credits or courses", () => {
+    const p = plan("스마트팜과학과", "원예생명공학과", "double");
+    expect(p.majorRules.basicExemption).not.toBeNull();
+    const none = applyTaken(p, new Set());
+    expect(none.remaining).toBe(p.majorRules.minimumCredits); // 90
+    expect(none.exempted).toBe(p.majorRules.basicExemption!.credits);
+    const basics = group(none.second, "전공기초");
+    expect(basics).toMatchObject({ exempt: true, remaining: 0, remainingCourses: 0 });
+    expect(none.second.remaining).toBe(p.totals.secondCredits - p.majorRules.basicExemption!.credits);
+  });
+
   it("double major: a required course in both programs is one course to take, not two", () => {
     const p = plan("컴퓨터공학과", "소프트웨어융합학과", "double");
     const r = applyTaken(p, new Set());
