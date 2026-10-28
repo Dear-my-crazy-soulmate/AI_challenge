@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import AuthGate from "@/components/AuthGate";
 import ServiceWorker from "@/components/ServiceWorker";
-import TabBar from "@/components/TabBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -30,8 +30,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full">
         <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-paper md:shadow-[0_0_0_1px_var(--color-line)]">
-          <div className="flex-1 pb-[calc(62px+env(safe-area-inset-bottom))]">{children}</div>
-          <TabBar />
+          <AuthGate>
+            <div className="flex-1 pb-[calc(62px+env(safe-area-inset-bottom))]">{children}</div>
+          </AuthGate>
         </div>
         <ServiceWorker />
       </body>

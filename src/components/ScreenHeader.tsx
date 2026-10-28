@@ -7,16 +7,20 @@ export default function ScreenHeader({
   backHref,
   onBack,
   right,
+  noBack = false,
 }: {
   title: string;
   backHref?: string;
   onBack?: () => void;
   right?: ReactNode;
+  noBack?: boolean; // first screen (login before anything else): nowhere to go back to
 }) {
   const cls = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
   return (
     <div className="flex h-11 items-center justify-between">
-      {onBack ? (
+      {noBack ? (
+        <span className="w-11" />
+      ) : onBack ? (
         <button type="button" aria-label="이전 단계" onClick={onBack} className={cls}>
           ‹
         </button>

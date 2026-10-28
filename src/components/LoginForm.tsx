@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
+import { safeNext } from "@/components/AuthGate";
 import { ErrorNote, Field, SampleLoginNote, primaryButton, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useAuth } from "@/lib/auth";
@@ -27,12 +28,14 @@ export default function LoginForm() {
     const r = await auth.signIn(mail.value, password);
     setBusy(false);
     if (!r.ok) return setError(r.message);
-    router.push("/");
+    // back to the page the student opened before the login screen (AuthGate's ?next=)
+    router.push(safeNext(new URLSearchParams(window.location.search).get("next")));
   }
 
   return (
     <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
-      <ScreenHeader title="로그인" />
+      {/* signed out, every other page leads back here, so there is no back arrow */}
+      <ScreenHeader title="로그인" noBack={ready && !signedIn} />
       {ready && signedIn ? (
         <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">이미 로그인되어 있어요</h2>
