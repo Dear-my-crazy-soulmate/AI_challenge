@@ -108,8 +108,13 @@ export interface PlannerProps {
 
 export default function MajorPlanner({ data, rules, microdegrees, initial, quizMajors = [] }: PlannerProps) {
   const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
+  // a link whose combination cannot be computed as asked (e.g. no 다전공 for that pair) still
+  // brings its 본전공, so the student only picks the form again instead of starting over
+  const [linkOnly] = useState(() =>
+    !start && initial && singleDepts(data).some((d) => d.dept === initial.primary) ? initial.primary : "",
+  );
   const [step, setStep] = useState<Step>(start ? 4 : 2);
-  const [linkPrimary, setLinkPrimary] = useState(start?.primary ?? ""); // 본전공 of a shared link, if any
+  const [linkPrimary, setLinkPrimary] = useState(start?.primary ?? linkOnly); // 본전공 of a shared link, if any
   const [guestPrimary, setGuestPrimary] = useState(""); // picked here when not signed in
   const [mode, setMode] = useState<Mode | null>(start?.mode ?? null);
   const [second, setSecond] = useState(start?.second ?? "");
@@ -135,7 +140,8 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   const firsts = useMemo(() => singleDepts(data), [data]);
   const mine = firsts.find((d) => d.dept === profile?.primary);
   const primary = linkPrimary || mine?.dept || guestPrimary;
-  const ownPrimary = !!mine && !linkPrimary; // the chip then leads to 내 정보 instead of re-picking
+  // the chip then leads to 내 정보 instead of re-picking (a link to my own 본전공 counts as mine)
+  const ownPrimary = !!mine && (!linkPrimary || linkPrimary === mine.dept);
   const changePrimary = () => {
     setLinkPrimary("");
     setGuestPrimary("");
