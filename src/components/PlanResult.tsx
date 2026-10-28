@@ -428,6 +428,7 @@ function useTakenProgress(calc: (codes: ReadonlySet<string>) => TakenProgress) {
 /** "남은 전공 학점 / 앞으로 들을 과목" box, or the sign-in link when nobody is signed in. */
 function TakenBox(p: {
   t: ReturnType<typeof useTakenProgress>;
+  fullTotal: number; // the combination's credits before anything taken is left out
   secondLabel: string;
   secondName: string;
   sharedWhat: string; // "두 전공에" / "본전공과 마이크로디그리에"
@@ -437,18 +438,28 @@ function TakenBox(p: {
   if (!progress) {
     return p.t.enabled === false ? (
       <Link href="/login" className="rounded-[18px] bg-sand-2 px-[18px] py-3.5 text-sm leading-normal">
-        로그인하면 <b>들은 과목을 체크</b>해서 남은 학점과 과목 수를 계산할 수 있어요 ›
+        로그인하고 <b>내 이수 과목</b>을 저장하면, 들은 과목을 빼고 남은 학점과 과목 수를 계산해 드려요 ›
       </Link>
     ) : null;
   }
   const c = progress.remainingCourses;
+  const saved = p.t.ui?.codes.size ?? 0;
   return (
     <div className="flex flex-col gap-1 rounded-[18px] border border-accent/30 bg-accent-soft px-[18px] py-4">
-      <span className="text-sm leading-normal">
-        들은 과목을 빼면 (본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {p.secondLabel} −
-        <b className="tabular-nums">{progress.second.taken}</b>)
+      <span className="flex items-center justify-between gap-2">
+        <span className="text-[13px] font-semibold text-accent-deep">내 이수 과목 {saved}개 반영</span>
+        <Link href="/profile/courses" className="whitespace-nowrap text-[13px] font-semibold text-accent-deep underline">
+          내 이수 과목 관리 ›
+        </Link>
       </span>
-      <span className="text-[22px] font-bold tabular-nums text-accent-deep">남은 전공 학점 {progress.remaining}학점</span>
+      <span className="text-[22px] font-bold tabular-nums text-accent-deep">
+        <span className="text-base font-semibold text-ink-2 line-through decoration-1">{p.fullTotal}학점</span> → 남은{" "}
+        {progress.remaining}학점
+      </span>
+      <span className="text-sm leading-normal">
+        이 조합에 인정된 들은 과목: 본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {p.secondLabel} −
+        <b className="tabular-nums">{progress.second.taken}</b>학점
+      </span>
       <span className="text-sm leading-normal">
         앞으로 들을 과목 최소 <b className="tabular-nums">{c.total}</b>과목
         <span className="text-mute">
@@ -470,9 +481,11 @@ function TakenBox(p: {
         </span>
       )}
       <span className="text-xs leading-normal text-mute">
-        {progress.taken === 0
-          ? "아래 과목 목록을 펼쳐 들은 과목에 체크하세요. 내 계정에 저장돼요."
-          : `체크한 과목은 내 계정에 저장돼요. ${p.countsNote}`}
+        {saved === 0
+          ? "아직 저장한 이수 과목이 없어요. ‘내 이수 과목 관리’에서 들은 과목을 저장하면 여기서 바로 빠져요."
+          : progress.taken === 0
+            ? `저장한 이수 과목 ${saved}개 중 이 조합에 해당하는 과목이 없어요.`
+            : `저장한 과목은 내 계정에 남아요. ${p.countsNote}`}
       </span>
       {p.t.error && <span className="text-xs text-warn">{p.t.error}</span>}
     </div>
@@ -521,6 +534,7 @@ export function PlanView({
       )}
       <TakenBox
         t={t}
+        fullTotal={plan.totals.total}
         secondLabel={label}
         secondName={plan.second.dept}
         sharedWhat="두 전공에"
@@ -616,6 +630,7 @@ export function MicrodegreeView({
       {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
       <TakenBox
         t={t}
+        fullTotal={plan.primaryCredits + (known ?? md.course_credits)}
         secondLabel="마이크로디그리"
         secondName={md.name}
         sharedWhat="본전공과 마이크로디그리에"

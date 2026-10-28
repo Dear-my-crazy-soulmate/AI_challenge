@@ -14,6 +14,7 @@ import { ErrorNote, SampleLoginNote, primaryButton, secondaryButton } from "@/co
 import PersonalFields from "@/components/PersonalFields";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useGoal } from "@/components/useGoal";
+import { useTaken } from "@/components/useTaken";
 import { useAuth } from "@/lib/auth";
 import { MAX_INTERESTS } from "@/lib/auth/types";
 import type { Profile } from "@/lib/auth/types";
@@ -106,6 +107,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const router = useRouter();
   const { auth, email } = useAuth();
   const goal = useGoal();
+  const taken = useTaken();
   const [editing, setEditing] = useState(false);
   const [account, setAccount] = useState<AccountAction | null>(null);
 
@@ -149,6 +151,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
 
       <section className="overflow-hidden rounded-[22px] border border-edge bg-card">
         <Row label="프로필 수정" right={profile.primary} onClick={() => setEditing(true)} />
+        <Row label="내 이수 과목" right={`${taken.codes.size}과목`} href="/profile/courses" />
         <Row
           label="다전공 목표"
           right={goal ? `${MODE_NAME[goal.mode]} · ${goal.secondName}` : "미정"}

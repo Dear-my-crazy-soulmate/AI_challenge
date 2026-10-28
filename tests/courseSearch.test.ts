@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { searchCourses } from "../src/lib/courseSearch";
+import { deptCatalog, lookupCourses, searchCourses } from "../src/lib/courseSearch";
 import type { CourseQuery } from "../src/lib/courseSearch";
 import type { CourseData } from "../src/lib/rules/courses";
 
@@ -49,5 +49,27 @@ describe("searchCourses with a query", () => {
   it("returns each code once and nothing when there is no match", () => {
     expect(searchCourses(data, { ...base, query: "이산" })[0].rows).toHaveLength(1);
     expect(searchCourses(data, { ...base, query: "zzz" })).toEqual([]);
+  });
+});
+
+describe("deptCatalog (내 이수 과목)", () => {
+  it("lists every course once, 전공기초 then 전공필수 then 전공선택", () => {
+    const g = deptCatalog(data, "컴퓨터공학과");
+    expect(g.map((x) => x.category)).toEqual(["전공기초", "전공필수"]);
+    expect(g[0].courses.map((c) => c.code)).toEqual(["CSE101", "MTH100"]);
+    expect(deptCatalog(data, "응용수학과").map((x) => x.category)).toEqual(["전공기초", "전공선택"]);
+    expect(deptCatalog(data, "없는과")).toEqual([]);
+  });
+});
+
+describe("lookupCourses", () => {
+  it("names saved codes in their order and reports unknown ones", () => {
+    expect(lookupCourses(data, ["MTH200", "CSE201", "ZZZ999"])).toEqual({
+      courses: [
+        { code: "MTH200", name: "해석학", credits: 3 },
+        { code: "CSE201", name: "자료구조", credits: 3 },
+      ],
+      missing: ["ZZZ999"],
+    });
   });
 });

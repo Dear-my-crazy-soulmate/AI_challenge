@@ -79,3 +79,40 @@ export function searchCourses(data: CourseData, q: CourseQuery): CourseSection[]
   if (q.second) out.push({ label: `${q.secondWord} · ${q.second}`, rows: listOf(q.second).slice(0, SECTION_LIMIT) });
   return out.filter((x) => x.rows.length);
 }
+
+// ---- 내 이수 과목 (MY): a department's whole course list, and names for saved codes ----
+
+export interface CatalogEntry {
+  code: string;
+  name: string;
+  credits: number;
+}
+
+const CATEGORY_ORDER = ["전공기초", "전공필수", "전공선택"];
+
+/** Every course of one department, grouped by 이수구분 (전공기초 → 전공필수 → 전공선택 → others). */
+export function deptCatalog(data: CourseData, dept: string): { category: string; courses: CatalogEntry[] }[] {
+  const groups = new Map<string, CatalogEntry[]>();
+  const seen = new Set<string>();
+  for (const c of data.depts[dept]?.catalog ?? []) {
+    if (seen.has(c.code)) continue;
+    seen.add(c.code);
+    groups.set(c.category, [...(groups.get(c.category) ?? []), { code: c.code, name: c.name, credits: c.credits }]);
+  }
+  const rank = (k: string) => (CATEGORY_ORDER.includes(k) ? CATEGORY_ORDER.indexOf(k) : CATEGORY_ORDER.length);
+  return [...groups.entries()]
+    .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b, "ko"))
+    .map(([category, courses]) => ({ category, courses }));
+}
+
+/** Names and credits for saved course codes; codes no department lists come back in `missing`. */
+export function lookupCourses(data: CourseData, codes: string[]): { courses: CatalogEntry[]; missing: string[] } {
+  const want = new Set(codes);
+  const found = new Map<string, CatalogEntry>();
+  for (const dept of Object.values(data.depts)) {
+    for (const c of dept.catalog) {
+      if (want.has(c.code) && !found.has(c.code)) found.set(c.code, { code: c.code, name: c.name, credits: c.credits });
+    }
+  }
+  return { courses: codes.flatMap((c) => found.get(c) ?? []), missing: codes.filter((c) => !found.has(c)) };
+}
