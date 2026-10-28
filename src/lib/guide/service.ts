@@ -62,7 +62,8 @@ export function createGuideService(
     if (!llm) return fallback(f, "NO_KEY");
     let reply;
     try {
-      reply = await llm.chat(buildMessages(f), { maxTokens: 2000, temperature: 0.3, timeoutMs: 25_000 });
+      // Korean answers run long in tokens; 2000 still cut some answers mid-JSON (10/29)
+      reply = await llm.chat(buildMessages(f), { maxTokens: 4000, temperature: 0.3, timeoutMs: 25_000 });
     } catch (e) {
       log({ key, ok: false, problems: [`call failed: ${e instanceof Error ? e.message : String(e)}`] });
       return fallback(f, "LLM_ERROR");
