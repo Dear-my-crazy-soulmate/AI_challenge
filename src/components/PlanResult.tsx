@@ -8,6 +8,7 @@ import Link from "next/link";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
+import { ComboGuide } from "@/components/ComboGuide";
 import { useTaken } from "@/components/useTaken";
 import { applyTaken } from "@/lib/rules/taken";
 import type { ProgramProgress } from "@/lib/rules/taken";
@@ -438,6 +439,7 @@ export function PlanView({
         b={plan.totals.secondCredits}
       />
       <SaveGoalButton a={actions} />
+      <ComboGuide primary={plan.primary.dept} kind={kind} second={plan.second.dept} />
       {plan.totals.savedCredits > 0 && (
         <div className="flex items-center gap-3.5 rounded-[18px] bg-accent-soft px-[18px] py-4">
           <span className="whitespace-nowrap text-[22px] font-bold tabular-nums text-accent-deep">−{plan.totals.savedCredits}</span>
@@ -550,6 +552,7 @@ export function MicrodegreeView({
         b={known}
       />
       <SaveGoalButton a={actions} />
+      <ComboGuide primary={plan.primary.dept} kind="md" second={plan.input.id} />
       {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
       <ProgramCard
         role="본전공 · 단일전공"
