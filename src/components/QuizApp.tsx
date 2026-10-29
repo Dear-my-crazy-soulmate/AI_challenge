@@ -65,7 +65,7 @@ function DeptCard({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="quiz-pop relative box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
+      className="quiz-pop relative box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-white px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
       style={{ animationDelay: `${delay}ms` }}
     >
       {mine && <span className="absolute left-3 top-3 z-10 rounded-md bg-accent px-1.5 py-0.5 text-xs font-bold text-white">내 학과</span>}
