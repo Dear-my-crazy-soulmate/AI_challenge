@@ -25,6 +25,20 @@ export interface PostDraft {
 
 const fail = (message: string): Checked<never> => ({ ok: false, message });
 
+export const INFO_ONLY = "학과 정보는 이 학과를 본전공·다전공·부전공·마이크로디그리로 공부하는 학생만 쓸 수 있어요. 궁금한 점은 질문으로 남겨 주세요.";
+
+/** How the writer relates to a department, read from their profile and saved 내 목표 instead of asking. */
+export function relationTo(
+  dept: string,
+  profile: { primary: string; interests: readonly string[] },
+  goal: { mode: "double" | "minor" | "microdegree"; second: string } | null,
+): Relation {
+  if (dept === profile.primary) return "major";
+  if (goal && goal.second === dept) return goal.mode;
+  if (profile.interests.includes(dept)) return "curious";
+  return "none";
+}
+
 const text = (raw: string, max: number, label: string, required: boolean): Checked<string> => {
   const r = checkPostText(raw, max, label);
   if (r.ok && required && r.value === "") return fail(`${label}을(를) 적어 주세요.`);
@@ -61,7 +75,7 @@ export function buildPost(d: PostDraft, author: Author, knownDepts: string[], id
   if (d.category !== null && !CATEGORY_IDS.includes(d.category)) return fail("항목을 다시 골라 주세요.");
   const isInfo = d.type === "info";
   if (isInfo && d.category === null) return fail("어떤 내용인지 항목을 골라 주세요.");
-  if (isInfo && !INFO_RELATIONS.includes(d.relation)) return fail("학과 정보는 이 학과를 다녀 본 학생만 쓸 수 있어요. 궁금한 점은 질문으로 남겨 주세요.");
+  if (isInfo && !INFO_RELATIONS.includes(d.relation)) return fail(INFO_ONLY);
 
   const title = text(d.title, LIMITS.title, "제목", true);
   if (!title.ok) return title;
@@ -86,8 +100,8 @@ export function buildPost(d: PostDraft, author: Author, knownDepts: string[], id
   };
 }
 
-export function buildComment(postId: string, raw: string, author: Author, id: string, now: Date): Checked<Comment> {
+export function buildComment(postId: string, raw: string, author: Author, id: string, now: Date, parentId?: string): Checked<Comment> {
   const body = text(raw, LIMITS.comment, "댓글", true);
   if (!body.ok) return body;
-  return { ok: true, value: { id, postId, body: body.value, badge: { primary: author.primary, grade: author.grade }, createdAt: now.toISOString(), is_sample: false } };
+  return { ok: true, value: { id, postId, ...(parentId ? { parentId } : {}), body: body.value, badge: { primary: author.primary, grade: author.grade }, createdAt: now.toISOString(), is_sample: false } };
 }

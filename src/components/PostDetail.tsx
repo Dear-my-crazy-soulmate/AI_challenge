@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
+import CommunityBadge, { PostTags, SampleTag } from "@/components/CommunityBadge";
 import { ErrorNote, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
 import { commentStoreFor, getCommunityStore, isSamplePost, useCommunity } from "@/components/useCommunity";
@@ -14,8 +14,8 @@ import { fmtDate } from "@/lib/community/format";
 import { newId } from "@/lib/community/local";
 import { CATEGORIES, LOAD_LABEL } from "@/lib/community/schema";
 import type { FieldDef } from "@/lib/community/schema";
-import { LIMITS, TYPE_LABEL } from "@/lib/community/types";
-import type { FieldValue } from "@/lib/community/types";
+import { LIMITS } from "@/lib/community/types";
+import type { Comment, FieldValue } from "@/lib/community/types";
 
 /** a stored field value as the text a reader sees */
 function show(def: FieldDef, v: FieldValue | undefined): string {
@@ -25,9 +25,9 @@ function show(def: FieldDef, v: FieldValue | undefined): string {
 }
 
 const Row = ({ k, children }: { k: string; children: string }) => (
-  <div className="flex flex-col gap-1 border-t border-line-2 py-3 first:border-t-0 first:pt-0 last:pb-0">
-    <span className="text-xs font-semibold text-mute">{k}</span>
-    <span className="text-pretty whitespace-pre-wrap text-[15px] leading-[1.55]">{children}</span>
+  <div className="grid grid-cols-[88px_1fr] gap-2 text-[13px] leading-normal">
+    <span className="text-mute">{k}</span>
+    <span className="text-pretty whitespace-pre-wrap font-medium text-ink-2">{children}</span>
   </div>
 );
 
@@ -38,6 +38,8 @@ export default function PostDetail({ id }: { id: string | null }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
   const post = posts.find((p) => p.id === id);
   if (!post && loading) {
@@ -62,13 +64,18 @@ export default function PostDetail({ id }: { id: string | null }) {
   }
 
   const list = comments.filter((c) => c.postId === post.id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const ids = new Set(list.map((c) => c.id));
+  // a reply whose parent is gone is shown as a top-level comment rather than lost
+  const tops = list.filter((c) => !c.parentId || !ids.has(c.parentId));
+  const repliesTo = (id: string) => list.filter((c) => c.parentId === id);
+  const replying = list.find((c) => c.id === replyTo) ?? null;
   const def = post.category ? CATEGORIES[post.category] : null;
   const rows = post.type === "info" && def ? def.fields.flatMap((f) => (post.fields[f.key] === undefined ? [] : [{ f, text: show(f, post.fields[f.key]) }])) : [];
   const deptHref = `/community/dept?name=${encodeURIComponent(post.dept)}`;
 
   async function send() {
     if (!profile || !post) return;
-    const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, newId("c"), new Date());
+    const c = buildComment(post.id, text, { primary: profile.primary, grade: profile.grade }, newId("c"), new Date(), replying?.id);
     if (!c.ok) return setError(c.message);
     setBusy(true);
     const r = await commentStoreFor(post.id).addComment(c.value);
@@ -76,6 +83,7 @@ export default function PostDetail({ id }: { id: string | null }) {
     if (!r.ok) return setError(r.message);
     setText("");
     setError("");
+    setReplyTo(null);
   }
 
   async function removePost(postId: string, back: string) {
@@ -84,6 +92,39 @@ export default function PostDetail({ id }: { id: string | null }) {
     router.push(back);
   }
 
+  function startReply(commentId: string) {
+    setReplyTo(commentId);
+    const box = document.getElementById("comment-box");
+    box?.scrollIntoView({ behavior: "smooth", block: "center" });
+    box?.focus({ preventScroll: true });
+  }
+
+  const commentItem = (c: Comment, reply: boolean) => (
+    <div className={`flex flex-col gap-1.5 py-3.5 ${reply ? "pl-7" : ""}`}>
+      <div className="flex items-start justify-between gap-2">
+        <span className="flex items-center gap-1.5">
+          {reply && <span aria-hidden className="-ml-5 text-mute">ㄴ</span>}
+          <CommunityBadge badge={c.badge} dept={post?.dept} />
+        </span>
+        {c.is_sample && <SampleTag />}
+      </div>
+      <p className="text-pretty whitespace-pre-wrap text-[15px] leading-[1.6]">{c.body}</p>
+      <div className="flex items-center gap-3 text-xs text-mute">
+        <span>{fmtDate(c.createdAt)}</span>
+        {profile && (
+          <button type="button" onClick={() => startReply(reply ? (c.parentId ?? c.id) : c.id)} className="hit font-semibold text-ink-2">
+            답글쓰기
+          </button>
+        )}
+        {c.mine && (
+          <button type="button" onClick={() => void removeComment(c.id)} className="hit ml-auto font-semibold text-accent-deep">
+            삭제
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   async function removeComment(commentId: string) {
     const r = await commentStoreFor(post?.id ?? "").deleteComment(commentId);
     if (!r.ok) setError(r.message);
@@ -91,17 +132,24 @@ export default function PostDetail({ id }: { id: string | null }) {
 
   return (
     <main className="flex flex-col gap-4 px-[22px] pb-10 pt-[max(6px,env(safe-area-inset-top))]">
-      <ScreenHeader title="커뮤니티" backHref={deptHref} />
+      <ScreenHeader
+        title="커뮤니티"
+        backHref={deptHref}
+        right={
+          post.mine && (
+            <button type="button" onClick={() => setConfirming(true)} className="hit text-sm font-semibold text-accent-deep">
+              삭제
+            </button>
+          )
+        }
+      />
 
       <article className="flex flex-col gap-3">
         <span className="flex flex-wrap items-center gap-1.5">
           <Link href={deptHref} className="rounded-md bg-ink px-1.5 py-px text-xs font-bold text-paper">
             {post.dept}
           </Link>
-          <span className={`rounded-md px-1.5 py-px text-xs font-bold ${post.type === "question" ? "bg-sand text-ink-2" : "bg-accent-soft text-accent-deep"}`}>
-            {post.type === "question" ? TYPE_LABEL.question : def?.label}
-          </span>
-          {post.type === "question" && def && <span className="rounded-md bg-sand px-1.5 py-px text-xs font-semibold text-ink-2">{def.label}</span>}
+          <PostTags post={post} />
           {post.is_sample && <SampleTag />}
         </span>
         <h2 className="text-pretty text-[22px] font-bold leading-[1.35] tracking-[-0.5px]">{post.title}</h2>
@@ -111,7 +159,7 @@ export default function PostDetail({ id }: { id: string | null }) {
         </div>
 
         {rows.length > 0 && (
-          <section aria-label="학과 정보" className="flex flex-col rounded-3xl border border-edge bg-white p-[18px]">
+          <section aria-label="학과 정보" className="flex flex-col gap-1.5 rounded-xl bg-sand px-3.5 py-3">
             {rows.map((r) => (
               <Row key={r.f.key} k={r.f.label}>
                 {r.text}
@@ -121,51 +169,47 @@ export default function PostDetail({ id }: { id: string | null }) {
         )}
         {post.body && <p className="text-pretty whitespace-pre-wrap text-[15px] leading-[1.7]">{post.body}</p>}
 
-        <Link href={deptHref} className={secondaryButton}>
-          {post.dept}의 다른 이야기 보기
-        </Link>
-        {post.mine && (
-          <button
-            type="button"
-            onClick={() => void removePost(post.id, deptHref)}
-            className="h-11 text-sm font-semibold text-accent-deep"
-          >
-            내 글 삭제
-          </button>
-        )}
       </article>
 
-      <section aria-label="댓글" className="flex flex-col gap-3">
+      <section aria-label="댓글" className="mt-6 flex flex-col gap-3 border-t-8 border-sand pt-6">
         <h3 className="text-[17px] font-bold">댓글 {list.length}</h3>
-        {list.map((c) => (
-          <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl border border-edge bg-white px-4 py-3.5">
-            <div className="flex items-start justify-between gap-2">
-              <CommunityBadge badge={c.badge} dept={post.dept} />
-              {c.is_sample && <SampleTag />}
-            </div>
-            <p className="text-pretty whitespace-pre-wrap text-sm leading-[1.6]">{c.body}</p>
-            <div className="flex items-center justify-between text-xs text-mute">
-              <span>{fmtDate(c.createdAt)}</span>
-              {c.mine && (
-                <button type="button" onClick={() => void removeComment(c.id)} className="font-semibold text-accent-deep">
-                  삭제
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+        {tops.length > 0 && (
+          <ul className="-mt-1 flex flex-col divide-y divide-line border-y border-line">
+            {tops.map((c) => (
+              <li key={c.id}>
+                {commentItem(c, false)}
+                {repliesTo(c.id).map((r) => (
+                  <div key={r.id} className="border-t border-line-2 bg-sand/40">
+                    {commentItem(r, true)}
+                  </div>
+                ))}
+              </li>
+            ))}
+          </ul>
+        )}
         {list.length === 0 && <p className="text-sm text-mute">아직 댓글이 없어요. {post.type === "question" ? "아는 만큼 답해 주세요." : "첫 댓글을 남겨 보세요."}</p>}
 
         {profile ? (
           <div className="flex flex-col gap-2">
+            {replying && (
+              <div className="flex items-center justify-between gap-2 text-xs text-ink-2">
+                <span className="truncate">
+                  <b>답글</b> · {replying.body}
+                </span>
+                <button type="button" onClick={() => setReplyTo(null)} className="hit flex-none font-semibold text-mute">
+                  취소
+                </button>
+              </div>
+            )}
             <div className="flex flex-col rounded-2xl border border-edge bg-white focus-within:border-accent">
               <textarea
-                aria-label="댓글 쓰기"
+                id="comment-box"
+                aria-label={replying ? "답글 쓰기" : "댓글 쓰기"}
                 rows={2}
                 value={text}
                 maxLength={LIMITS.comment}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="경험이나 의견을 나눠 주세요"
+                placeholder={replying ? "답글을 남겨 주세요" : "경험이나 의견을 나눠 주세요"}
                 className="field-sizing-content max-h-40 min-h-[3.5rem] resize-none rounded-t-2xl bg-transparent px-3.5 pt-3 text-base leading-normal outline-none"
               />
               <div className="flex items-center justify-between gap-2 px-3 pb-2.5 pt-1">
@@ -193,6 +237,25 @@ export default function PostDetail({ id }: { id: string | null }) {
           </Link>
         )}
       </section>
+
+      {confirming && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center px-8" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+          <button type="button" aria-label="닫기" onClick={() => setConfirming(false)} className="absolute inset-0 bg-ink/40" />
+          <div className="relative flex w-full max-w-[320px] flex-col gap-5 rounded-3xl bg-paper px-5 pb-5 pt-6">
+            <p id="delete-title" className="text-center text-base font-bold">
+              정말 삭제하시겠습니까?
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" autoFocus onClick={() => setConfirming(false)} className="h-12 rounded-2xl bg-sand-2 text-[15px] font-semibold text-ink">
+                아니요
+              </button>
+              <button type="button" onClick={() => { setConfirming(false); void removePost(post.id, deptHref); }} className="h-12 rounded-2xl bg-accent text-[15px] font-bold text-white">
+                삭제
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

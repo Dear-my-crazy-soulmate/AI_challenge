@@ -53,6 +53,7 @@ interface PostRow {
 interface CommentRow {
   id: string;
   post_id: string;
+  parent_id?: string | null; // missing until 0005_comment_replies.sql has run
   body: string;
   badge: unknown;
   created_at: string;
@@ -80,6 +81,7 @@ export function fromServer(posts: PostRow[], comments: CommentRow[]): Stored {
     .map((r) => ({
       id: r.id,
       postId: r.post_id,
+      ...(r.parent_id ? { parentId: r.parent_id } : {}),
       body: r.body,
       badge: r.badge,
       createdAt: r.created_at,
@@ -171,7 +173,7 @@ export function createSupabaseStore(sb: SupabaseClient): CommunityStore {
       return after(error);
     },
     async addComment(c) {
-      const { error } = await sb.from("community_comments").insert({ id: c.id, post_id: c.postId, body: c.body, badge: c.badge });
+      const { error } = await sb.from("community_comments").insert({ id: c.id, post_id: c.postId, body: c.body, badge: c.badge, ...(c.parentId ? { parent_id: c.parentId } : {}) });
       return after(error);
     },
     async deletePost(id) {

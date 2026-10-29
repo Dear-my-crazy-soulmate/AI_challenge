@@ -12,16 +12,19 @@ export type Category = "curriculum" | "culture" | "clubs" | "career" | "multimaj
 export const CATEGORY_IDS: readonly Category[] = ["curriculum", "culture", "clubs", "career", "multimajor"];
 
 /** the writer's relation to the department the post is about */
-export type Relation = "major" | "double" | "minor" | "alumni" | "curious";
+/** alumni is kept only so older posts still read; new posts take their relation from the profile (relationTo) */
+export type Relation = "major" | "double" | "minor" | "microdegree" | "alumni" | "curious" | "none";
 export const RELATION_LABEL: Record<Relation, string> = {
   major: "이 학과 재학 중",
   double: "다전공 중",
   minor: "부전공 중",
+  microdegree: "마이크로디그리 중",
   alumni: "졸업생",
-  curious: "관심 있는 학생",
+  curious: "관심 전공",
+  none: "관련 없음",
 };
 /** who can write 학과 정보: someone who actually studied it (a question can come from anyone) */
-export const INFO_RELATIONS: readonly Relation[] = ["major", "double", "minor", "alumni"];
+export const INFO_RELATIONS: readonly Relation[] = ["major", "double", "minor", "microdegree", "alumni"];
 
 export type FieldValue = string | string[] | number;
 
@@ -52,6 +55,7 @@ export interface Post {
 export interface Comment {
   id: string;
   postId: string;
+  parentId?: string; // a reply: the top-level comment it answers (replies are one level deep)
   body: string;
   badge: CommentBadge;
   createdAt: string;

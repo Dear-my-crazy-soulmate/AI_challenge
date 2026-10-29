@@ -34,6 +34,20 @@ export const BackIcon = ({ className }: IconProps) => (
   </Svg>
 );
 
+export const CloseIcon = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="M6 6l12 12M18 6 6 18" />
+  </Svg>
+);
+
+/** 글쓰기 버튼: 말풍선 + 플러스 */
+export const WriteIcon = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="M20 11.5A8.5 8.5 0 1 0 6.7 18.5L4 21l4.6-.9A8.5 8.5 0 0 0 12 20.3" />
+    <path d="M18 15v6M15 18h6" />
+  </Svg>
+);
+
 /** 학과 이야기 항목별 아이콘 (16px 안팎의 작은 크기로 쓴다) */
 const CATEGORY_PATHS: Record<string, ReactNode> = {
   all: (

@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import credits from "../data/curated/credits_global.json";
 import seed from "../data/seed/community_sample.json";
-import { buildComment, buildPost } from "../src/lib/community/compose";
+import { buildComment, buildPost, relationTo } from "../src/lib/community/compose";
 import type { PostDraft } from "../src/lib/community/compose";
-import { isComment, isPost, mergeWithSeed, parseStored, sampleComments, withComment, withPost, withoutPost } from "../src/lib/community/local";
+import { isComment, isPost, mergeWithSeed, parseStored, sampleComments, withComment, withoutComment, withPost, withoutPost } from "../src/lib/community/local";
 import { highlights, newestFirst, statsByDept, tally } from "../src/lib/community/query";
 import { CATEGORIES } from "../src/lib/community/schema";
 import { CATEGORY_IDS } from "../src/lib/community/types";
@@ -188,5 +188,37 @@ describe("sampleComments", () => {
     const c = (id: string, postId: string): Comment => ({ id, postId, body: "좋아요", badge, createdAt: at, is_sample: false });
     const device = { posts: [], comments: [c("c1", "sample-cs-1"), c("c2", "real-post")] };
     expect(sampleComments(device, new Set(["sample-cs-1"])).map((x) => x.id)).toEqual(["c1"]);
+  });
+});
+
+describe("relationTo", () => {
+  const me = { primary: "컴퓨터공학과", interests: ["경영학과"] };
+  it("reads the relation from the profile and 내 목표 instead of asking", () => {
+    expect(relationTo("컴퓨터공학과", me, null)).toBe("major");
+    expect(relationTo("수학과", me, { mode: "double", second: "수학과" })).toBe("double");
+    expect(relationTo("수학과", me, { mode: "minor", second: "수학과" })).toBe("minor");
+    expect(relationTo("수학과", me, { mode: "microdegree", second: "수학과" })).toBe("microdegree");
+    expect(relationTo("경영학과", me, null)).toBe("curious");
+    expect(relationTo("철학과", me, { mode: "double", second: "수학과" })).toBe("none");
+  });
+  it("lets a 마이크로디그리 student write 학과 정보 but not someone unrelated", () => {
+    const d: PostDraft = { type: "info", dept: "컴퓨터공학과", category: "culture", relation: "microdegree", title: "분위기", body: "", values: { vibe: ["협력적"] } };
+    expect(buildPost(d, author, DEPTS, "p", new Date()).ok).toBe(true);
+    expect(buildPost({ ...d, relation: "none" }, author, DEPTS, "p", new Date()).ok).toBe(false);
+  });
+});
+
+describe("comment replies", () => {
+  const now = new Date("2026-10-30T00:00:00Z");
+  it("keeps the parent of a reply, and deleting a comment takes its replies with it", () => {
+    const top = buildComment("p1", "질문 있어요", author, "c1", now);
+    const reply = buildComment("p1", "답해 드릴게요", author, "c2", now, "c1");
+    if (!top.ok || !reply.ok) throw new Error("should build");
+    expect(top.value.parentId).toBeUndefined();
+    expect(reply.value.parentId).toBe("c1");
+    expect(isComment(reply.value)).toBe(true);
+    const s = withComment(withComment({ posts: [], comments: [] }, top.value), reply.value);
+    expect(withoutComment(s, "c1").comments).toEqual([]);
+    expect(withoutComment(s, "c2").comments.map((c) => c.id)).toEqual(["c1"]);
   });
 });

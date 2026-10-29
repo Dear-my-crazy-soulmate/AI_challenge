@@ -39,7 +39,7 @@ export const isPost = (p: unknown): p is Post => {
 
 export const isComment = (c: unknown): c is Comment => {
   const x = c as Partial<Comment> | null;
-  return !!x && typeof x.id === "string" && typeof x.postId === "string" && typeof x.body === "string" && typeof x.createdAt === "string" && isBadge(x.badge);
+  return !!x && typeof x.id === "string" && typeof x.postId === "string" && (x.parentId === undefined || typeof x.parentId === "string") && typeof x.body === "string" && typeof x.createdAt === "string" && isBadge(x.badge);
 };
 
 export function parseStored(raw: string | null): Stored {
@@ -71,7 +71,8 @@ export const withoutPost = (s: Stored, id: string): Stored => ({
   posts: s.posts.filter((p) => p.id !== id),
   comments: s.comments.filter((c) => c.postId !== id),
 });
-export const withoutComment = (s: Stored, id: string): Stored => ({ ...s, comments: s.comments.filter((c) => c.id !== id) });
+/** A comment's replies go with it. */
+export const withoutComment = (s: Stored, id: string): Stored => ({ ...s, comments: s.comments.filter((c) => c.id !== id && c.parentId !== id) });
 
 export const newId = (prefix: string) => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 

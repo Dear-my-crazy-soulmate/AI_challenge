@@ -5,7 +5,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { CategoryIcon } from "@/components/Icons";
+import { TONE } from "@/components/CommunityBadge";
+import { CategoryIcon, WriteIcon } from "@/components/Icons";
 import PostRow from "@/components/PostRow";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useCommunity } from "@/components/useCommunity";
@@ -16,16 +17,6 @@ import type { Category } from "@/lib/community/types";
 import type { DeptOption } from "@/lib/depts";
 
 type View = "all" | "question" | Category;
-// each tab keeps its own colour: a soft tile when off, the full colour when chosen
-const TONE: Record<string, { fg: string; bg: string }> = {
-  all: { fg: "#475569", bg: "#f1f5f9" },
-  curriculum: { fg: "#2563eb", bg: "#dbeafe" },
-  culture: { fg: "#db2777", bg: "#fce7f3" },
-  clubs: { fg: "#ea580c", bg: "#ffedd5" },
-  career: { fg: "#15803d", bg: "#dcfce7" },
-  multimajor: { fg: "#7c3aed", bg: "#ede9fe" },
-  question: { fg: "#b45309", bg: "#fef3c7" },
-};
 const writeHref = (dept: string, extra = "") => `/community/write?dept=${encodeURIComponent(dept)}${extra}`;
 
 export default function DeptView({ depts, name }: { depts: DeptOption[]; name: string | null }) {
@@ -53,12 +44,14 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
     ...CATEGORY_IDS.map((c) => ({ id: c as View, label: CATEGORIES[c].label })),
     { id: "question", label: "질문" },
   ];
+  // the write link opens the form already set to the tab being looked at
+  const viewHref = writeHref(dept.dept, view !== "all" && view !== "question" ? `&category=${view}` : view === "question" ? "&type=question" : "");
   const shown = newestFirst(
     view === "all" ? mine : view === "question" ? mine.filter((p) => p.type === "question") : mine.filter((p) => p.type === "info" && p.category === view),
   );
 
   return (
-    <main className="flex flex-col gap-3.5 px-[22px] pb-10 pt-[max(6px,env(safe-area-inset-top))]">
+    <main className="flex flex-col gap-3.5 px-[22px] pb-24 pt-[max(6px,env(safe-area-inset-top))]">
       <ScreenHeader title="학과" backHref="/community" />
 
       <section className="flex flex-col gap-3 rounded-3xl bg-ink px-5 py-5 text-paper">
@@ -127,12 +120,19 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
         {shown.length === 0 && (
           <div className="flex flex-col gap-2 rounded-3xl border border-edge bg-white px-[18px] py-6 text-center">
             <span className="text-[15px] font-semibold">아직 글이 없어요</span>
-            <Link href={writeHref(dept.dept, view !== "all" && view !== "question" ? `&category=${view}` : view === "question" ? "&type=question" : "")} className="text-[13px] font-semibold text-accent-deep">
+            <Link href={viewHref} className="text-[13px] font-semibold text-accent-deep">
               첫 번째로 남겨 보세요 ›
             </Link>
           </div>
         )}
       </section>
+
+      {/* floats above the tab bar (62px) on the right edge of the 430px app column */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(78px+env(safe-area-inset-bottom))] z-20 mx-auto flex w-full max-w-[430px] justify-end px-5">
+        <Link href={viewHref} aria-label="글쓰기" className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white shadow-lg active:opacity-85">
+          <WriteIcon className="h-7 w-7" />
+        </Link>
+      </div>
     </main>
   );
 }

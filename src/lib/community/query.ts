@@ -23,7 +23,7 @@ export function statsByDept(posts: Post[]): Map<string, DeptStat> {
     if (p.type === "info") {
       s.info++;
       if (p.category) s.byCategory[p.category]++;
-      if (["major", "double", "minor"].includes(p.badge.relation)) s.fromStudents++;
+      if (["major", "double", "minor", "microdegree"].includes(p.badge.relation)) s.fromStudents++;
     } else s.questions++;
     m.set(p.dept, s);
   }

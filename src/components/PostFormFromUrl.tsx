@@ -14,6 +14,8 @@ export default function PostFormFromUrl({ depts }: { depts: DeptOption[] }) {
   const dept = sp.get("dept");
   return (
     <PostForm
+      // cacheComponents keeps a visited page's state alive, so a new query must start a fresh form
+      key={sp.toString()}
       depts={depts}
       start={{
         dept: depts.some((d) => d.dept === dept) ? dept : null,
