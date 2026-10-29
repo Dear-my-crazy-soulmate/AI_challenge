@@ -44,9 +44,9 @@ function Row({ label, right, tone = "", href, onClick }: { label: string; right?
   );
 }
 
-function Editor({ profile, depts, onDone }: { profile: Profile; depts: DeptOption[]; onDone: () => void }) {
+function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profile: Profile; depts: DeptOption[]; onDone: () => void; title?: string }) {
   const { auth } = useAuth();
-  const [primary, setPrimary] = useState<string[]>([profile.primary]);
+  const [primary, setPrimary] = useState<string[]>(profile.primary ? [profile.primary] : []);
   const [interests, setInterests] = useState<string[]>(profile.interests);
   const [personal, setPersonal] = useState({ name: profile.name, studentId: profile.studentId, grade: profile.grade });
   const [error, setError] = useState("");
@@ -70,7 +70,7 @@ function Editor({ profile, depts, onDone }: { profile: Profile; depts: DeptOptio
 
   return (
     <>
-      <ScreenHeader title="프로필 수정" onBack={onDone} />
+      <ScreenHeader title={title} onBack={onDone} />
       <PersonalFields value={personal} onChange={setPersonal} />
       <DeptPicker
         label="내 본전공"
@@ -200,6 +200,8 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   );
 }
 
+const EMPTY_PROFILE: Profile = { primary: "", interests: [], avatar: null, grade: 1, name: "", studentId: "" };
+
 export default function ProfileView({ depts }: { depts: DeptOption[] }) {
   const { ready, signedIn, profile } = useAuth();
   return (
@@ -225,6 +227,8 @@ export default function ProfileView({ depts }: { depts: DeptOption[] }) {
         </div>
       )}
       {ready && signedIn && profile && <Me profile={profile} depts={depts} />}
+      {/* signed in without a profile (e.g. an account made in the Supabase dashboard): ask for the 본전공 first */}
+      {ready && signedIn && !profile && <Editor profile={EMPTY_PROFILE} depts={depts} onDone={() => {}} title="프로필 만들기" />}
     </main>
   );
 }
