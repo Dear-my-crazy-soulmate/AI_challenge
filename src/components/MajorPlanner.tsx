@@ -340,7 +340,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       double && single
         ? {
             mode: "double" as const,
-            bigLabel: "본전공 학점이 이렇게 줄어요",
+            bigLabel: "본전공 학점이 줄어요",
             big: `${single.계} → ${double.계}`,
             desc: "두 번째 전공을 정식으로 이수해요. 본전공 이수 학점이 다전공 기준으로 줄어들어요.",
             meta: `2학기 이상 등록 후 신청 · 선발 필요 (p.${pageOf("apply-eligibility")})`,
@@ -349,7 +349,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       minors.length
         ? {
             mode: "minor" as const,
-            bigLabel: "본전공 말고 추가로 이수해요",
+            bigLabel: "추가로 이수해요",
             big: rangeNum(minors),
             desc: "다른 전공을 가볍게 이수해요. 본전공은 단일전공 기준 학점을 그대로 들어요.",
             meta: `졸업예정학기에 인포21로 이수 심사 신청 (p.${pageOf("minor-apply")})`,
@@ -375,7 +375,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
 
   return (
-    <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
+    <main className={`flex flex-col px-[22px] pt-[max(6px,env(safe-area-inset-top))] ${step === 2 && !needPrimary ? "min-h-[calc(100dvh-62px-env(safe-area-inset-bottom))] gap-4 pb-3" : "gap-5 pb-8"}`}>
       <div className="flex h-11 items-center justify-between">
         {step === 2 ? (
           <span aria-hidden className="w-11" /> // a tab's first screen has nowhere to go back to
@@ -508,16 +508,9 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       )}
 
       {step === 2 && !needPrimary && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
-              어떤 방식으로
-              <br />더 공부할까요?
-            </h2>
-            <span className="text-[13px] text-mute">
-              {ownPrimary ? "본전공은 내 정보의 학과로 계산해요." : "본전공을 바꾸려면 위의 본전공을 누르세요."}
-            </span>
-          </div>
+        // flex-1: the three cards share whatever height the phone has left above the tab bar
+        <div className="flex flex-1 flex-col gap-3">
+          {!ownPrimary && <span className="-mt-1 text-[13px] text-mute">본전공을 바꾸려면 위의 본전공을 누르세요.</span>}
           {kinds.map((k) => (
             <button
               key={k.mode}
@@ -527,26 +520,28 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 setSecond("");
                 goto(3);
               }}
-              className="flex flex-col gap-4 rounded-3xl border border-edge bg-white p-5 text-left active:scale-[.99]"
+              className="flex flex-1 flex-col justify-center gap-2.5 rounded-3xl border border-edge bg-white px-5 py-3.5 text-left active:scale-[.99]"
             >
-              <span className="flex items-center justify-between gap-2.5">
-                <span className="flex items-center gap-2 text-lg font-bold">
-                  <span aria-hidden className="h-2 w-2 flex-none rounded-full bg-accent" />
-                  {MODE_LABEL[k.mode]}
+              <span className="flex flex-col gap-1">
+                <span className="flex items-baseline justify-between gap-3">
+                  <span className="flex items-center gap-2 text-lg font-bold">
+                    <span aria-hidden className="h-2 w-2 flex-none rounded-full bg-accent" />
+                    {MODE_LABEL[k.mode]}
+                  </span>
+                  <span className="flex flex-none items-baseline gap-1 text-accent-deep">
+                    <span className="text-[30px] font-bold leading-none tracking-[-1px] tabular-nums">{k.big}</span>
+                    <span className="text-sm font-semibold">학점</span>
+                  </span>
                 </span>
-                <span aria-hidden className="text-xl text-mute">
+                <span className="pl-4 text-[13px] text-ink-2">{k.bigLabel}</span>
+              </span>
+              <span className="text-pretty border-t border-line pt-3 text-sm leading-[1.5] text-ink-2">{k.desc}</span>
+              <span className="flex items-center justify-between gap-3 text-[13px] text-mute">
+                <span>{k.meta}</span>
+                <span aria-hidden className="text-xl">
                   ›
                 </span>
               </span>
-              <span className="flex flex-col gap-1">
-                <span className="text-xs font-semibold text-mute">{k.bigLabel}</span>
-                <span className="flex items-baseline gap-1.5 text-accent-deep">
-                  <span className="text-[36px] font-bold leading-none tracking-[-1px] tabular-nums">{k.big}</span>
-                  <span className="text-base font-semibold">학점</span>
-                </span>
-              </span>
-              <span className="text-pretty text-sm leading-normal text-ink-2">{k.desc}</span>
-              <span className="border-t border-line pt-3 text-xs text-mute">{k.meta}</span>
             </button>
           ))}
         </div>
