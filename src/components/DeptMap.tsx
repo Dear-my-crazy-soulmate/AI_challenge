@@ -13,11 +13,13 @@ import type { MapEdge, MapNode } from "@/lib/deptMap";
 const PALETTE = ["#7aa2f7", "#f7768e", "#9ece6a", "#e0af68", "#bb9af7", "#7dcfff", "#ff9e64", "#73daca", "#c0caf5", "#f4b8e4"];
 const FUSION = "융합전공";
 const TOP = 5;
-const PAD = 70;
+const PAD = 100; // room around the dots for names at the edge of the map
 const START_K = 0.9;
 const MIN_K = 0.25;
 const MAX_K = 3.5;
 const TAP_SLOP = 8; // px of finger travel that still counts as a tap
+const SHOW_ALL_K = 1.8; // zoomed in this far there is room: every department shows its name
+const FOCUS_PAD = 60; // map units kept around a college when the view jumps to it
 
 interface View {
   cx: number;
@@ -46,10 +48,11 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
   const byName = useMemo(() => new Map(nodes.map((n) => [n.dept, n])), [nodes]);
   const near = useMemo(() => (sel ? neighborsOf(sel, edges).slice(0, TOP) : []), [sel, edges]);
   const nearSet = useMemo(() => new Set(near.flatMap((e) => [e.a, e.b])), [near]);
+  const members = useMemo(() => new Map(colleges.map((c) => [c, nodes.filter((n) => n.college === c)])), [colleges, nodes]);
   const mine = profile?.primary;
   // crop the canvas to where the dots are, so the first screen is never empty
   const x0 = Math.min(...nodes.map((n) => n.x)) - PAD;
-  const y0 = Math.min(...nodes.map((n) => n.y)) - PAD;
+  const y0 = Math.min(...nodes.map((n) => n.y)) - PAD - 40; // college names sit above their dots, so the top needs more room
   const w = Math.max(...nodes.map((n) => n.x)) + PAD - x0;
   const h = Math.max(...nodes.map((n) => n.y)) + PAD - y0;
 
@@ -59,6 +62,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
   const startY = mineNode?.y ?? y0 + h / 2;
   const [user, setUser] = useState<View | null>(null);
   const view = user ?? { cx: startX, cy: startY, k: START_K };
+  const unit = 1 / view.k; // one screen px in map units: names keep their size on screen at any zoom
   const move = (f: (v: View) => View) => setUser((p) => f(p ?? { cx: startX, cy: startY, k: START_K }));
 
   const pts = useRef(new Map<number, { x: number; y: number }>());
@@ -112,14 +116,79 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
 
   const fit = () => {
     const c = centre();
+    setSel(null);
     setUser({ cx: x0 + w / 2, cy: y0 + h / 2, k: clamp(Math.min(c.w / w, c.h / h)) });
   };
+  /** Choose a department: its name and its neighbours' names show, and the view frames them so the names have room. */
   const pick = (d: string) => {
     setSel(d);
-    const n = byName.get(d);
-    if (n) move((v) => ({ cx: n.x, cy: n.y, k: Math.max(v.k, 1) }));
+    const group = [d, ...neighborsOf(d, edges).slice(0, TOP).flatMap((e) => [e.a, e.b])];
+    const ns = group.map((x) => byName.get(x)).filter((n): n is MapNode => !!n);
+    const xs = ns.map((n) => n.x);
+    const ys = ns.map((n) => n.y);
+    const x1 = Math.min(...xs);
+    const x2 = Math.max(...xs);
+    const y1 = Math.min(...ys);
+    const y2 = Math.max(...ys);
+    const r = centre();
+    setUser({ cx: (x1 + x2) / 2, cy: (y1 + y2) / 2, k: Math.max(1, clamp(Math.min(r.w / (x2 - x1 + 2 * FOCUS_PAD), r.h / (y2 - y1 + 2 * FOCUS_PAD)))) });
   };
   const node = sel ? byName.get(sel) : undefined;
+
+  // start with the whole map in view, so every college shows up (the student's own department stays one tap away)
+  useEffect(() => {
+    const r = box.current?.getBoundingClientRect();
+    if (!r) return;
+    setUser((cur) => cur ?? { cx: x0 + w / 2, cy: y0 + h / 2, k: clamp(Math.min(r.width / w, r.height / h)) });
+  }, [x0, y0, w, h]);
+
+  const chips = (() => {
+    if (sel || view.k >= SHOW_ALL_K) return []; // a chosen department or a close zoom needs the room for names
+    const list = colleges
+      .map((c) => {
+        const m = members.get(c) ?? [];
+        // above the topmost dot, so the name never sits on a dot
+        return { name: c, x: m.reduce((a, n) => a + n.x, 0) / m.length, y: Math.min(...m.map((n) => n.y)) - 20 * unit, w: (c.length * 12 + 6) * unit, h: 14 * unit };
+      })
+      .sort((a, b) => a.y - b.y);
+    // lift a name up while it overlaps one that is already placed (a few rounds are enough for ten names)
+    for (let round = 0; round < 12; round++) {
+      let changed = false;
+      for (let i = 0; i < list.length; i++) {
+        for (let j = 0; j < i; j++) {
+          const a = list[i];
+          const b = list[j];
+          if (Math.abs(a.x - b.x) < (a.w + b.w) / 2 + 2 * unit && Math.abs(a.y - b.y) < (a.h + b.h) / 2 + 2 * unit) {
+            a.y = b.y - (a.h + b.h) / 2 - 2 * unit;
+            changed = true;
+          }
+        }
+      }
+      if (!changed) break;
+    }
+    return list;
+  })();
+
+  // A name shows once it has room at this zoom: chosen and neighbouring names always, the rest only if
+  // their text would sit on no other name, college name or dot (all measured in map units).
+  const named = (() => {
+    const out = new Set<string>();
+    const boxes = chips.map((c) => ({ x0: c.x - c.w / 2, x1: c.x + c.w / 2, y0: c.y - c.h / 2, y1: c.y + c.h / 2 }));
+    const clash = (a: { x0: number; x1: number; y0: number; y1: number }, b: typeof a) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+    const lit = (d: string) => d === sel || nearSet.has(d);
+    for (const n of [...nodes].sort((a, b) => Number(lit(b.dept)) - Number(lit(a.dept)))) {
+      const big = n.dept === sel;
+      const w = (n.dept.length * (big ? 15 : 12) + 4) * unit;
+      const top = n.y + (big ? 15 : 10) + 2 * unit;
+      const box = { x0: n.x - w / 2, x1: n.x + w / 2, y0: top, y1: top + (big ? 18 : 15) * unit };
+      const free = !boxes.some((o) => clash(box, o)) && !nodes.some((m) => m !== n && clash(box, { x0: m.x - 11, x1: m.x + 11, y0: m.y - 11, y1: m.y + 11 }));
+      if (lit(n.dept) || free) {
+        out.add(n.dept);
+        boxes.push(box);
+      }
+    }
+    return out;
+  })();
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -129,7 +198,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
           <br />
           한눈에 둘러봐요
         </h2>
-        <p className="text-sm leading-normal text-ink-2">관련 있는 학과는 가까이 모여 있어요. 점을 누르면 가까운 학과와 이유를 볼 수 있어요. 손가락으로 끌어서 움직이고, 두 손가락으로 확대·축소해 보세요.</p>
+        <p className="text-sm leading-normal text-ink-2">단과대학 이름은 그 학과들이 모여 있는 자리예요. 점을 누르면 가까운 학과와 이유를 볼 수 있어요. 손가락으로 끌어서 움직이고, 두 손가락으로 확대·축소해 보세요.</p>
       </div>
 
       <div className="relative">
@@ -169,7 +238,8 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
           })}
           {nodes.map((n) => {
             const active = n.dept === sel;
-            const dim = sel && !active && !nearSet.has(n.dept);
+            const lit = active || nearSet.has(n.dept);
+            const dim = !!sel && !lit;
             return (
               <g
                 key={n.dept}
@@ -177,35 +247,76 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
                 tabIndex={0}
                 aria-label={`${n.dept} (${n.college})`}
                 aria-pressed={active}
-                onClick={() => moved.current <= TAP_SLOP && setSel(n.dept)}
-                onKeyDown={(ev) => (ev.key === "Enter" || ev.key === " ") && setSel(n.dept)}
+                onClick={() => moved.current <= TAP_SLOP && pick(n.dept)}
+                onKeyDown={(ev) => (ev.key === "Enter" || ev.key === " ") && pick(n.dept)}
                 opacity={dim ? 0.3 : 1}
                 className="cursor-pointer outline-none"
               >
                 <circle cx={n.x} cy={n.y} r={26} fill="transparent" />
-                {n.dept === mine && <circle cx={n.x} cy={n.y} r={20} fill="none" stroke="#f7768e" strokeWidth={3} strokeDasharray="5 4" />}
                 <circle cx={n.x} cy={n.y} r={active ? 15 : 10} fill={color(n.college)} stroke={active ? "#fff" : "none"} strokeWidth={3} />
-                <text x={n.x} y={n.y + (active ? 32 : 26)} textAnchor="middle" fontSize={active ? 17 : 13} fontWeight={active ? 700 : 500} fill={active ? "#fff" : "#c0caf5"} stroke="#0f1020" strokeWidth={4} strokeLinejoin="round" paintOrder="stroke">
+                {named.has(n.dept) && (
+                <text
+                  x={n.x}
+                  y={n.y + (active ? 15 : 10) + 4 * unit + (active ? 15 : 12) * unit * 0.85}
+                  textAnchor="middle"
+                  fontSize={(active ? 15 : 12) * unit}
+                  fontWeight={active ? 700 : 500}
+                  fill={active ? "#ffffff" : "#e3e8ff"}
+                  stroke="#0f1020"
+                  strokeWidth={4 * unit}
+                  strokeLinejoin="round"
+                  paintOrder="stroke"
+                >
                   {n.dept}
                 </text>
+                )}
               </g>
             );
           })}
+          {chips.map((c) => (
+            <text
+              key={c.name}
+              x={c.x}
+              y={c.y}
+              textAnchor="middle"
+              fontSize={12 * unit}
+              fontWeight={700}
+              fill={color(c.name)}
+              stroke="#0f1020"
+              strokeWidth={3 * unit}
+              strokeLinejoin="round"
+              paintOrder="stroke"
+              pointerEvents="none"
+              aria-hidden
+            >
+              {c.name}
+            </text>
+          ))}
           </svg>
         </div>
-        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
-          {[
-            ["확대", "+", () => move((v) => zoomAt(v, 1.4, 0, 0))],
-            ["축소", "−", () => move((v) => zoomAt(v, 1 / 1.4, 0, 0))],
-          ].map(([label, text, run]) => (
-            <button key={label as string} type="button" aria-label={label as string} onClick={run as () => void} className="hit h-10 w-10 rounded-full bg-white/15 text-xl font-bold leading-none text-white active:bg-white/30">
-              {text as string}
-            </button>
-          ))}
-          <button type="button" onClick={fit} className="hit h-10 rounded-full bg-white/15 px-3 text-xs font-bold text-white active:bg-white/30">
-            전체
+      </div>
+
+      <div className="flex gap-2">
+        {[
+          ["축소", "−", () => move((v) => zoomAt(v, 1 / 1.4, 0, 0))],
+          ["확대", "+", () => move((v) => zoomAt(v, 1.4, 0, 0))],
+        ].map(([label, text, run]) => (
+          <button key={label as string} type="button" aria-label={label as string} onClick={run as () => void} className="box-border flex h-11 w-11 flex-none items-center justify-center rounded-xl border border-edge bg-white text-xl font-bold leading-none active:bg-card">
+            {text as string}
           </button>
-        </div>
+        ))}
+        <button type="button" onClick={fit} className="box-border flex h-11 flex-1 items-center justify-center rounded-xl border border-edge bg-white text-sm font-semibold active:bg-card">
+          전체 보기
+        </button>
+        {mineNode && (
+          <button
+            type="button"
+            onClick={() => setUser({ cx: mineNode.x, cy: mineNode.y, k: Math.max(view.k, 1) })}
+            className="box-border flex h-11 flex-1 items-center justify-center rounded-xl border border-edge bg-white text-sm font-semibold active:bg-card"
+          >
+            내 학과로
+          </button>
+        )}
       </div>
 
       <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 text-xs text-mute" aria-label="단과대학 색">
@@ -215,11 +326,6 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
             {c}
           </li>
         ))}
-        {mine && (
-          <li className="flex items-center gap-1.5">
-            <span aria-hidden className="box-border h-2.5 w-2.5 rounded-full border-[1.5px] border-dashed border-accent" />내 본전공
-          </li>
-        )}
       </ul>
 
       {node ? (
