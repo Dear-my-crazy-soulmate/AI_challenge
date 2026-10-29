@@ -13,11 +13,38 @@ export interface MajorRules {
   as_of: string;
   prohibited_double: (RuleSource & { depts: string[]; note?: string })[];
   same_unit_one_major: (RuleSource & { depts: string[] })[];
+  tracks: TrackGroup[];
   basic_exemption: RuleSource;
   double_overlap: RuleSource & { same_code_only: { page: number; evidence: string }; limit_note: string };
   minor_overlap: RuleSource;
   notices: { id: string; kinds: CreditKind[]; page: number; text: string }[];
   microdegree: { page: number; definition: string; rules: { id: string; page: number; text: string }[] };
+}
+
+/** A 학부/학과 whose majors are tracks of one unit (기계공학부, 환경학및환경공학과). */
+export interface TrackGroup extends RuleSource {
+  school: string;
+  depts: string[];
+  choose: string; // when and how a track is chosen
+  choose_source: string;
+}
+
+export function trackOf(dept: string, rules: MajorRules): TrackGroup | null {
+  return rules.tracks.find((t) => t.depts.includes(dept)) ?? null;
+}
+
+// "환경학및환경공학과 (환경학)" -> "환경학"
+const trackName = (dept: string) => dept.match(/\(([^)]+)\)$/)?.[1] ?? dept;
+
+/** How the tracks work, once for each 학부 with a track in the combination. */
+export function trackNotices(depts: string[], rules: MajorRules): { id: string; page: number; text: string }[] {
+  const seen = new Set<string>();
+  return depts.flatMap((dept) => {
+    const t = trackOf(dept, rules);
+    if (!t || seen.has(t.id)) return [];
+    seen.add(t.id);
+    return [{ id: t.id, page: t.page, text: `${t.school}는 ${t.depts.length}개 트랙(${t.depts.map(trackName).join("·")})으로 운영해요. ${t.choose}` }];
+  });
 }
 
 /** Why this combination is not allowed, or null. A minor is only possible
@@ -32,6 +59,10 @@ export function prohibitedReason(primary: string, second: string, rules: MajorRu
     if (r.depts.includes(primary) && r.depts.includes(second)) {
       return `${primary}와(과) ${second}은(는) 같은 모집단위 안의 전공이라 1개만 선택할 수 있습니다 (교육과정 p.${r.page}).`;
     }
+  }
+  const t = trackOf(primary, rules);
+  if (t && t.depts.includes(second)) {
+    return `${primary}와(과) ${second}은(는) 같은 ${t.school}의 트랙이라 다전공·부전공으로 함께 고를 수 없습니다 (교육과정 p.${t.page}).`;
   }
   return null;
 }
@@ -80,12 +111,15 @@ function uniqueByCode(courses: CourseRef[]): CourseRef[] {
 }
 
 export function applyMajorRules(
-  input: { kind: CreditKind; primaryCollege: string; secondCollege: string; total: number },
+  input: { kind: CreditKind; primaryCollege: string; secondCollege: string; total: number; depts?: string[] },
   primary: ProgramLike,
   second: ProgramLike,
   rules: MajorRules,
 ): AppliedMajorRules {
-  const notices = rules.notices.filter((n) => n.kinds.includes(input.kind)).map(({ id, page, text }) => ({ id, page, text }));
+  const notices = [
+    ...trackNotices(input.depts ?? [], rules),
+    ...rules.notices.filter((n) => n.kinds.includes(input.kind)).map(({ id, page, text }) => ({ id, page, text })),
+  ];
   let basicExemption: AppliedMajorRules["basicExemption"] = null;
   let overlap: AppliedMajorRules["overlap"] = null;
   let minorOverlap: AppliedMajorRules["minorOverlap"] = null;

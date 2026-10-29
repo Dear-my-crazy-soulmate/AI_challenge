@@ -158,6 +158,7 @@ export function buildCoursePlan(
         primaryCollege: collegeOf(plan.primary.dept),
         secondCollege: collegeOf(plan.second.dept),
         total: plan.totals.total,
+        depts: [plan.primary.dept, plan.second.dept],
       },
       primary,
       second,

@@ -22,7 +22,9 @@ export default function DeptPicker({
 }) {
   const [query, setQuery] = useState("");
   const q = query.trim().replace(/\s/g, "");
-  const shown = options.filter((o) => !q || o.dept.replace(/\s/g, "").includes(q));
+  const shown = options.filter((o) => !q || (o.dept + (o.school ?? "")).replace(/\s/g, "").includes(q));
+  // A 신입생 of a 학부 with tracks has not chosen one yet (기계공학부 등).
+  const trackNote = max === 1 ? options.find((o) => o.dept === selected[0])?.trackNote : undefined;
 
   const toggle = (dept: string) => {
     if (selected.includes(dept)) onChange(selected.filter((d) => d !== dept));
@@ -60,6 +62,9 @@ export default function DeptPicker({
           ))}
         </div>
       )}
+      {trackNote && (
+        <p className="-mt-1 text-xs text-mute">{trackNote} 아직 트랙을 정하지 않았다면 관심 있는 트랙을 골라 두세요. 나중에 바꿀 수 있어요.</p>
+      )}
       <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
         <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
         <input
@@ -86,7 +91,7 @@ export default function DeptPicker({
             >
               <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                 <span className="text-pretty text-[15px] font-semibold">{o.dept}</span>
-                <span className="text-xs text-mute">{o.college}</span>
+                <span className="text-xs text-mute">{o.school ? `${o.college} · ${o.school} 트랙` : o.college}</span>
               </span>
               <span
                 aria-hidden

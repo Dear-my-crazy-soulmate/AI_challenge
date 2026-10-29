@@ -14,7 +14,7 @@ import { useGoal } from "@/components/useGoal";
 import type { CoursePlanOk, CoursePlanResult } from "@/lib/rules/courses";
 import { listCreditOptions } from "@/lib/rules/credits";
 import type { CreditData, ProgramKind } from "@/lib/rules/credits";
-import { prohibitedReason } from "@/lib/rules/majorRules";
+import { prohibitedReason, trackOf } from "@/lib/rules/majorRules";
 import type { MajorRules } from "@/lib/rules/majorRules";
 import type { Microdegree, MicrodegreePlanOk, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
 import { useAuth } from "@/lib/auth";
@@ -219,6 +219,9 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
   const isMdPick = step === 3 && mode === "microdegree";
   const q = query.trim().replace(/\s/g, "");
   const match = (s: string) => !q || s.replace(/\s/g, "").includes(q);
+  // Tracks of one 학부 (기계공학부 등) show the 학부 name and can be found by it.
+  const schoolOf = (dept: string) => trackOf(dept, rules)?.school ?? "";
+  const withTrack = (college: string, dept: string) => (schoolOf(dept) ? `${college} · ${schoolOf(dept)} 트랙` : college);
 
   let rows: PickRow[] = [];
   let chips: string[] = [];
@@ -226,11 +229,11 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     chips = [...new Set(firsts.map((d) => d.college))];
     const col = q ? null : college;
     rows = firsts
-      .filter((d) => match(d.dept) && (!col || d.college === col))
+      .filter((d) => match(d.dept + schoolOf(d.dept)) && (!col || d.college === col))
       .map((d) => ({
         key: d.dept,
         title: d.dept,
-        sub: d.college,
+        sub: withTrack(d.college, d.dept),
         right: `단일전공 ${d.credits}학점`,
         onPick: () => {
           setGuestPrimary(d.dept);
@@ -244,11 +247,11 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     // Departments the user marked as interesting come first when choosing a second major.
     const liked = new Set(profile?.interests ?? []);
     rows = [...list.filter((d) => liked.has(d.dept)), ...list.filter((d) => !liked.has(d.dept))]
-      .filter((d) => match(d.dept) && (!col || d.college === col))
+      .filter((d) => match(d.dept + schoolOf(d.dept)) && (!col || d.college === col))
       .map((d) => ({
         key: d.dept,
         title: d.dept,
-        sub: liked.has(d.dept) ? `${d.college} · 관심 전공` : d.college,
+        sub: liked.has(d.dept) ? `${withTrack(d.college, d.dept)} · 관심 전공` : withTrack(d.college, d.dept),
         right: `${MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
         onPick: () => {
           setSecond(d.dept);

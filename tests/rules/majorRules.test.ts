@@ -7,7 +7,7 @@ import issues from "../../data/curated/credits_global_issues.json";
 import { buildCoursePlan } from "../../src/lib/rules/courses";
 import type { CourseData, CoursePlanOk, CoursePlanResult } from "../../src/lib/rules/courses";
 import type { CreditData } from "../../src/lib/rules/credits";
-import { applyMajorRules, prohibitedReason } from "../../src/lib/rules/majorRules";
+import { applyMajorRules, prohibitedReason, trackNotices, trackOf } from "../../src/lib/rules/majorRules";
 import type { MajorRules, ProgramLike } from "../../src/lib/rules/majorRules";
 
 const credits = { depts, issues } as unknown as CreditData;
@@ -37,6 +37,36 @@ describe("prohibited combinations (p.116-117)", () => {
     expect(prohibitedReason("컴퓨터공학과", "동서의과학과", rules)).toContain("p.116");
     expect(prohibitedReason("컴퓨터공학과", "자유전공학부", rules)).not.toBeNull();
     expect(prohibitedReason("컴퓨터공학과", "체육학과", rules)).toBeNull();
+  });
+});
+
+describe("tracks of one 학부 (기계공학부 p.132, 환경학및환경공학과 p.258)", () => {
+  it("trackOf finds the 학부 of a track and nothing for an ordinary 학과", () => {
+    expect(trackOf("지능로봇공학", rules)?.school).toBe("기계공학부");
+    expect(trackOf("환경학및환경공학과 (환경공학)", rules)?.school).toBe("환경학및환경공학과");
+    expect(trackOf("컴퓨터공학과", rules)).toBeNull();
+    expect(trackNotices(["환경학및환경공학과 (환경학)"], rules)[0].text).toContain("2개 트랙(환경학·환경공학)");
+  });
+
+  it("two tracks of 기계공학부 cannot be a double major or a minor", () => {
+    const d = plan("기계공학", "지능로봇공학", "double");
+    expect(d.available ? "available" : d.reason).toBe("PROHIBITED");
+    if (!d.available) expect(d.message).toContain("기계공학부의 트랙");
+    const m = plan("항공우주모빌리티", "기계공학", "minor");
+    expect(m.available ? "available" : m.reason).toBe("PROHIBITED");
+  });
+
+  it("a student of another 학과 picks one track as a double major and sees how tracks work", () => {
+    const r = ok(plan("컴퓨터공학과", "지능로봇공학", "double"));
+    const n = r.majorRules.notices.find((x) => x.id === "mech-tracks");
+    expect(n?.page).toBe(132);
+    expect(n?.text).toContain("1학년");
+    expect(r.majorRules.notices.filter((x) => x.id === "env-tracks")).toHaveLength(0);
+  });
+
+  it("every track name is a real department in the credit data", () => {
+    const names = new Set((depts as { dept: string }[]).map((d) => d.dept));
+    for (const t of rules.tracks) for (const d of t.depts) expect(names.has(d), d).toBe(true);
   });
 });
 
