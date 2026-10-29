@@ -18,6 +18,7 @@ import { useTaken } from "@/components/useTaken";
 import { useAuth } from "@/lib/auth";
 import { MAX_INTERESTS } from "@/lib/auth/types";
 import type { Profile } from "@/lib/auth/types";
+import { isDemoEmail } from "@/lib/demo";
 import type { DeptOption } from "@/lib/depts";
 import { MODE_NAME, clearGoal } from "@/lib/goal";
 import { checkProfile } from "@/lib/safety/input";
@@ -112,7 +113,9 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const [account, setAccount] = useState<AccountAction | null>(null);
 
   if (editing) return <Editor profile={profile} depts={depts} onDone={() => setEditing(false)} />;
-  if (account) return <AccountSettings action={account} onDone={() => setAccount(null)} />;
+  // the shared 심사·체험용 account keeps its email and password, and cannot be deleted
+  const demo = isDemoEmail(email);
+  if (account && !demo) return <AccountSettings action={account} onDone={() => setAccount(null)} />;
 
   const college = depts.find((d) => d.dept === profile.primary)?.college ?? "";
   const stats = [
@@ -162,8 +165,14 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
 
       <h2 className="px-1 pt-2 text-sm font-bold">계정</h2>
       <section className="overflow-hidden rounded-[22px] border border-edge bg-card">
-        <Row label="이메일" right={email ?? ""} onClick={() => setAccount("email")} />
-        <Row label="비밀번호 변경" onClick={() => setAccount("password")} />
+        {demo ? (
+          <Row label="이메일" right={email ?? ""} />
+        ) : (
+          <>
+            <Row label="이메일" right={email ?? ""} onClick={() => setAccount("email")} />
+            <Row label="비밀번호 변경" onClick={() => setAccount("password")} />
+          </>
+        )}
         <Row
           label="로그아웃"
           tone="text-accent-deep"
@@ -172,8 +181,13 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
             router.push("/");
           }}
         />
-        <Row label="회원 탈퇴" tone="text-mute" onClick={() => setAccount("delete")} />
+        {!demo && <Row label="회원 탈퇴" tone="text-mute" onClick={() => setAccount("delete")} />}
       </section>
+      {demo && (
+        <p className="px-1 text-xs leading-normal text-mute">
+          심사·체험용 계정이라 이메일·비밀번호 변경과 탈퇴는 할 수 없어요. 여러 사람이 함께 쓰니 개인 정보는 적지 마세요.
+        </p>
+      )}
 
       <p className="px-1 text-xs leading-normal text-mute">
         {auth.kind === "server"
