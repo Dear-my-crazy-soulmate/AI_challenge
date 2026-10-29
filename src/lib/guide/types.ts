@@ -35,6 +35,13 @@ export interface CourseNames {
   category: string; // 전공기초 / 전공필수 / 전공선택 / 마이크로디그리
   names: string[];
   partial: boolean; // only a few of a long list
+  terms?: Record<string, "1학기" | "2학기">; // 2026 개설 학기 by name, when the 수강신청 list has it
+}
+
+/** One of the student's 관심 분야, with what the book says about it for the departments here. */
+export interface InterestFact {
+  label: string;
+  reasons: { dept: string; text: string; page: number }[];
 }
 
 export interface GuideFacts {
@@ -47,6 +54,9 @@ export interface GuideFacts {
   };
   shared: string[]; // courses in both programs
   mdDefinition: { text: string; page: number } | null;
+  // comboGuide.v2 only: the 본전공's own courses, and the student's 관심 분야 (no personal data)
+  primaryCourses?: CourseNames[];
+  interests?: InterestFact[];
 }
 
 export interface GuideItem {
@@ -59,6 +69,10 @@ export interface Guide {
   strengths: GuideItem[];
   paths: GuideItem[];
   fit: string;
+  // comboGuide.v2
+  bridges?: { from: string; to: string; text: string }[]; // a 본전공 course and a second-program course that connect
+  activities?: string[]; // things to try with this combination, each naming a listed course
+  consider?: string; // one thing to think about before choosing
 }
 
 export type FallbackReason = "NO_KEY" | "LLM_ERROR" | "CHECK_FAILED" | "BUSY";

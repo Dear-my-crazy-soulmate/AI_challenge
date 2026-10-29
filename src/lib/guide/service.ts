@@ -1,12 +1,12 @@
 // Runs one combination through ChatKHU with the guards a public demo needs:
 // a cache (same combination → no second call), one call at a time per combination,
 // a daily cap and a per-visitor cap (credits are limited), and a fallback for every failure.
-import { buildMessages, VERSION } from "../llm/prompts/comboGuide.v1";
+import { buildMessages, VERSION } from "../llm/prompts/comboGuide.v2";
 import type { LlmClient } from "../llm/types";
 import { fallbackGuide } from "./fallback";
 import { guideSources } from "./facts";
 import type { FallbackReason, GuideFacts, GuideResult } from "./types";
-import { verifyGuide } from "./verify";
+import { verifyGuideV2 as verifyGuide } from "./verify";
 
 export const PROMPT_VERSION = VERSION;
 
@@ -62,8 +62,8 @@ export function createGuideService(
     if (!llm) return fallback(f, "NO_KEY");
     let reply;
     try {
-      // Korean answers run long in tokens; 2000 still cut some answers mid-JSON (10/29)
-      reply = await llm.chat(buildMessages(f), { maxTokens: 4000, temperature: 0.3, timeoutMs: 25_000 });
+      // Korean answers run long in tokens; 2000 still cut some answers mid-JSON (10/29). v2 writes more.
+      reply = await llm.chat(buildMessages(f), { maxTokens: 4000, temperature: 0.3, timeoutMs: 45_000 });
     } catch (e) {
       log({ key, ok: false, problems: [`call failed: ${e instanceof Error ? e.message : String(e)}`] });
       return fallback(f, "LLM_ERROR");

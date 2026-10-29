@@ -6,9 +6,11 @@
 
 import { useEffect, useState } from "react";
 
-import type { GuideItem, GuideKind, GuideResult } from "@/lib/guide/types";
+import { useAuth } from "@/lib/auth";
+import type { Guide, GuideItem, GuideKind, GuideResult } from "@/lib/guide/types";
+import { topicLabel } from "@/lib/recommend/topics";
 
-const STORE = "guide.v1:";
+const STORE = "guide.v2:"; // v1 answers saved earlier are simply not read again
 
 function readStored(key: string): GuideResult | null {
   try {
@@ -52,8 +54,46 @@ function Items({ title, items }: { title: string; items: GuideItem[] }) {
   );
 }
 
+/** comboGuide.v2 parts: course-to-course links, things to try, one thing to think about. */
+function Extras({ guide }: { guide: Guide }) {
+  return (
+    <>
+      {guide.bridges && guide.bridges.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <h4 className="text-[13px] font-semibold text-ink-2">두 전공을 잇는 과목</h4>
+          <ul className="flex flex-col gap-2">
+            {guide.bridges.map((b, i) => (
+              <li key={i} className="flex flex-col gap-1 rounded-xl bg-card px-3 py-2.5 text-sm leading-normal">
+                <span className="text-[13px] font-semibold text-accent-deep">
+                  {b.from} <span aria-hidden>→</span> {b.to}
+                </span>
+                <span className="text-pretty">{b.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {guide.activities && guide.activities.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <h4 className="text-[13px] font-semibold text-ink-2">이 조합으로 해 볼 수 있는 것</h4>
+          <ul className="flex flex-col gap-1.5">
+            {guide.activities.map((a, i) => (
+              <li key={i} className="flex gap-2 text-sm leading-normal">
+                <span aria-hidden className="text-accent-deep">•</span>
+                <span className="text-pretty">{a}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
+  );
+}
+
 export function ComboGuide({ primary, kind, second }: { primary: string; kind: GuideKind; second: string }) {
-  const key = `${kind}|${primary}|${second}`;
+  // 관심 분야 ids are not personal; the explanation is tailored to them (and cached per choice)
+  const topics = (useAuth().profile?.topics ?? []).join(",");
+  const key = `${kind}|${primary}|${second}|${topics}`;
   const [state, setState] = useState<{ key: string; result: GuideResult | null; failed: boolean }>({
     key,
     result: null,
@@ -65,7 +105,7 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
   useEffect(() => {
     const ctrl = new AbortController();
     const saved = attempt === 0 ? readStored(key) : null;
-    const q = new URLSearchParams({ primary, kind, second });
+    const q = new URLSearchParams({ primary, kind, second, ...(topics ? { topics } : {}) });
     const load: Promise<GuideResult> = saved
       ? Promise.resolve(saved)
       : fetch(`/api/guide?${q}`, { signal: ctrl.signal }).then((r) =>
@@ -81,7 +121,7 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
         if (!ctrl.signal.aborted) setState({ key, result: null, failed: true });
       });
     return () => ctrl.abort();
-  }, [key, primary, kind, second, attempt]);
+  }, [key, primary, kind, second, topics, attempt]);
 
   const r = current.result;
   const retry = () => {
@@ -98,7 +138,7 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
 
       {!r && !current.failed && (
         <div className="flex flex-col gap-2" aria-busy>
-          <p className="text-sm text-mute">ChatKHU가 두 학과의 교육과정을 읽고 설명을 쓰고 있어요…</p>
+          <p className="text-sm text-mute">ChatKHU가 두 전공의 교육과정과 과목을 읽고 설명을 쓰고 있어요… 처음 보는 조합은 10초쯤 걸려요.</p>
           <div className="h-3.5 w-4/5 animate-pulse rounded bg-sand-2" />
           <div className="h-3.5 w-3/5 animate-pulse rounded bg-sand-2" />
           <div className="h-3.5 w-2/3 animate-pulse rounded bg-sand-2" />
@@ -118,6 +158,7 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
         <>
           {r.source === "fallback" && <p className="rounded-xl bg-sand-2 px-3 py-2 text-xs leading-normal text-ink-2">{FALLBACK_NOTE[r.reason]}</p>}
           <p className="text-pretty text-[15px] font-semibold leading-normal">{r.guide.summary}</p>
+          {r.source === "ai" && <Extras guide={r.guide} />}
           <Items title={r.source === "ai" ? "이 조합의 강점" : "학과가 밝힌 교육목적"} items={r.guide.strengths} />
           <Items title="이어질 수 있는 진로" items={r.guide.paths} />
           {r.guide.fit && (
@@ -125,9 +166,14 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
               <b className="font-semibold text-accent-deep">이런 학생에게 잘 맞아요</b> · {r.guide.fit}
             </p>
           )}
+          {r.guide.consider && (
+            <p className="border-l-2 border-edge pl-3 text-sm leading-normal">
+              <b className="font-semibold text-ink-2">미리 생각해 볼 점</b> · {r.guide.consider}
+            </p>
+          )}
           <p className="text-xs leading-normal text-mute">
             {r.source === "ai"
-              ? "ChatKHU가 2026 교육과정 책의 학과 소개·교육목표만 보고 쓴 설명을, 앱이 숫자·표현·쪽 번호까지 검사했어요. 학점은 위 계산 결과를 보세요. 진로를 보장하지는 않아요."
+              ? `ChatKHU가 2026 교육과정 책의 학과 소개·교육목표와 두 전공의 과목 목록${topics ? `, 내 관심 분야(${topics.split(",").map(topicLabel).join(", ")})` : ""}만 보고 쓴 설명을, 앱이 과목 이름·숫자·표현·쪽 번호까지 검사했어요. 학점은 위 계산 결과를 보세요. 진로를 보장하지는 않아요.`
               : "교육과정 책 원문이에요."}{" "}
             출처: {r.sources.map((s) => `${s.dept} p.${s.page}`).join(", ")}
           </p>

@@ -7,7 +7,7 @@ import profiles from "../../data/curated/2026/dept_profiles.json";
 import depts from "../../data/curated/credits_global.json";
 import issues from "../../data/curated/credits_global_issues.json";
 import { fallbackGuide } from "../../src/lib/guide/fallback";
-import { factsFromMicrodegree, factsFromPlan, guideSources } from "../../src/lib/guide/facts";
+import { factsFromMicrodegree, factsFromPlan, guideSources, termsFromSyllabus } from "../../src/lib/guide/facts";
 import { createGuideService } from "../../src/lib/guide/service";
 import type { GuideFacts, ProfileData } from "../../src/lib/guide/types";
 import { verifyGuide } from "../../src/lib/guide/verify";
@@ -129,11 +129,27 @@ describe("fallbackGuide", () => {
   });
 });
 
+// The service runs comboGuide.v2: rich facts and an answer with bridges and activities.
+function cseSwconV2(): GuideFacts {
+  const plan = buildCoursePlan({ primary: "컴퓨터공학과", second: "소프트웨어융합학과", kind: "double" }, credits, data, rules);
+  return factsFromPlan(plan as CoursePlanOk, prof, { terms: termsFromSyllabus([]), interests: [] });
+}
+const goodV2 = (f: GuideFacts) => {
+  const from = f.primaryCourses![0].names[0];
+  const to = f.second.courses[0].names[0];
+  return JSON.stringify({
+    ...JSON.parse(good(f)),
+    bridges: [{ from, to, text: `${from}에서 배운 것을 ${to}에서 이어 써 볼 수 있어요.` }],
+    activities: [`${to} 수업 내용으로 작은 프로젝트를 해 볼 수 있어요.`],
+    consider: "두 전공 모두 프로그래밍 과제가 많아요.",
+  });
+};
+
 describe("createGuideService", () => {
-  const f = cseSwcon();
+  const f = cseSwconV2();
 
   it("calls ChatKHU once per combination and serves the cache after that", async () => {
-    const llm = createMockLlm(good(f));
+    const llm = createMockLlm(goodV2(f));
     const s = createGuideService(llm);
     const [a, b] = await Promise.all([s.get("k", f, "ip"), s.get("k", f, "ip")]);
     const c = await s.get("k", f, "other");
@@ -149,10 +165,10 @@ describe("createGuideService", () => {
     expect(await broken.get("k", f, "ip")).toMatchObject({ source: "fallback", reason: "LLM_ERROR" });
     const wrong = createGuideService(createMockLlm('{"summary":"102학점","strengths":[],"paths":[]}'));
     expect(await wrong.get("k", f, "ip")).toMatchObject({ source: "fallback", reason: "CHECK_FAILED" });
-    const tight = createGuideService(createMockLlm(good(f)), { perDay: 1, perVisitorHour: 5, cacheSize: 10 });
+    const tight = createGuideService(createMockLlm(goodV2(f)), { perDay: 1, perVisitorHour: 5, cacheSize: 10 });
     await tight.get("a", f, "ip");
     expect(await tight.get("b", f, "ip")).toMatchObject({ source: "fallback", reason: "BUSY" });
-    const visitor = createGuideService(createMockLlm(good(f)), { perDay: 10, perVisitorHour: 1, cacheSize: 10 });
+    const visitor = createGuideService(createMockLlm(goodV2(f)), { perDay: 10, perVisitorHour: 1, cacheSize: 10 });
     await visitor.get("a", f, "ip");
     expect(await visitor.get("b", f, "ip")).toMatchObject({ reason: "BUSY" });
     expect((await visitor.get("b", f, "someone else")).source).toBe("ai");
