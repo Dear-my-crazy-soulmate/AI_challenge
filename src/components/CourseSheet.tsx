@@ -268,7 +268,8 @@ export default function CourseSheet({
             )}
           </>
         ) : (
-          <div className="flex flex-col gap-5 overflow-y-auto px-5 pt-1">
+          // shrink-0: when the content is taller than the sheet it scrolls, instead of squeezing the buttons
+          <div className="flex flex-col gap-5 overflow-y-auto px-5 pt-1 [&>*]:shrink-0">
             <button type="button" onClick={() => setPicked(null)} className="-ml-2 flex h-11 items-center self-start px-2 text-sm font-semibold text-ink-2">
               ‹ 다른 과목 고르기
             </button>
