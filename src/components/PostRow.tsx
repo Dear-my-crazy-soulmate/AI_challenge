@@ -9,7 +9,7 @@ import type { Post } from "@/lib/community/types";
 /** One post in a list: what it is, which department, who wrote it. */
 export default function PostRow({ post, comments, showDept = false }: { post: Post; comments: number; showDept?: boolean }) {
   return (
-    <Link href={`/community/post?id=${encodeURIComponent(post.id)}`} className="flex flex-col gap-2 rounded-3xl border border-edge bg-card p-4 active:scale-[.99]">
+    <Link href={`/community/post?id=${encodeURIComponent(post.id)}`} className="flex flex-col gap-2 rounded-3xl border border-edge bg-white p-4 active:scale-[.99]">
       <span className="flex flex-wrap items-center gap-1.5">
         {showDept && <span className="rounded-md bg-ink px-1.5 py-px text-xs font-bold text-paper">{post.dept}</span>}
         <span className={`rounded-md px-1.5 py-px text-xs font-bold ${post.type === "question" ? "bg-sand text-ink-2" : "bg-accent-soft text-accent-deep"}`}>

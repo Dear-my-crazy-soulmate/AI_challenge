@@ -423,7 +423,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               key={c.k}
               type="button"
               onClick={c.go}
-              className="flex items-center gap-1.5 rounded-full border border-edge bg-card px-3 py-[7px] text-[13px]"
+              className="flex items-center gap-1.5 rounded-full border border-edge bg-white px-3 py-[7px] text-[13px]"
             >
               <span className="text-mute">{c.k}</span>
               <span className="font-semibold">{c.v}</span>
@@ -444,7 +444,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               하면 내 본전공으로 바로 시작하고, 들은 과목을 체크해 남은 학점도 볼 수 있어요.
             </p>
           )}
-          <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+          <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5">
             <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
             <input
               type="search"
@@ -468,7 +468,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                       setQuery("");
                     }}
                     className={`hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
-                      on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"
+                      on ? "border-accent bg-accent text-white" : "border-edge bg-white text-ink-2"
                     }`}
                   >
                     {c}
@@ -562,7 +562,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               setFetched(null);
               setAttempt((n) => n + 1);
             }}
-            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold"
+            className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-white text-[15px] font-semibold"
           >
             다시 시도
           </button>
@@ -693,7 +693,7 @@ function ResultWithReset({ message, onReset }: { message: string; onReset: () =>
       <button
         type="button"
         onClick={onReset}
-        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold"
+        className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-white text-[15px] font-semibold"
       >
         다시 계산하기
       </button>

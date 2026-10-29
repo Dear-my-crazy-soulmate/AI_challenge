@@ -140,7 +140,7 @@ export default function MyCourses() {
       {codes.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="px-1 text-sm font-bold">내가 들은 과목</h2>
-          <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-white">
             {known.map((c) => (
               <div key={c.code} className="flex min-h-12 items-center gap-3 border-t border-line-2 px-4 py-2.5 first:border-t-0">
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -169,7 +169,7 @@ export default function MyCourses() {
       <section className="flex flex-col gap-3">
         <h2 className="px-1 text-sm font-bold">들은 과목 추가</h2>
         <form
-          className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5"
+          className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5"
           onSubmit={(e) => {
             e.preventDefault();
             setQuery(text.trim());
@@ -202,7 +202,7 @@ export default function MyCourses() {
                   type="button"
                   onClick={() => setDept(d.dept)}
                   className={`flex flex-none flex-col items-start rounded-2xl border px-3.5 py-2 text-left ${
-                    on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink"
+                    on ? "border-accent bg-accent text-white" : "border-edge bg-white text-ink"
                   }`}
                 >
                   <span className={`text-xs ${on ? "opacity-80" : "text-mute"}`}>{d.tag}</span>
@@ -221,7 +221,7 @@ export default function MyCourses() {
           ) : search.value.sections.length === 0 ? (
             <p className="text-sm text-mute">찾는 과목이 없어요. 학수번호로도 검색해 보세요.</p>
           ) : (
-            <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
+            <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-white">
               {search.value.sections[0].rows.map((c) => (
                 <CheckRow key={c.code} c={c} on={taken.codes.has(c.code)} onToggle={(on) => toggle(c.code, on)} />
               ))}
@@ -239,7 +239,7 @@ export default function MyCourses() {
               <h3 className="px-1 text-[13px] font-semibold text-ink-2">
                 {g.category} <span className="font-normal text-mute">{g.courses.length}과목</span>
               </h3>
-              <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
+              <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-white">
                 {g.courses.map((c) => (
                   <CheckRow key={c.code} c={c} on={taken.codes.has(c.code)} onToggle={(on) => toggle(c.code, on)} />
                 ))}

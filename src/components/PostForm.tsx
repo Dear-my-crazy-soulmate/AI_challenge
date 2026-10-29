@@ -25,7 +25,7 @@ export interface PostFormStart {
 }
 
 const chip = (on: boolean) =>
-  `flex h-11 flex-none items-center justify-center rounded-xl border px-3.5 text-sm font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink"}`;
+  `flex h-11 flex-none items-center justify-center rounded-xl border px-3.5 text-sm font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-white text-ink"}`;
 
 function Chips<T extends string | number>({ label, hint, value, options, multi = false, onChange }: {
   label: string;
@@ -151,7 +151,7 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
       <section className="flex flex-col gap-2">
         <span className="text-sm font-bold">어떤 학과 이야기인가요?</span>
         {dept && !changingDept ? (
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-edge bg-card px-4 py-3">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-edge bg-white px-4 py-3">
             <span className="text-[15px] font-semibold">{dept}</span>
             <button type="button" onClick={() => setChangingDept(true)} className="text-[13px] font-semibold text-accent-deep">
               바꾸기

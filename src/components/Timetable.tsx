@@ -193,7 +193,7 @@ export default function Timetable() {
                 saveTimetable(list.filter((s) => s.id !== open.id));
                 setOpenId(null);
               }}
-              className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold text-accent-deep"
+              className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-white text-[15px] font-semibold text-accent-deep"
             >
               시간표에서 삭제
             </button>

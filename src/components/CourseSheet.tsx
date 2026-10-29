@@ -19,7 +19,7 @@ type Fetched = { key: string; sections: CourseSection[] } | { key: string; error
 
 const chip = (on: boolean) =>
   `flex h-11 flex-none items-center justify-center rounded-xl border px-3.5 text-sm font-semibold tabular-nums ${
-    on ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink"
+    on ? "border-ink bg-ink text-paper" : "border-edge bg-white text-ink"
   }`;
 
 // 75분 is more than half of all meetings; 165 and 230 minutes are usually one block a week (class_times.json)
@@ -189,7 +189,7 @@ export default function CourseSheet({
                   ✕
                 </button>
               </div>
-              <label className="flex h-[46px] items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+              <label className="flex h-[46px] items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5">
                 <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
                 <input
                   type="search"
@@ -227,7 +227,7 @@ export default function CourseSheet({
               {current && "error" in current && (
                 <div className="flex flex-col gap-2">
                   <p className="rounded-xl bg-warn-soft px-4 py-3 text-sm">{current.error}</p>
-                  <button type="button" onClick={() => setAttempt((n) => n + 1)} className="h-11 rounded-xl border border-edge bg-card text-sm font-semibold">
+                  <button type="button" onClick={() => setAttempt((n) => n + 1)} className="h-11 rounded-xl border border-edge bg-white text-sm font-semibold">
                     다시 시도
                   </button>
                 </div>
@@ -289,7 +289,7 @@ export default function CourseSheet({
                     type="button"
                     aria-pressed={len === v}
                     onClick={() => changeLen(v)}
-                    className={`flex min-h-14 flex-col items-start justify-center gap-0.5 rounded-xl border px-3.5 py-2 text-left ${len === v ? "border-ink bg-ink text-paper" : "border-edge bg-card text-ink"}`}
+                    className={`flex min-h-14 flex-col items-start justify-center gap-0.5 rounded-xl border px-3.5 py-2 text-left ${len === v ? "border-ink bg-ink text-paper" : "border-edge bg-white text-ink"}`}
                   >
                     <span className="text-sm font-bold">{label}</span>
                     <span className={`text-xs ${len === v ? "text-paper/80" : "text-mute"}`}>{LENGTH_HINT[Math.round(v * 60)] ?? ""}</span>
@@ -340,7 +340,7 @@ export default function CourseSheet({
                 aria-label="다른 시작 시간"
                 value={STARTS.includes(start) ? "" : start}
                 onChange={(e) => e.target.value && setStart(Number(e.target.value))}
-                className="h-11 w-full rounded-xl border border-edge bg-card px-3.5 text-sm font-semibold tabular-nums"
+                className="h-11 w-full rounded-xl border border-edge bg-white px-3.5 text-sm font-semibold tabular-nums"
               >
                 <option value="">{STARTS.includes(start) ? "다른 시간 고르기" : "아래에서 고른 시간"}</option>
                 {startOptions(len)

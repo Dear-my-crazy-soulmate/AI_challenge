@@ -23,7 +23,7 @@ const LETTERS = "①②③④"; // the same marks the explanations use ("정답 
 const PREVIEW = process.env.NEXT_PUBLIC_QUIZ_PREVIEW === "1";
 const BASE = quizBase(PREVIEW);
 const chip = (on: boolean) =>
-  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-white text-ink-2"}`;
 const CONFETTI = ["bg-accent", "bg-ink", "bg-ok", "bg-accent-soft", "bg-chip"];
 
 const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center";
@@ -287,7 +287,7 @@ export default function QuizApp({
               문제 {QUESTIONS_PER_ROUND}개를 풀면 별을 모을 수 있어요. 풀 때마다 문제가 새로 뽑혀서, 다시 해도 다른 문제가 나와요.
             </p>
           </div>
-          <label className="flex h-10 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+          <label className="flex h-10 items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5">
             <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
             <input
               type="search"
@@ -502,7 +502,7 @@ export default function QuizApp({
             </span>
           </section>
 
-          <section className="flex flex-col gap-2.5 rounded-3xl border border-edge bg-card p-[18px]">
+          <section className="flex flex-col gap-2.5 rounded-3xl border border-edge bg-white p-[18px]">
             <div className="flex items-center gap-2">
               <h3 className="text-[15px] font-bold">체험 피드백</h3>
               {qs.some((q) => q.is_sample) && <SampleTag className="text-xs" />}
@@ -511,7 +511,7 @@ export default function QuizApp({
             <p className="text-xs leading-normal text-mute">점수는 참고 지표예요. 전공 적합성을 판정하지 않아요.</p>
           </section>
 
-          <section className="rounded-3xl border border-edge bg-card px-[18px] py-1.5">
+          <section className="rounded-3xl border border-edge bg-white px-[18px] py-1.5">
             {qs.map((q, i) => {
               const ok = isCorrect(q, picks[i]);
               return (

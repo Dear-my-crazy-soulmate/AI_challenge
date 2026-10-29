@@ -329,7 +329,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
       </ul>
 
       {node ? (
-        <section className="quiz-pop flex flex-col gap-3 rounded-3xl border border-edge bg-card p-[18px]">
+        <section className="quiz-pop flex flex-col gap-3 rounded-3xl border border-edge bg-white p-[18px]">
           <div className="flex items-center gap-3">
             <Avatar dept={node.dept} size={44} />
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">

@@ -38,7 +38,7 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
       <main className="flex flex-col gap-4 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
         <ScreenHeader title="학과" backHref="/community" />
         <h2 className="text-xl font-bold">학과를 찾을 수 없어요</h2>
-        <Link href="/community" className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-semibold">
+        <Link href="/community" className="box-border flex h-[50px] items-center justify-center rounded-2xl border border-edge bg-white text-[15px] font-semibold">
           학과 목록으로
         </Link>
       </main>
