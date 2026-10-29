@@ -10,6 +10,7 @@ interface ProfileRow {
   id: string;
   primary_major: string;
   interests: string[] | null;
+  topics: string[] | null; // supabase/migrations/0004_profile_topics.sql
   avatar: string | null;
   grade: number | null;
   name: string | null;
@@ -23,6 +24,7 @@ export function toRow(id: string, p: Profile): ProfileRow {
     id,
     primary_major: p.primary,
     interests: p.interests,
+    topics: p.topics ?? [],
     avatar: p.avatar,
     grade: p.grade,
     name: p.name,
@@ -35,6 +37,7 @@ export function fromRow(r: ProfileRow): Profile {
   return {
     primary: r.primary_major,
     interests: r.interests ?? [],
+    topics: r.topics ?? [],
     avatar: r.avatar ?? null,
     grade,
     name: r.name ?? "",

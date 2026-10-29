@@ -11,6 +11,7 @@ import { ErrorNote, Field, SampleLoginNote, primaryButton } from "@/components/F
 import PersonalFields from "@/components/PersonalFields";
 import type { Personal } from "@/components/PersonalFields";
 import ScreenHeader from "@/components/ScreenHeader";
+import TopicPicker from "@/components/TopicPicker";
 import { useAuth } from "@/lib/auth";
 import { MAX_INTERESTS } from "@/lib/auth/types";
 import type { DeptOption } from "@/lib/depts";
@@ -26,6 +27,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
   const [again, setAgain] = useState("");
   const [primary, setPrimary] = useState<string[]>([]);
   const [interests, setInterests] = useState<string[]>([]);
+  const [topics, setTopics] = useState<string[]>([]);
   const [personal, setPersonal] = useState<Personal>({ name: "", studentId: "", grade: 1 });
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -49,7 +51,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
     if (!mail.ok || !pw.ok) return setStep(1);
     const main = primary[0] ?? "";
     // The profile character follows the major until the user can pick another one.
-    const profile = checkProfile({ primary: main, interests, avatar: main || null, ...personal }, depts.map((d) => d.dept));
+    const profile = checkProfile({ primary: main, interests, topics, avatar: main || null, ...personal }, depts.map((d) => d.dept));
     if (!profile.ok) return setError(profile.message);
     setBusy(true);
     const r = await auth.signUp(mail.value, pw.value, profile.value);
@@ -177,6 +179,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
             max={MAX_INTERESTS}
             onChange={setInterests}
           />
+          <TopicPicker selected={topics} onChange={setTopics} />
           {primary[0] && (
             <section className="flex items-center gap-4 rounded-3xl border border-edge bg-white p-4" aria-label="내 캐릭터 미리보기">
               <Avatar dept={primary[0]} size={120} variant="full" />

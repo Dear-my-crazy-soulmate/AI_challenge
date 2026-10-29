@@ -29,6 +29,7 @@ function withDefaults(p: Partial<Profile> | undefined): Profile | null {
   return {
     primary: p.primary,
     interests: Array.isArray(p.interests) ? p.interests : [],
+    topics: Array.isArray(p.topics) ? p.topics : [],
     avatar: p.avatar ?? null,
     grade: p.grade && GRADES.includes(p.grade) ? p.grade : 1,
     name: typeof p.name === "string" ? p.name : "",

@@ -16,6 +16,8 @@ import type { CoursePlanOk, CoursePlanResult } from "@/lib/rules/courses";
 import { listCreditOptions } from "@/lib/rules/credits";
 import type { CreditData, ProgramKind } from "@/lib/rules/credits";
 import { prohibitedReason, trackOf } from "@/lib/rules/majorRules";
+import { suggestDepts } from "@/lib/recommend/rank";
+import type { DeptTopicsData, Suggestion } from "@/lib/recommend/rank";
 import type { MajorRules } from "@/lib/rules/majorRules";
 import type { Microdegree, MicrodegreePlanOk, MicrodegreePlanResult } from "@/lib/rules/microdegrees";
 import { useAuth } from "@/lib/auth";
@@ -88,6 +90,69 @@ function PickGroup({ title, star = false, rows }: { title?: string; star?: boole
   );
 }
 
+/** 학과 that fit the student's 관심 분야, with ChatKHU's one-line reason from the book text and its page. */
+function TopicSuggestions({
+  topics,
+  signedIn,
+  suggestions,
+  label,
+  onPick,
+}: {
+  topics: string[];
+  signedIn: boolean;
+  suggestions: Suggestion<{ dept: string; college: string; credits: number }>[];
+  label: string;
+  onPick: (dept: string) => void;
+}) {
+  if (topics.length === 0) {
+    return signedIn ? (
+      <p className="rounded-2xl border border-edge bg-white px-4 py-3 text-[13px] leading-normal text-ink-2">
+        <Link href="/profile" className="font-semibold text-accent-deep underline">
+          MY에서 관심 분야
+        </Link>
+        를 고르면 맞는 학과를 먼저 추천해 드려요.
+      </p>
+    ) : null;
+  }
+  if (suggestions.length === 0) return null;
+  return (
+    <section className="flex flex-col gap-2" aria-label="관심 분야 추천">
+      <h3 className="pl-0.5 text-sm font-bold">관심 분야 추천</h3>
+      <div className="flex flex-col overflow-hidden rounded-3xl border border-edge bg-white">
+        {suggestions.map(({ candidate: d, matches }) => (
+          <button
+            key={d.dept}
+            type="button"
+            onClick={() => onPick(d.dept)}
+            className="box-border flex items-start gap-3 border-t border-line px-4 py-3 text-left first:border-t-0 active:bg-card"
+          >
+            <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <span className="text-pretty text-[15px] font-semibold leading-snug">{d.dept}</span>
+              <span className="flex flex-wrap gap-1">
+                {matches.map((m) => (
+                  <span key={m.id} className="rounded-full bg-card px-2 py-0.5 text-xs font-semibold text-accent-deep">
+                    {m.label}
+                  </span>
+                ))}
+              </span>
+              <span className="text-pretty text-xs leading-normal text-ink-2">
+                {matches[0].reason} <span className="text-mute">p.{matches[0].page}</span>
+              </span>
+            </span>
+            <span className="flex flex-none flex-col items-end">
+              <span className="text-xs text-mute">{label}</span>
+              <span className="whitespace-nowrap text-base font-bold tabular-nums text-accent-deep">{d.credits}학점</span>
+            </span>
+          </button>
+        ))}
+      </div>
+      <p className="pl-0.5 text-xs leading-normal text-mute">
+        ChatKHU가 교육과정 책의 학과 소개를 읽고 고른 분야예요. 참고용이며 적성을 판정하지 않아요.
+      </p>
+    </section>
+  );
+}
+
 function creditsOf(data: CreditData, dept: string, kind: ProgramKind): Breakdown | null {
   const p = data.depts.find((d) => d.dept === dept)?.programs[kind];
   return p && p.available === true ? { 기초: p.기초, 필수: p.필수, 선택: p.선택, 계: p.계, combined: p.combined } : null;
@@ -147,9 +212,10 @@ export interface PlannerProps {
   microdegrees: Microdegree[];
   initial?: PlannerInitial;
   quizMajors?: string[]; // majors that have 체험 문제, so a result can link to the right quiz
+  deptTopics?: DeptTopicsData; // 관심 분야 per 학과 (ChatKHU, code-checked), for the suggestions on step 3
 }
 
-export default function MajorPlanner({ data, rules, microdegrees, initial, quizMajors = [] }: PlannerProps) {
+export default function MajorPlanner({ data, rules, microdegrees, initial, quizMajors = [], deptTopics }: PlannerProps) {
   const [start] = useState(() => validInitial(initial, data, rules, microdegrees));
   // a link whose combination cannot be computed as asked (e.g. no 다전공 for that pair) still
   // brings its 본전공, so the student only picks the form again instead of starting over
@@ -476,6 +542,18 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 );
               })}
             </div>
+          )}
+          {step === 3 && !isMdPick && !q && !college && (
+            <TopicSuggestions
+              topics={profile?.topics ?? []}
+              signedIn={signedIn}
+              suggestions={deptTopics ? suggestDepts(profile?.topics ?? [], seconds, deptTopics) : []}
+              label={MODE_LABEL[mode ?? "double"]}
+              onPick={(dept) => {
+                setSecond(dept);
+                goto(4);
+              }}
+            />
           )}
           <PickGroup title={rows.some((r) => r.liked) ? "관심 전공" : undefined} star rows={rows.filter((r) => r.liked)} />
           <PickGroup title={rows.some((r) => r.liked) ? "전체 학과" : undefined} rows={rows.filter((r) => !r.liked)} />

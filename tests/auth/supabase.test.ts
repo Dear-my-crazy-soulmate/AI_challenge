@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseAuth, explain, fromRow, toRow } from "../../src/lib/auth/supabase";
 import type { AuthService, Profile } from "../../src/lib/auth/types";
 
-const profile: Profile = { primary: "컴퓨터공학과", interests: ["철학과"], avatar: null, grade: 2, name: "", studentId: "" };
+const profile: Profile = { primary: "컴퓨터공학과", interests: ["철학과"], topics: [], avatar: null, grade: 2, name: "", studentId: "" };
 
 interface FakeUser {
   id: string;

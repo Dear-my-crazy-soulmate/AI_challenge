@@ -7,6 +7,7 @@
 export interface Profile {
   primary: string; // 본전공 (department name from credits_global.json)
   interests: string[]; // 관심 있는 다전공·부전공 후보, at most MAX_INTERESTS
+  topics?: string[]; // 관심 분야 ids (src/lib/recommend/topics.ts), at most MAX_TOPICS; used to suggest 다전공 학과
   avatar: string | null; // department the profile character belongs to; null = none chosen yet
   grade: Grade;
   name: string; // "" when not given

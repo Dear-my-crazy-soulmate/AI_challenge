@@ -2,6 +2,7 @@
 // Pure functions. Messages are written for the user.
 import { GRADES, MAX_INTERESTS, MAX_NAME } from "../auth/types";
 import type { Profile } from "../auth/types";
+import { MAX_TOPICS, TOPICS } from "../recommend/topics";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const MIN_PASSWORD = 8;
@@ -40,6 +41,9 @@ export function checkProfile(input: Profile, knownDepts: string[]): Checked<Prof
   const interests = [...new Set(input.interests)].filter((d) => d !== input.primary);
   if (interests.some((d) => !known.has(d))) return { ok: false, message: "관심 전공을 목록에서 골라 주세요." };
   if (interests.length > MAX_INTERESTS) return { ok: false, message: `관심 전공은 ${MAX_INTERESTS}개까지 고를 수 있어요.` };
+  const topics = [...new Set(input.topics ?? [])];
+  if (topics.some((t) => !TOPICS.some((x) => x.id === t))) return { ok: false, message: "관심 분야를 목록에서 골라 주세요." };
+  if (topics.length > MAX_TOPICS) return { ok: false, message: `관심 분야는 ${MAX_TOPICS}개까지 고를 수 있어요.` };
   if (input.avatar !== null && !known.has(input.avatar)) return { ok: false, message: "프로필 캐릭터를 목록에서 골라 주세요." };
   if (!GRADES.includes(input.grade)) return { ok: false, message: "학년을 골라 주세요." };
   const name = checkName(input.name);
@@ -48,7 +52,7 @@ export function checkProfile(input: Profile, knownDepts: string[]): Checked<Prof
   if (!studentId.ok) return studentId;
   return {
     ok: true,
-    value: { primary: input.primary, interests, avatar: input.avatar, grade: input.grade, name: name.value, studentId: studentId.value },
+    value: { primary: input.primary, interests, topics, avatar: input.avatar, grade: input.grade, name: name.value, studentId: studentId.value },
   };
 }
 

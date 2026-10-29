@@ -13,6 +13,7 @@ import DeptPicker from "@/components/DeptPicker";
 import { ErrorNote, SampleLoginNote, primaryButton, secondaryButton } from "@/components/Field";
 import PersonalFields from "@/components/PersonalFields";
 import ScreenHeader from "@/components/ScreenHeader";
+import TopicPicker from "@/components/TopicPicker";
 import { useGoal } from "@/components/useGoal";
 import { useTaken } from "@/components/useTaken";
 import { useAuth } from "@/lib/auth";
@@ -55,6 +56,7 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
   const { auth } = useAuth();
   const [primary, setPrimary] = useState<string[]>(profile.primary ? [profile.primary] : []);
   const [interests, setInterests] = useState<string[]>(profile.interests);
+  const [topics, setTopics] = useState<string[]>(profile.topics ?? []);
   const [personal, setPersonal] = useState({ name: profile.name, studentId: profile.studentId, grade: profile.grade });
   const [error, setError] = useState("");
 
@@ -64,6 +66,7 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
   const dirty =
     !same(primary, profile.primary ? [profile.primary] : []) ||
     !same(interests, profile.interests) ||
+    !same(topics, profile.topics ?? []) ||
     personal.name !== profile.name ||
     personal.studentId !== profile.studentId ||
     personal.grade !== profile.grade;
@@ -75,7 +78,7 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
     const main = primary[0] ?? "";
     // The character follows the major, unless it was changed to another department's earlier.
     const avatar = !profile.avatar || profile.avatar === profile.primary ? main : profile.avatar;
-    const checked = checkProfile({ primary: main, interests, avatar: avatar || null, ...personal }, depts.map((d) => d.dept));
+    const checked = checkProfile({ primary: main, interests, topics, avatar: avatar || null, ...personal }, depts.map((d) => d.dept));
     if (!checked.ok) return setError(checked.message);
     setBusy(true);
     const r = await auth.saveProfile(checked.value);
@@ -108,6 +111,7 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
         max={MAX_INTERESTS}
         onChange={setInterests}
       />
+      <TopicPicker selected={topics} onChange={setTopics} />
       <SampleLoginNote />
       <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-10 -mx-[22px] flex flex-col gap-2 border-t border-line-2 bg-white px-[22px] py-3">
         <ErrorNote message={error} />
@@ -223,7 +227,7 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
   );
 }
 
-const EMPTY_PROFILE: Profile = { primary: "", interests: [], avatar: null, grade: 1, name: "", studentId: "" };
+const EMPTY_PROFILE: Profile = { primary: "", interests: [], topics: [], avatar: null, grade: 1, name: "", studentId: "" };
 
 export default function ProfileView({ depts }: { depts: DeptOption[] }) {
   const { ready, signedIn, profile } = useAuth();

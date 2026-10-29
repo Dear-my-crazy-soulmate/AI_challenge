@@ -41,7 +41,7 @@ describe("checkName / checkStudentId", () => {
 });
 
 describe("checkProfile", () => {
-  const ok = { primary: "컴퓨터공학과", interests: ["철학과"], avatar: null, grade: 2 as const, name: "김경희", studentId: "2026100123" };
+  const ok = { primary: "컴퓨터공학과", interests: ["철학과"], topics: [] as string[], avatar: null, grade: 2 as const, name: "김경희", studentId: "2026100123" };
 
   it("accepts known departments", () => {
     expect(checkProfile(ok, DEPTS)).toEqual({ ok: true, value: ok });
