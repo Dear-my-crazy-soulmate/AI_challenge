@@ -73,7 +73,7 @@ export default function Timetable() {
   ];
 
   return (
-    <section aria-label="시간표" className="flex flex-col gap-3 rounded-3xl border border-edge bg-card px-3.5 pb-3.5 pt-4">
+    <section aria-label="시간표" className="flex flex-col gap-3 rounded-3xl border border-edge bg-white px-3.5 pb-3.5 pt-4">
       <div className="flex items-center justify-between gap-2.5 px-0.5">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-base font-bold">시간표</h2>
@@ -141,13 +141,13 @@ export default function Timetable() {
           </div>
         ))}
         {empty && (
-          <div className="absolute inset-y-0 left-[26px] right-0 flex flex-col items-center justify-center gap-2.5 bg-card/75">
+          <div className="absolute inset-y-0 left-[26px] right-0 flex flex-col items-center justify-center gap-2.5 bg-white/75">
             <span className="text-sm font-semibold">이번 학기 과목을 담아 보세요</span>
             <div className="flex gap-2">
               <button type="button" onClick={() => setSheet("add")} className="hit flex h-10 items-center rounded-xl bg-ink px-3.5 text-[13px] font-bold text-paper">
                 과목 검색
               </button>
-              <button type="button" onClick={fillSample} className="hit box-border flex h-10 items-center rounded-xl border border-edge bg-card px-3.5 text-[13px] font-semibold">
+              <button type="button" onClick={fillSample} className="hit box-border flex h-10 items-center rounded-xl border border-edge bg-white px-3.5 text-[13px] font-semibold">
                 예시로 채우기
               </button>
             </div>
