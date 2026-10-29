@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { conflictPairs, conflictsWith, fmtHour, isValidSlot, overlaps, parseTimetable, startOptions, totalCredits } from "../src/lib/timetable";
+import { LENGTHS, STARTS, conflictPairs, conflictsWith, defaultsFor, fmtHour, fmtMinutes, isValidSlot, overlaps, parseTimetable, startOptions, totalCredits } from "../src/lib/timetable";
 import type { Slot } from "../src/lib/timetable";
 
 const slot = (over: Partial<Slot> = {}): Slot => ({
@@ -20,10 +20,38 @@ describe("fmtHour / startOptions", () => {
     expect(fmtHour(9)).toBe("9:00");
     expect(fmtHour(10.5)).toBe("10:30");
   });
-  it("only offers starts that end by 18:00", () => {
+  it("formats times that are not on the half hour", () => {
+    expect(fmtHour(10.5 + 75 / 60)).toBe("11:45");
+    expect(fmtHour(9 + 230 / 60)).toBe("12:50");
+  });
+  it("only offers starts that end by 20:00", () => {
     expect(startOptions(1)[0]).toBe(9);
-    expect(startOptions(1).at(-1)).toBe(17);
-    expect(startOptions(3).at(-1)).toBe(15);
+    expect(startOptions(1).at(-1)).toBe(19);
+    expect(startOptions(3).at(-1)).toBe(17);
+  });
+});
+
+describe("경희대 class times", () => {
+  it("offers the six usual start times", () => {
+    expect(STARTS).toEqual([9, 10.5, 12, 13.5, 15, 16.5]);
+  });
+  it("offers the four usual lengths, shortest first", () => {
+    expect(LENGTHS.map(([, label]) => label)).toEqual(["75분", "1시간 50분", "2시간 45분", "3시간 50분"]);
+    expect(LENGTHS[0][0]).toBe(1.25);
+  });
+  it("words minutes the way people say them", () => {
+    expect([fmtMinutes(75), fmtMinutes(110), fmtMinutes(165), fmtMinutes(230), fmtMinutes(60), fmtMinutes(45)]).toEqual(["75분", "1시간 50분", "2시간 45분", "3시간 50분", "1시간", "45분"]);
+  });
+  it("starts a 3학점 course with 75분, a 2학점 one with a long block", () => {
+    expect(defaultsFor(3)).toEqual({ len: 1.25, start: 10.5 });
+    expect(defaultsFor(2).len).toBe(230 / 60);
+    expect(defaultsFor(1).len).toBe(110 / 60);
+  });
+  it("every default fits inside the day", () => {
+    for (const c of [1, 2, 3]) {
+      const d = defaultsFor(c);
+      expect(startOptions(d.len)).toContain(d.start);
+    }
   });
 });
 
@@ -61,7 +89,7 @@ describe("parseTimetable", () => {
     expect(parseTimetable(JSON.stringify(list))).toEqual(list);
   });
   it("drops broken entries but keeps the good ones", () => {
-    const raw = JSON.stringify([slot(), slot({ id: "x", days: [] }), slot({ id: "y", days: [5] }), slot({ id: "z", start: 17.5, len: 1.5 }), { nope: 1 }]);
+    const raw = JSON.stringify([slot(), slot({ id: "x", days: [] }), slot({ id: "y", days: [5] }), slot({ id: "z", start: 19, len: 1.5 }), { nope: 1 }]);
     expect(parseTimetable(raw).map((s) => s.id)).toEqual(["a"]);
   });
   it.each([null, "", "not json", "{}", "42"])("returns [] for %j", (raw) => {
@@ -70,5 +98,12 @@ describe("parseTimetable", () => {
   it("validates tag and duplicate days", () => {
     expect(isValidSlot(slot({ tag: "zzz" as never }))).toBe(false);
     expect(isValidSlot(slot({ days: [1, 1] }))).toBe(false);
+  });
+  it("accepts the lengths 경희대 uses and the ones saved before them, nothing else", () => {
+    expect(isValidSlot(slot({ len: 75 / 60 }))).toBe(true);
+    expect(isValidSlot(slot({ start: 9, len: 230 / 60 }))).toBe(true);
+    expect(isValidSlot(slot({ len: 1.5 }))).toBe(true); // an older save
+    expect(isValidSlot(slot({ len: 1.3 }))).toBe(false);
+    expect(isValidSlot(slot({ start: 16.5, len: 230 / 60 }))).toBe(false); // would end after 20:00
   });
 });

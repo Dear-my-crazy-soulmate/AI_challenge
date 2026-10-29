@@ -1,0 +1,70 @@
+{
+  "year": 2026,
+  "term": "2학기",
+  "campus": "국제캠퍼스",
+  "source_url": "https://sugang.khu.ac.kr/",
+  "source": "종합시간표 조회, 2026학년도 2학기, 국제캠퍼스 분반의 `timetable` 값",
+  "as_of": "2026-10-29",
+  "sections": 1388,
+  "sections_with_fixed_time": 1230,
+  "meetings": 1775,
+  "note": "meetings = 요일마다 한 번씩 센 수업 횟수. starts·lengths는 그중 가장 많이 쓰이는 값이고, 나머지 시간대는 드물어요.",
+  "starts": [
+    {
+      "start": "09:00",
+      "meetings": 306
+    },
+    {
+      "start": "10:30",
+      "meetings": 310
+    },
+    {
+      "start": "12:00",
+      "meetings": 173
+    },
+    {
+      "start": "13:30",
+      "meetings": 359
+    },
+    {
+      "start": "15:00",
+      "meetings": 267
+    },
+    {
+      "start": "16:30",
+      "meetings": 111
+    }
+  ],
+  "lengths": [
+    {
+      "minutes": 75,
+      "meetings": 985,
+      "share": 0.555
+    },
+    {
+      "minutes": 165,
+      "meetings": 312,
+      "share": 0.176
+    },
+    {
+      "minutes": 230,
+      "meetings": 204,
+      "share": 0.115
+    },
+    {
+      "minutes": 110,
+      "meetings": 133,
+      "share": 0.075
+    },
+    {
+      "minutes": 255,
+      "meetings": 40,
+      "share": 0.023
+    },
+    {
+      "minutes": 50,
+      "meetings": 32,
+      "share": 0.018
+    }
+  ]
+}

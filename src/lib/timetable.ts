@@ -1,6 +1,7 @@
 // The weekly timetable the user builds on the home screen, kept in this browser only.
 // Course codes, names and credits come from the curriculum book; the days and times are typed in
 // by the user (the book has no class schedule). Same storage pattern as goal.ts.
+import classTimes from "../../data/curated/2026/class_times.json";
 import type { CourseTag } from "./courseSearch";
 
 export const TIMETABLE_KEY = "timetable";
@@ -9,13 +10,37 @@ const CHANGE_EVENT = "timetablechange"; // 'storage' does not fire in the tab th
 export const SEMESTER = "2026-2";
 export const DAYS = ["월", "화", "수", "목", "금"] as const;
 export const DAY_START = 9; // first hour shown
-export const DAY_END = 18; // classes must end by here
-export const LENGTHS: readonly [number, string][] = [
-  [1, "1시간"],
-  [1.5, "1.5시간"],
-  [2, "2시간"],
-  [3, "3시간"],
-];
+export const DAY_END = 20; // classes must end by here (evening classes up to 20:00)
+
+const toHours = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h + m / 60;
+};
+
+/** "75분", "1시간 50분", "2시간 45분" */
+export function fmtMinutes(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h === 0 ? `${m}분` : m === 0 ? `${h}시간` : min < 90 ? `${min}분` : `${h}시간 ${m}분`;
+}
+
+// What 경희대 국제캠퍼스 classes really use (data/curated/2026/class_times.json, from the public 종합시간표):
+// six start times and the lengths that carry at least 5% of all meetings.
+export const STARTS: readonly number[] = classTimes.starts.map((s) => toHours(s.start));
+export const LENGTHS: readonly [number, string][] = classTimes.lengths
+  .filter((l) => l.share >= 0.05)
+  .map((l) => l.minutes)
+  .sort((a, b) => a - b)
+  .map((min): [number, string] => [min / 60, fmtMinutes(min)]);
+// Timetables saved before the lengths followed 경희대 still hold these, so they stay valid.
+const LEGACY_LENGTHS: readonly number[] = [1, 1.5, 2, 3];
+
+/** The usual length and start for a course of this many credits (3학점 is mostly 75분, 2학점 a long block). */
+export function defaultsFor(credits: number): { len: number; start: number } {
+  if (credits >= 3) return { len: 75 / 60, start: 10.5 };
+  if (credits >= 2) return { len: 230 / 60, start: 13.5 };
+  return { len: 110 / 60, start: 9 };
+}
 
 export interface Slot {
   id: string;
@@ -30,8 +55,11 @@ export interface Slot {
 
 type Span = Pick<Slot, "days" | "start" | "len">;
 
-/** 9 -> "9:00", 10.5 -> "10:30" */
-export const fmtHour = (h: number) => `${Math.floor(h)}:${h % 1 ? "30" : "00"}`;
+/** 9 -> "9:00", 10.5 -> "10:30", 11.75 -> "11:45" */
+export function fmtHour(h: number): string {
+  const t = Math.round(h * 60);
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
 
 export const totalCredits = (list: Slot[]) => list.reduce((a, s) => a + s.credits, 0);
 
@@ -70,7 +98,7 @@ export function isValidSlot(x: unknown): x is Slot {
     s.days.every((d) => Number.isInteger(d) && d >= 0 && d < DAYS.length) &&
     new Set(s.days).size === s.days.length &&
     typeof s.len === "number" &&
-    LENGTHS.some(([l]) => l === s.len) &&
+    (LENGTHS.some(([l]) => l === s.len) || LEGACY_LENGTHS.includes(s.len)) &&
     typeof s.start === "number" &&
     startOptions(s.len).includes(s.start) &&
     typeof s.tag === "string" &&

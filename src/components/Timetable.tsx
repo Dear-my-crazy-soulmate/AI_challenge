@@ -11,11 +11,11 @@ import { useTimetable } from "@/components/useTimetable";
 import { useAuth } from "@/lib/auth";
 import type { CourseSection } from "@/lib/courseSearch";
 import { MODE_NAME } from "@/lib/goal";
-import { DAYS, DAY_START, SEMESTER, conflictPairs, fmtHour, saveTimetable, totalCredits } from "@/lib/timetable";
+import { DAYS, DAY_END, DAY_START, SEMESTER, conflictPairs, fmtHour, saveTimetable, totalCredits } from "@/lib/timetable";
 import type { Slot } from "@/lib/timetable";
 
-const HOUR_PX = 34;
-const HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+const HOUR_PX = 31;
+const HOURS = Array.from({ length: DAY_END - DAY_START }, (_, i) => DAY_START + i);
 const TONE: Record<Slot["tag"], string> = {
   p: "bg-ink text-paper",
   s: "bg-accent text-white",
@@ -47,6 +47,7 @@ export default function Timetable() {
   const clashing = new Set(pairs.flat().map((s) => s.id));
   const open = list.find((s) => s.id === openId) ?? null;
   const credits = totalCredits(list);
+  const empty = list.length === 0;
   const secondName = goal ? MODE_NAME[goal.mode] : "희망 전공 (목표 저장 시)";
 
   async function fillSample() {
@@ -72,13 +73,13 @@ export default function Timetable() {
   ];
 
   return (
-    <section aria-label="시간표" className="flex flex-col gap-3 rounded-[22px] border border-edge bg-card px-3.5 pb-3.5 pt-4">
+    <section aria-label="시간표" className="flex flex-col gap-3 rounded-3xl border border-edge bg-card px-3.5 pb-3.5 pt-4">
       <div className="flex items-center justify-between gap-2.5 px-0.5">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-base font-bold">시간표</h2>
           <span className="text-xs text-mute">{list.length > 0 ? `${SEMESTER}학기 · ${list.length}과목 ${credits}학점` : `${SEMESTER}학기`}</span>
         </div>
-        <button type="button" onClick={() => setSheet("add")} className="flex h-9 items-center rounded-[18px] bg-ink px-3.5 text-[13px] font-bold text-paper active:opacity-90">
+        <button type="button" onClick={() => setSheet("add")} className="hit flex h-9 items-center rounded-full bg-ink px-3.5 text-[13px] font-bold text-paper active:opacity-90">
           + 과목
         </button>
       </div>
@@ -104,7 +105,7 @@ export default function Timetable() {
       <div className="relative -mt-3 grid grid-cols-[26px_repeat(5,minmax(0,1fr))]">
         <div className="flex flex-col" aria-hidden>
           {HOURS.map((h) => (
-            <div key={h} style={{ height: HOUR_PX }} className="box-border pt-0.5 text-[10px] leading-none tabular-nums text-faint">
+            <div key={h} style={{ height: HOUR_PX }} className="box-border pt-0.5 text-xs leading-none tabular-nums text-mute">
               {h}
             </div>
           ))}
@@ -114,10 +115,10 @@ export default function Timetable() {
             key={d}
             role="group"
             aria-label={`${d}요일`}
-            className="relative border-l border-line-2"
+            className="relative border-l border-edge"
             style={{
               height: HOURS.length * HOUR_PX,
-              backgroundImage: `repeating-linear-gradient(to bottom, var(--color-line-2) 0, var(--color-line-2) 1px, transparent 1px, transparent ${HOUR_PX}px)`,
+              backgroundImage: `repeating-linear-gradient(to bottom, var(--color-edge) 0, var(--color-edge) 1px, transparent 1px, transparent ${HOUR_PX}px)`,
             }}
           >
             {list
@@ -133,20 +134,20 @@ export default function Timetable() {
                   }`}
                   style={{ top: (s.start - DAY_START) * HOUR_PX + 1, height: Math.max(20, s.len * HOUR_PX - 2) }}
                 >
-                  <span className="line-clamp-3 break-keep text-[10.5px] font-bold leading-tight">{s.name}</span>
-                  <span className="mt-0.5 text-[9.5px] opacity-75">{fmtHour(s.start)}</span>
+                  <span className="line-clamp-3 break-keep text-xs font-bold leading-tight">{s.name}</span>
+                  <span className="mt-0.5 text-xs">{fmtHour(s.start)}</span>
                 </button>
               ))}
           </div>
         ))}
-        {list.length === 0 && (
+        {empty && (
           <div className="absolute inset-y-0 left-[26px] right-0 flex flex-col items-center justify-center gap-2.5 bg-card/75">
             <span className="text-sm font-semibold">이번 학기 과목을 담아 보세요</span>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setSheet("add")} className="flex h-10 items-center rounded-xl bg-ink px-3.5 text-[13px] font-bold text-paper">
+              <button type="button" onClick={() => setSheet("add")} className="hit flex h-10 items-center rounded-xl bg-ink px-3.5 text-[13px] font-bold text-paper">
                 과목 검색
               </button>
-              <button type="button" onClick={fillSample} className="box-border flex h-10 items-center rounded-xl border border-edge bg-card px-3.5 text-[13px] font-semibold">
+              <button type="button" onClick={fillSample} className="hit box-border flex h-10 items-center rounded-xl border border-edge bg-card px-3.5 text-[13px] font-semibold">
                 예시로 채우기
               </button>
             </div>
@@ -155,7 +156,7 @@ export default function Timetable() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-x-3 gap-y-1 px-0.5 text-[11px] text-mute">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 px-0.5 text-xs text-mute">
         {legend.map((l) => (
           <span key={l.label} className="flex items-center gap-[5px]">
             <span className={`h-2 w-2 rounded-sm ${l.dot}`} />
@@ -163,15 +164,14 @@ export default function Timetable() {
           </span>
         ))}
       </div>
-      <p className="px-0.5 text-[11px] leading-normal text-faint">과목은 2026학년도 교육과정 기준이에요. 요일·시간은 직접 입력한 값이에요.</p>
+      <p className="px-0.5 text-xs leading-normal text-mute">과목은 2026학년도 교육과정 기준이에요. 요일·시간은 직접 입력한 값이에요.</p>
 
       {sheet === "add" && (
         <CourseSheet
           list={list}
           ctx={ctx}
           onAdd={(slot) => {
-            saveTimetable([...list, slot]);
-            setSheet(null);
+            saveTimetable([...list, slot]); // the sheet stays open so several courses can be added in a row
           }}
           onClose={() => setSheet(null)}
         />
@@ -180,7 +180,7 @@ export default function Timetable() {
       {open && (
         <div className="fixed inset-0 z-40 flex flex-col items-center justify-end" role="dialog" aria-modal="true" aria-label={open.name}>
           <button type="button" aria-label="닫기" onClick={() => setOpenId(null)} className="absolute inset-0 bg-ink/40" />
-          <div className="relative flex w-full max-w-[430px] flex-col gap-4 rounded-t-[26px] bg-paper px-5 pb-[max(26px,env(safe-area-inset-bottom))] pt-4">
+          <div className="relative flex w-full max-w-[430px] flex-col gap-4 rounded-t-3xl bg-paper px-5 pb-[max(26px,env(safe-area-inset-bottom))] pt-4">
             <div className="flex flex-col gap-1.5">
               <span className="text-pretty text-[21px] font-bold tracking-[-0.4px]">{open.name}</span>
               <span className="text-sm text-ink-2">
