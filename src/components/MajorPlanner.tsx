@@ -7,6 +7,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { SearchIcon } from "@/components/Icons";
 import { primaryButton } from "@/components/Field";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
 import type { Breakdown, ResultActions } from "@/components/PlanResult";
@@ -42,8 +43,49 @@ interface PickRow {
   key: string;
   title: string;
   sub: string;
-  right: string;
+  rightTop?: string; // small label over the number: "다전공"
+  rightMain: string; // the number: "51학점"
+  liked?: boolean; // one of the student's 관심 전공: listed first, under its own heading
   onPick: () => void;
+}
+
+/** One list of departments: a hairline between rows, the credits on the right as a number. */
+function PickGroup({ title, star = false, rows }: { title?: string; star?: boolean; rows: PickRow[] }) {
+  if (rows.length === 0) return null;
+  return (
+    <section className="flex flex-col gap-2">
+      {title && (
+        <h3 className="flex items-center gap-1.5 pl-0.5 text-sm font-bold">
+          {star && (
+            <span aria-hidden className="text-accent">
+              ★
+            </span>
+          )}
+          {title}
+          <span className="text-xs font-semibold text-mute">{rows.length}</span>
+        </h3>
+      )}
+      <div className="flex flex-col overflow-hidden rounded-3xl border border-edge bg-white">
+        {rows.map((r) => (
+          <button
+            key={r.key}
+            type="button"
+            onClick={r.onPick}
+            className="box-border flex min-h-16 items-center gap-3 border-t border-line px-4 py-3 text-left first:border-t-0 active:bg-card"
+          >
+            <span className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="text-pretty text-[15px] font-semibold leading-snug">{r.title}</span>
+              <span className="text-xs text-mute">{r.sub}</span>
+            </span>
+            <span className="flex flex-none flex-col items-end">
+              {r.rightTop && <span className="text-xs text-mute">{r.rightTop}</span>}
+              <span className="whitespace-nowrap text-base font-bold tabular-nums text-accent-deep">{r.rightMain}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function creditsOf(data: CreditData, dept: string, kind: ProgramKind): Breakdown | null {
@@ -91,11 +133,12 @@ function validInitial(
   return found ? { primary, mode, second } : null;
 }
 
-const range = (xs: number[]) => {
+/** "+21~33" (no unit), for the big number of a card */
+const rangeNum = (xs: number[]) => {
   if (xs.length === 0) return "";
   const lo = Math.min(...xs);
   const hi = Math.max(...xs);
-  return lo === hi ? `+${lo}학점` : `+${lo}~${hi}학점`;
+  return lo === hi ? `+${lo}` : `+${lo}~${hi}`;
 };
 
 export interface PlannerProps {
@@ -234,7 +277,8 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         key: d.dept,
         title: d.dept,
         sub: withTrack(d.college, d.dept),
-        right: `단일전공 ${d.credits}학점`,
+        rightTop: "단일전공",
+        rightMain: `${d.credits}학점`,
         onPick: () => {
           setGuestPrimary(d.dept);
           goto(2);
@@ -251,8 +295,10 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       .map((d) => ({
         key: d.dept,
         title: d.dept,
-        sub: liked.has(d.dept) ? `${withTrack(d.college, d.dept)} · 관심 전공` : withTrack(d.college, d.dept),
-        right: `${MODE_LABEL[mode ?? "double"]} ${d.credits}학점`,
+        sub: withTrack(d.college, d.dept),
+        rightTop: MODE_LABEL[mode ?? "double"],
+        rightMain: `${d.credits}학점`,
+        liked: liked.has(d.dept),
         onPick: () => {
           setSecond(d.dept);
           goto(4);
@@ -265,7 +311,8 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
         key: m.id,
         title: m.name,
         sub: `${m.depts.join(" · ")} · ${m.courses.length}과목`,
-        right: `${m.required_credits ?? "?"}학점`,
+        rightTop: "필요 학점",
+        rightMain: `${m.required_credits ?? "?"}학점`,
         onPick: () => {
           setSecond(m.id);
           goto(4);
@@ -293,7 +340,8 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       double && single
         ? {
             mode: "double" as const,
-            tag: `본전공 ${single.계} → ${double.계}학점`,
+            bigLabel: "본전공 학점이 이렇게 줄어요",
+            big: `${single.계} → ${double.계}`,
             desc: "두 번째 전공을 정식으로 이수해요. 본전공 이수 학점이 다전공 기준으로 줄어들어요.",
             meta: `2학기 이상 등록 후 신청 · 선발 필요 (p.${pageOf("apply-eligibility")})`,
           }
@@ -301,14 +349,16 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
       minors.length
         ? {
             mode: "minor" as const,
-            tag: range(minors),
+            bigLabel: "본전공 말고 추가로 이수해요",
+            big: rangeNum(minors),
             desc: "다른 전공을 가볍게 이수해요. 본전공은 단일전공 기준 학점을 그대로 들어요.",
             meta: `졸업예정학기에 인포21로 이수 심사 신청 (p.${pageOf("minor-apply")})`,
           }
         : null,
       {
         mode: "microdegree" as const,
-        tag: range(mdCredits),
+        bigLabel: "추가로 이수해요",
+        big: rangeNum(mdCredits),
         desc: "특정 분야의 과목 묶음을 이수하는 소단위 과정이에요. 과목은 전공·교양 학점으로도 인정돼요.",
         meta: `${microdegrees.length}개 과정 운영`,
       },
@@ -328,9 +378,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
       <div className="flex h-11 items-center justify-between">
         {step === 2 ? (
-          <Link href="/" aria-label="홈으로" className={backBtn}>
-            ‹
-          </Link>
+          <span aria-hidden className="w-11" /> // a tab's first screen has nowhere to go back to
         ) : (
           <button type="button" aria-label="이전 단계" onClick={() => goto((step - 1) as Step)} className={backBtn}>
             ‹
@@ -396,8 +444,8 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               하면 내 본전공으로 바로 시작하고, 들은 과목을 체크해 남은 학점도 볼 수 있어요.
             </p>
           )}
-          <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
-            <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+          <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+            <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
             <input
               type="search"
               value={query}
@@ -408,7 +456,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
             />
           </label>
           {chips.length > 0 && (
-            <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px]">
+            <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]">
               {["전체", ...chips].map((c) => {
                 const on = c === "전체" ? !college : college === c;
                 return (
@@ -419,7 +467,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                       setCollege(c === "전체" ? null : c);
                       setQuery("");
                     }}
-                    className={`flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
+                    className={`hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${
                       on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"
                     }`}
                   >
@@ -429,23 +477,9 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
               })}
             </div>
           )}
-          <div className="flex flex-col overflow-hidden rounded-[18px] border border-edge bg-card">
-            {rows.map((r) => (
-              <button
-                key={r.key}
-                type="button"
-                onClick={r.onPick}
-                className="box-border flex min-h-14 items-center gap-3 border-t border-line-2 px-4 py-3.5 text-left first:border-t-0 active:bg-paper"
-              >
-                <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-                  <span className="text-pretty text-[15px] font-semibold">{r.title}</span>
-                  <span className="text-xs text-mute">{r.sub}</span>
-                </span>
-                <span className="whitespace-nowrap text-sm font-semibold tabular-nums text-accent-deep">{r.right}</span>
-              </button>
-            ))}
-            {rows.length === 0 && <p className="px-4 py-5 text-sm text-mute">검색 결과가 없어요.</p>}
-          </div>
+          <PickGroup title={rows.some((r) => r.liked) ? "관심 전공" : undefined} star rows={rows.filter((r) => r.liked)} />
+          <PickGroup title={rows.some((r) => r.liked) ? "전체 학과" : undefined} rows={rows.filter((r) => !r.liked)} />
+          {rows.length === 0 && <p className="rounded-3xl border border-edge bg-white px-4 py-5 text-sm text-mute">검색 결과가 없어요.</p>}
         </div>
       )}
 
@@ -493,17 +527,26 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
                 setSecond("");
                 goto(3);
               }}
-              className="flex flex-col gap-2.5 rounded-[20px] border border-edge bg-card p-[18px] text-left active:scale-[.99]"
+              className="flex flex-col gap-4 rounded-3xl border border-edge bg-white p-5 text-left active:scale-[.99]"
             >
-              <span className="flex items-baseline justify-between gap-2.5">
+              <span className="flex items-center justify-between gap-2.5">
                 <span className="flex items-center gap-2 text-lg font-bold">
                   <span aria-hidden className="h-2 w-2 flex-none rounded-full bg-accent" />
                   {MODE_LABEL[k.mode]}
                 </span>
-                <span className="whitespace-nowrap text-[13px] font-semibold text-accent">{k.tag}</span>
+                <span aria-hidden className="text-xl text-mute">
+                  ›
+                </span>
+              </span>
+              <span className="flex flex-col gap-1">
+                <span className="text-xs font-semibold text-mute">{k.bigLabel}</span>
+                <span className="flex items-baseline gap-1.5 text-accent-deep">
+                  <span className="text-[36px] font-bold leading-none tracking-[-1px] tabular-nums">{k.big}</span>
+                  <span className="text-base font-semibold">학점</span>
+                </span>
               </span>
               <span className="text-pretty text-sm leading-normal text-ink-2">{k.desc}</span>
-              <span className="text-xs text-mute">{k.meta}</span>
+              <span className="border-t border-line pt-3 text-xs text-mute">{k.meta}</span>
             </button>
           ))}
         </div>

@@ -1,5 +1,7 @@
-// Result screens of the calculator (step 4): a dark total card, one card per program with
-// credit bars, the school-wide rules that apply, and the course lists folded inside each card.
+// Result screens of the calculator (step 4), top to bottom: the dark total card, what is left after the
+// courses the student already took, the AI explanation, ONE table that sets the two programs side by
+// side, and a single folded "자세히 보기" list that holds the rules and the course lists.
+// Surfaces are white with a hairline; colour is kept for the 상태 tags (검증/확인 필요) and the numbers that matter.
 // Pure presentation: every number comes from src/lib/rules/ through /api/plan and /api/microdegree.
 // Signed-in users can tick the courses they already took; the remaining credits come from rules/taken.ts.
 "use client";
@@ -34,26 +36,6 @@ const STATUS: Record<Status, { label: string; tone: string }> = {
 };
 const KIND_LABEL = { single: "단일전공", double: "다전공", minor: "부전공" } as const;
 
-interface Row {
-  k: string;
-  v: number;
-  ratio: number; // 0..1 share of the bar
-}
-
-function creditRows(b: Breakdown): Row[] {
-  const rows: [string, number][] = b.combined
-    ? [
-        ["전공기초·전공필수", b.기초],
-        ["전공선택", b.선택],
-      ]
-    : [
-        ["전공기초", b.기초],
-        ["전공필수", b.필수],
-        ["전공선택", b.선택],
-      ];
-  return rows.map(([k, v]) => ({ k, v, ratio: b.계 ? v / b.계 : 0 }));
-}
-
 function groupRule(rule: CourseGroup["rule"]): string {
   if (rule === "all") return "모두 이수";
   if (rule === "choose") return "아래 과목 중 선택";
@@ -61,11 +43,23 @@ function groupRule(rule: CourseGroup["rule"]): string {
 }
 
 function Callout({ children }: { children: ReactNode }) {
-  return <p className="rounded-[18px] border border-warn/30 bg-warn-soft px-[18px] py-4 text-sm leading-normal text-ink">{children}</p>;
+  return <p className="rounded-2xl border border-warn/30 bg-warn-soft px-[18px] py-4 text-sm leading-normal text-ink">{children}</p>;
 }
 
 export function Unavailable({ message }: { message: string }) {
   return <Callout>{message}</Callout>;
+}
+
+/** Every block of the result sits on this: white, one hairline, one radius. */
+const surface = "rounded-3xl border border-edge bg-white";
+
+function Dot({ tone }: { tone: "ink" | "accent" }) {
+  return <span aria-hidden className={`h-2.5 w-2.5 flex-none rounded-full ${tone === "ink" ? "bg-ink" : "bg-accent"}`} />;
+}
+
+function StatusTag({ status }: { status: Status }) {
+  const s = STATUS[status];
+  return <span className={`inline-block whitespace-nowrap rounded-md px-1.5 py-0.5 text-xs font-semibold ${s.tone}`}>{s.label}</span>;
 }
 
 function Hero(p: {
@@ -106,75 +100,144 @@ function Hero(p: {
   );
 }
 
-function Bars({ rows, tone, labelWidth = 64 }: { rows: Row[]; tone: "ink" | "accent"; labelWidth?: number }) {
+// ---- the table that sets the programs side by side ----
+
+interface Col {
+  role: string; // "본전공" / "다전공"
+  name: string;
+  status: Status;
+  b: Breakdown;
+  tone: "ink" | "accent";
+  progress?: ProgramProgress | null;
+}
+
+function CreditTable({ cols, foot }: { cols: Col[]; foot?: ReactNode }) {
+  const grid = cols.length === 1 ? "grid-cols-[1fr_96px]" : "grid-cols-[1fr_96px_96px]";
+  const combined = cols.some((c) => c.b.combined);
+  const line = `grid ${grid} items-center gap-x-2 border-t border-line py-3`;
+  const num = "text-right text-base font-semibold tabular-nums";
+  const rows: [string, (c: Col) => ReactNode][] = [
+    ["전공기초", (c) => (c.b.combined ? <>{c.b.기초}<sup className="text-xs text-mute">*</sup></> : c.b.기초)],
+    ["전공필수", (c) => (c.b.combined ? <span className="text-mute">·</span> : c.b.필수)],
+    ["전공선택", (c) => c.b.선택],
+  ];
   return (
-    <div className="flex flex-col gap-3.5">
-      {rows.map((r) => (
-        <div
-          key={r.k}
-          className="grid items-center gap-2.5"
-          style={{ gridTemplateColumns: `${labelWidth}px 1fr 44px` }}
-        >
-          <span className="text-pretty text-[13px] text-ink-2">{r.k}</span>
-          <div className="h-2 overflow-hidden rounded bg-line-2">
-            <div
-              className={`h-full rounded ${tone === "ink" ? "bg-ink" : "bg-accent"}`}
-              style={{ width: `${Math.min(100, r.ratio * 100)}%` }}
-            />
-          </div>
-          <span className="text-right text-sm font-semibold tabular-nums">{r.v}</span>
+    <section className={`${surface} px-5 pb-5 pt-5`}>
+      <h3 className="mb-4 text-[15px] font-bold">학점 구성</h3>
+      <div className={`grid ${grid} gap-x-2 pb-3`}>
+        <span />
+        {cols.map((c) => (
+          <span key={c.role} className="flex min-w-0 flex-col gap-1">
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-mute">
+              <Dot tone={c.tone} />
+              {c.role}
+            </span>
+            <span className="text-pretty text-[13px] font-bold leading-snug">{c.name}</span>
+          </span>
+        ))}
+      </div>
+      {rows.map(([k, get]) => (
+        <div key={k} className={line}>
+          <span className="text-sm text-ink-2">{k}</span>
+          {cols.map((c) => (
+            <span key={c.role} className={num}>
+              {get(c)}
+            </span>
+          ))}
         </div>
       ))}
+      <div className={line}>
+        <span className="text-sm font-bold">합계</span>
+        {cols.map((c) => (
+          <span key={c.role} className="text-right text-xl font-bold tabular-nums">
+            {c.b.계}
+            <span className="text-xs font-semibold text-mute">학점</span>
+          </span>
+        ))}
+      </div>
+      <div className={line}>
+        <span className="text-sm text-ink-2">상태</span>
+        {cols.map((c) => (
+          <span key={c.role} className="flex justify-end">
+            <StatusTag status={c.status} />
+          </span>
+        ))}
+      </div>
+      {cols.some((c) => c.progress) && (
+        <div className={line}>
+          <span className="text-sm text-ink-2">남은 학점</span>
+          {cols.map((c) => (
+            <span key={c.role} className="flex flex-col items-end">
+              {c.progress ? (
+                <>
+                  <span className="text-base font-bold tabular-nums text-accent-deep">{c.progress.remaining}학점</span>
+                  <span className="text-xs text-mute">
+                    {c.progress.coursesUnknown ? "최소 " : ""}
+                    {c.progress.remainingCourses}과목
+                  </span>
+                </>
+              ) : (
+                <span className="text-mute">–</span>
+              )}
+            </span>
+          ))}
+        </div>
+      )}
+      {combined && <p className="border-t border-line pt-3 text-xs leading-normal text-mute">* 이 학과는 전공기초와 전공필수를 합쳐서 학점을 정해 두었어요.</p>}
+      {foot}
+    </section>
+  );
+}
+
+/** A plain line under the table: a big number and what it means. */
+function Insight({ number, children }: { number: string; children: ReactNode }) {
+  return (
+    <div className="mt-1 flex items-center gap-4 border-t border-line pt-4">
+      <span className="whitespace-nowrap text-[28px] font-bold leading-none tabular-nums text-accent-deep">{number}</span>
+      <span className="text-pretty text-sm leading-normal text-ink-2">{children}</span>
     </div>
   );
 }
 
-function ProgramCard(p: {
-  role: string;
-  name: string;
-  status: Status;
-  rows: Row[];
-  tone: "ink" | "accent";
-  labelWidth?: number;
-  foot: string;
-  sum: number | string;
-  progress?: ProgramProgress | null;
-  children?: ReactNode;
-}) {
-  const s = STATUS[p.status];
+// ---- the folded list: rules and course lists ----
+
+function More({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-3.5 rounded-[20px] border border-edge bg-card p-[18px]">
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="flex min-w-0 flex-col gap-[3px]">
-          <span className="text-xs text-mute">{p.role}</span>
-          <span className="text-pretty text-[17px] font-bold">{p.name}</span>
-        </div>
-        <span className={`flex-none whitespace-nowrap rounded-[10px] px-2 py-1 text-[11px] font-semibold ${s.tone}`}>
-          {s.label}
+    <details className="group border-t border-line first:border-t-0">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-3">
+        <span className="flex min-w-0 flex-col">
+          <span className="text-[15px] font-semibold">{title}</span>
+          {hint && <span className="truncate text-xs text-mute">{hint}</span>}
         </span>
-      </div>
-      <Bars rows={p.rows} tone={p.tone} labelWidth={p.labelWidth} />
-      <div className="flex justify-between gap-3 border-t border-line-2 pt-3 text-sm">
-        <span className="text-mute">{p.foot}</span>
-        <span className="font-bold tabular-nums">{p.sum}학점</span>
-      </div>
-      <TakenLine p={p.progress ?? null} />
-      {p.children}
-    </section>
+        <span aria-hidden className="flex-none text-mute transition-transform group-open:rotate-180">
+          ▾
+        </span>
+      </summary>
+      <div className="flex flex-col gap-3 pb-4">{children}</div>
+    </details>
   );
 }
 
 function Foldable({ summary, children }: { summary: string; children: ReactNode }) {
   return (
-    <details className="group border-t border-line-2 pt-3 text-sm">
-      <summary className="flex cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-ink-2">
+    <details className="group border-t border-line pt-3 text-sm">
+      <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-ink-2">
         {summary}
-        <span aria-hidden className="inline-block text-faint transition-transform group-open:rotate-180">
+        <span aria-hidden className="inline-block text-mute transition-transform group-open:rotate-180">
           ▾
         </span>
       </summary>
       <div className="mt-3 flex flex-col gap-3">{children}</div>
     </details>
+  );
+}
+
+function Details({ children }: { children: ReactNode }) {
+  return (
+    <section className={`${surface} px-5 pt-5`}>
+      <h3 className="text-[15px] font-bold">자세히 보기</h3>
+      <div className="mt-1">{children}</div>
+    </section>
   );
 }
 
@@ -195,33 +258,37 @@ function CourseList({
 }) {
   const t = useContext(TakenCtx);
   return (
-    <ul className="flex flex-col gap-1">
+    <ul className="flex flex-col">
       {courses.map((c) => {
         const on = t?.codes.has(c.code) ?? false;
         const label = (
           <>
-            <span className="flex min-w-0 items-center gap-2">
+            <span className="flex min-w-0 items-center gap-2.5">
               {t && (
                 <input
                   type="checkbox"
                   checked={on}
                   onChange={(e) => t.toggle(c.code, e.target.checked)}
                   aria-label={`${c.name} 들었어요`}
-                  className="h-4 w-4 flex-none accent-[var(--color-accent)]"
+                  className="h-5 w-5 flex-none accent-[var(--color-accent)]"
                 />
               )}
               <span className={on ? "text-mute line-through" : ""}>
                 {c.name} <span className="text-xs text-mute">{c.code}</span>
                 {badge?.(c.code)}
-                {on && t?.notCounted.has(c.code) && <span className="ml-1 text-[11px] text-warn no-underline">부전공 미인정</span>}
+                {on && t?.notCounted.has(c.code) && <span className="ml-1 text-xs text-warn no-underline">부전공 미인정</span>}
               </span>
             </span>
             <span className="whitespace-nowrap tabular-nums text-ink-2">{c.credits}학점</span>
           </>
         );
         return (
-          <li key={c.code} className={`rounded-lg px-2.5 py-1.5 text-[13px] ${on ? "bg-ok-soft" : "bg-sand"}`}>
-            {t ? <label className="flex cursor-pointer justify-between gap-2">{label}</label> : <div className="flex justify-between gap-2">{label}</div>}
+          <li key={c.code} className="border-t border-line text-[13px] first:border-t-0">
+            {t ? (
+              <label className="flex min-h-11 cursor-pointer items-center justify-between gap-2 py-1.5">{label}</label>
+            ) : (
+              <div className="flex min-h-11 items-center justify-between gap-2 py-1.5">{label}</div>
+            )}
           </li>
         );
       })}
@@ -229,21 +296,11 @@ function CourseList({
   );
 }
 
-/** "들은 과목 n학점 · 남은 m학점 · k과목" line under a program card, for signed-in users. */
-function TakenLine({ p }: { p: ProgramProgress | null }) {
-  if (!p) return null;
-  return (
-    <div className="flex justify-between gap-3 text-sm">
-      <span className="text-mute">들은 과목 {p.taken}학점 제외</span>
-      <span className="font-bold tabular-nums text-accent-deep">
-        남은 {p.remaining}학점 · {p.coursesUnknown ? "최소 " : ""}
-        {p.remainingCourses}과목
-      </span>
-    </div>
-  );
-}
+/** The book lists a 학부's courses once per track (기계공학부), so the same code can come twice: show it once. */
+const unique = <T extends { code: string }>(xs: T[]) => xs.filter((c, i) => xs.findIndex((x) => x.code === c.code) === i);
 
-function Group({ g }: { g: CourseGroup }) {
+function Group({ g: group }: { g: CourseGroup }) {
+  const g = { ...group, courses: unique(group.courses) };
   const head = (
     <span className="font-semibold">
       {g.category}{" "}
@@ -286,9 +343,9 @@ function Problems({ items }: { items: string[] }) {
   );
 }
 
-function CourseDetails({ p }: { p: ProgramCourses }) {
+function CourseDetailsBody({ p }: { p: ProgramCourses }) {
   return (
-    <Foldable summary="과목·학과 규정 보기">
+    <>
       {p.groups.map((g) => (
         <Group key={g.category} g={g} />
       ))}
@@ -306,20 +363,20 @@ function CourseDetails({ p }: { p: ProgramCourses }) {
         </details>
       )}
       {p.pages.length > 0 && <p className="text-xs text-mute">교육과정 책 확인 쪽: {p.pages.join(", ")}</p>}
-    </Foldable>
+    </>
   );
 }
 
 function RuleLine({ text, page }: { text: string; page: number }) {
   return (
-    <div className="flex gap-2.5 border-t border-line-2 py-2.5">
+    <div className="flex gap-2.5 border-t border-line py-2.5 first:border-t-0">
       <span className="flex-1 text-pretty text-[13.5px] leading-[1.55] text-ink-3">{text}</span>
-      <span className="flex-none pt-0.5 text-[11px] text-mute">p.{page}</span>
+      <span className="flex-none pt-0.5 text-xs text-mute">p.{page}</span>
     </div>
   );
 }
 
-function RulesApplied({ r }: { r: CoursePlanOk }) {
+function RulesBody({ r }: { r: CoursePlanOk }) {
   const m = r.majorRules;
   const items: { key: string; text: string; page: number }[] = [];
   if (m.basicExemption) {
@@ -344,13 +401,14 @@ function RulesApplied({ r }: { r: CoursePlanOk }) {
     });
   }
   return (
-    <section className="flex flex-col gap-1 rounded-[20px] border border-edge bg-card p-[18px]">
-      <h3 className="mb-1.5 text-[15px] font-bold">이 조합에 적용되는 규칙</h3>
-      {items.length > 0 ? (
-        items.map((i) => <RuleLine key={i.key} text={i.text} page={i.page} />)
-      ) : (
-        <p className="border-t border-line-2 pt-2.5 text-[13.5px] text-mute">이 조합에 학점이 달라지는 공통 규칙은 없어요.</p>
-      )}
+    <>
+      <div>
+        {items.length > 0 ? (
+          items.map((i) => <RuleLine key={i.key} text={i.text} page={i.page} />)
+        ) : (
+          <p className="text-[13.5px] text-mute">이 조합에 학점이 달라지는 공통 규칙은 없어요.</p>
+        )}
+      </div>
       <Foldable summary={`신청·이수 안내 ${m.notices.length}개`}>
         <div className="-mt-2">
           {m.notices.map((n) => (
@@ -358,7 +416,7 @@ function RulesApplied({ r }: { r: CoursePlanOk }) {
           ))}
         </div>
       </Foldable>
-    </section>
+    </>
   );
 }
 
@@ -390,7 +448,7 @@ function ResetButton({ onReset, quiz }: { onReset: () => void; quiz: ResultActio
     <>
       <Link
         href={quiz.quizHref}
-        className="box-border flex h-[52px] items-center justify-center rounded-2xl border border-edge bg-card text-[15px] font-bold"
+        className="box-border flex h-[52px] items-center justify-center rounded-2xl border border-edge bg-white text-[15px] font-bold"
       >
         {quiz.quizLabel}
       </Link>
@@ -425,7 +483,7 @@ function useTakenProgress(calc: (codes: ReadonlySet<string>) => TakenProgress) {
   return { enabled: taken.enabled, progress, ui, error };
 }
 
-/** "남은 전공 학점 / 앞으로 들을 과목" box, or the sign-in link when nobody is signed in. */
+/** "내 이수 과목 반영": what is left after the courses the student already took. Nothing is drawn for a signed-out reader. */
 function TakenBox(p: {
   t: ReturnType<typeof useTakenProgress>;
   fullTotal: number; // the combination's credits before anything taken is left out
@@ -437,7 +495,7 @@ function TakenBox(p: {
   const progress = p.t.progress;
   if (!progress) {
     return p.t.enabled === false ? (
-      <Link href="/login" className="rounded-[18px] bg-sand-2 px-[18px] py-3.5 text-sm leading-normal">
+      <Link href="/login" className={`${surface} px-5 py-4 text-sm leading-normal`}>
         로그인하고 <b>내 이수 과목</b>을 저장하면, 들은 과목을 빼고 남은 학점과 과목 수를 계산해 드려요 ›
       </Link>
     ) : null;
@@ -445,50 +503,54 @@ function TakenBox(p: {
   const c = progress.remainingCourses;
   const saved = p.t.ui?.codes.size ?? 0;
   return (
-    <div className="flex flex-col gap-1 rounded-[18px] border border-accent/30 bg-accent-soft px-[18px] py-4">
-      <span className="flex items-center justify-between gap-2">
-        <span className="text-[13px] font-semibold text-accent-deep">내 이수 과목 {saved}개 반영</span>
+    <section className={`${surface} flex flex-col gap-3 p-5`}>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-[15px] font-bold">내 이수 과목 {saved}개 반영</h3>
         <Link href="/profile/courses" className="whitespace-nowrap text-[13px] font-semibold text-accent-deep underline">
-          내 이수 과목 관리 ›
+          관리 ›
         </Link>
-      </span>
-      <span className="text-[22px] font-bold tabular-nums text-accent-deep">
-        <span className="text-base font-semibold text-ink-2 line-through decoration-1">{p.fullTotal}학점</span> → 남은{" "}
-        {progress.remaining}학점
-      </span>
-      <span className="text-sm leading-normal">
-        이 조합에 인정된 들은 과목: 본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {p.secondLabel} −
-        <b className="tabular-nums">{progress.second.taken}</b>학점
-      </span>
-      <span className="text-sm leading-normal">
-        앞으로 들을 과목 최소 <b className="tabular-nums">{c.total}</b>과목
-        <span className="text-mute">
-          {" "}
-          (꼭 들어야 할 과목 {c.required} + 선택 과목 최소 {c.elective})
+      </div>
+      <div className="flex items-baseline gap-2.5">
+        <span className="text-xs text-mute">남은 학점</span>
+        <span className="text-[40px] font-bold leading-none tracking-[-1px] tabular-nums text-accent-deep">{progress.remaining}</span>
+        <span className="text-base font-semibold text-ink-2">학점</span>
+        <span className="ml-auto text-sm text-mute line-through decoration-1">{p.fullTotal}학점</span>
+      </div>
+      <div className="flex flex-col gap-1.5 border-t border-line pt-3 text-sm leading-normal">
+        <span>
+          앞으로 들을 과목 최소 <b className="tabular-nums">{c.total}</b>과목
+          <span className="text-mute">
+            {" "}
+            (필수 {c.required} + 선택 최소 {c.elective})
+          </span>
         </span>
-      </span>
-      {(progress.sharedOnce > 0 || progress.exempted > 0) && (
-        <span className="text-xs leading-normal text-ink-2">
-          공통 규칙 적용:
-          {progress.exempted > 0 && ` ${p.secondName} 전공기초 ${progress.exempted}학점 면제`}
-          {progress.exempted > 0 && progress.sharedOnce > 0 && " ·"}
-          {progress.sharedOnce > 0 && ` ${p.sharedWhat} 함께 있는 과목 ${progress.sharedOnce}학점은 한 번만 셌어요`}
+        <span className="text-ink-2">
+          이 조합에 인정된 들은 과목: 본전공 −<b className="tabular-nums">{progress.primary.taken}</b> · {p.secondLabel} −
+          <b className="tabular-nums">{progress.second.taken}</b>학점
         </span>
-      )}
-      {c.unknown && (
-        <span className="text-xs leading-normal text-warn">
-          학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
+        {(progress.sharedOnce > 0 || progress.exempted > 0) && (
+          <span className="text-xs leading-normal text-ink-2">
+            공통 규칙 적용:
+            {progress.exempted > 0 && ` ${p.secondName} 전공기초 ${progress.exempted}학점 면제`}
+            {progress.exempted > 0 && progress.sharedOnce > 0 && " ·"}
+            {progress.sharedOnce > 0 && ` ${p.sharedWhat} 함께 있는 과목 ${progress.sharedOnce}학점은 한 번만 셌어요`}
+          </span>
+        )}
+        {c.unknown && (
+          <span className="text-xs leading-normal text-warn">
+            학점과 과목 목록이 맞지 않는 부분이 있어 과목 수는 최소치예요. 학과 공식 안내로 확인하세요.
+          </span>
+        )}
+        <span className="text-xs leading-normal text-mute">
+          {saved === 0
+            ? "아직 저장한 이수 과목이 없어요. ‘관리’에서 들은 과목을 저장하면 여기서 바로 빠져요."
+            : progress.taken === 0
+              ? `저장한 이수 과목 ${saved}개 중 이 조합에 해당하는 과목이 없어요.`
+              : `저장한 과목은 내 계정에 남아요. ${p.countsNote}`}
         </span>
-      )}
-      <span className="text-xs leading-normal text-mute">
-        {saved === 0
-          ? "아직 저장한 이수 과목이 없어요. ‘내 이수 과목 관리’에서 들은 과목을 저장하면 여기서 바로 빠져요."
-          : progress.taken === 0
-            ? `저장한 이수 과목 ${saved}개 중 이 조합에 해당하는 과목이 없어요.`
-            : `저장한 과목은 내 계정에 남아요. ${p.countsNote}`}
-      </span>
-      {p.t.error && <span className="text-xs text-warn">{p.t.error}</span>}
-    </div>
+        {p.t.error && <span className="text-xs text-warn">{p.t.error}</span>}
+      </div>
+    </section>
   );
 }
 
@@ -511,86 +573,78 @@ export function PlanView({
   const min = plan.majorRules.minimumCredits;
   const t = useTakenProgress((codes) => applyTaken(plan, codes));
   const progress = t.progress;
+  const foot =
+    (plan.totals.savedCredits > 0 || (!progress && min < plan.totals.total)) && (
+      <div className="flex flex-col gap-3">
+        {plan.totals.savedCredits > 0 && (
+          <Insight number={`−${plan.totals.savedCredits}`}>
+            다전공을 하면 본전공이 단일전공 {plan.singleCredits}학점에서 {plan.totals.primaryCredits}학점으로 줄어요.
+          </Insight>
+        )}
+        {/* signed in, the progress block above already applies these rules to what is left */}
+        {!progress && min < plan.totals.total && (
+          <Insight number={String(min)}>공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소 이만큼이에요.</Insight>
+        )}
+      </div>
+    );
   return (
     <TakenCtx.Provider value={t.ui}>
-    <div className="flex flex-col gap-3.5">
-      <Hero
-        headline={`${plan.primary.dept} + ${plan.second.dept}`}
-        total={plan.totals.total}
-        aLabel="본전공"
-        a={plan.totals.primaryCredits}
-        bLabel={label}
-        b={plan.totals.secondCredits}
-      />
-      <SaveGoalButton a={actions} />
-      <ComboGuide primary={plan.primary.dept} kind={kind} second={plan.second.dept} />
-      {plan.totals.savedCredits > 0 && (
-        <div className="flex items-center gap-3.5 rounded-[18px] bg-accent-soft px-[18px] py-4">
-          <span className="whitespace-nowrap text-[22px] font-bold tabular-nums text-accent-deep">−{plan.totals.savedCredits}</span>
-          <span className="text-pretty text-sm leading-normal">
-            다전공을 하면 본전공이 단일전공 {plan.singleCredits}학점에서 {plan.totals.primaryCredits}학점으로 줄어요.
-          </span>
+      <div className="flex flex-col gap-4">
+        <Hero
+          headline={`${plan.primary.dept} + ${plan.second.dept}`}
+          total={plan.totals.total}
+          aLabel="본전공"
+          a={plan.totals.primaryCredits}
+          bLabel={label}
+          b={plan.totals.secondCredits}
+        />
+        <SaveGoalButton a={actions} />
+        <TakenBox
+          t={t}
+          fullTotal={plan.totals.total}
+          secondLabel={label}
+          secondName={plan.second.dept}
+          sharedWhat="두 전공에"
+          countsNote="두 전공에 함께 있는 과목은 양쪽에 인정돼요(부전공은 본전공과 겹치면 미인정)."
+        />
+        <ComboGuide primary={plan.primary.dept} kind={kind} second={plan.second.dept} />
+        <CreditTable
+          cols={[
+            { role: "본전공", name: plan.primary.dept, status: plan.primary.status, b: primaryCredits, tone: "ink", progress: progress?.primary },
+            { role: label, name: plan.second.dept, status: plan.second.status, b: secondCredits, tone: "accent", progress: progress?.second },
+          ]}
+          foot={foot || undefined}
+        />
+        <Details>
+          <More title="본전공 과목·규정" hint={plan.primary.dept}>
+            <CourseDetailsBody p={plan.primary} />
+          </More>
+          <More title={`${label} 과목·규정`} hint={plan.second.dept}>
+            <CourseDetailsBody p={plan.second} />
+          </More>
+          <More title="이 조합에 적용되는 규칙">
+            <RulesBody r={plan} />
+          </More>
+          {plan.warnings.length > 0 && (
+            <More title={`학점 데이터 확인 항목 ${plan.warnings.length}개`}>
+              <ul className="list-disc pl-5 text-[13px] text-mute">
+                {plan.warnings.map((w, i) => (
+                  <li key={i}>
+                    {w.source} · {w.code}: {w.message}
+                  </li>
+                ))}
+              </ul>
+            </More>
+          )}
+        </Details>
+        <div className="mt-1 flex flex-col gap-2">
+          <ResetButton onReset={onReset} quiz={actions} />
         </div>
-      )}
-      <TakenBox
-        t={t}
-        fullTotal={plan.totals.total}
-        secondLabel={label}
-        secondName={plan.second.dept}
-        sharedWhat="두 전공에"
-        countsNote="두 전공에 함께 있는 과목은 양쪽에 인정돼요(부전공은 본전공과 겹치면 미인정)."
-      />
-      {/* signed in, the box above already applies these rules to what is left */}
-      {!progress && min < plan.totals.total && (
-        <div className="rounded-[18px] bg-sand-2 px-[18px] py-4 text-sm leading-normal">
-          공통 규칙을 적용하면 실제로 들어야 할 전공 학점은 최소 <b className="tabular-nums">{min}</b>학점이에요.
-        </div>
-      )}
-      <ProgramCard
-        role={`본전공 · ${kind === "double" ? "다전공 체계" : "단일전공"}`}
-        name={plan.primary.dept}
-        status={plan.primary.status}
-        rows={creditRows(primaryCredits)}
-        tone="ink"
-        foot={`${kind === "double" ? "다전공" : "단일전공"} 기준`}
-        sum={plan.totals.primaryCredits}
-        progress={progress?.primary}
-      >
-        <CourseDetails p={plan.primary} />
-      </ProgramCard>
-      <ProgramCard
-        role={`희망 ${label}`}
-        name={plan.second.dept}
-        status={plan.second.status}
-        rows={creditRows(secondCredits)}
-        tone="accent"
-        foot={`${label} 기준`}
-        sum={plan.totals.secondCredits}
-        progress={progress?.second}
-      >
-        <CourseDetails p={plan.second} />
-      </ProgramCard>
-      <RulesApplied r={plan} />
-      {plan.warnings.length > 0 && (
-        <details className="rounded-[18px] border border-edge bg-card px-[18px] py-3.5 text-[13px]">
-          <summary className="cursor-pointer font-semibold text-warn">학점 데이터 확인 항목 {plan.warnings.length}개</summary>
-          <ul className="mt-2 list-disc pl-5 text-mute">
-            {plan.warnings.map((w, i) => (
-              <li key={i}>
-                {w.source} · {w.code}: {w.message}
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
-      <div className="mt-1 flex flex-col gap-2">
-        <ResetButton onReset={onReset} quiz={actions} />
+        <Source>
+          출처: {plan.source.pdf} ({plan.source.asOf}). 과목 목록은 교육과정 편성표에서, 학점은 학과별 이수학점 표에서 가져왔어요. 졸업요건은 학과
+          공식 안내로 최종 확인하세요.
+        </Source>
       </div>
-      <Source>
-        출처: {plan.source.pdf} ({plan.source.asOf}). 과목 목록은 교육과정 편성표에서, 학점은 학과별 이수학점 표에서
-        가져왔어요. 졸업요건은 학과 공식 안내로 최종 확인하세요.
-      </Source>
-    </div>
     </TakenCtx.Provider>
   );
 }
@@ -612,81 +666,101 @@ export function MicrodegreeView({
   const md = plan.microdegree;
   const known = md.required_credits;
   const also = new Set(plan.alsoInPrimary.map((c) => c.code));
-  const scale = known || md.course_credits || 1;
   const t = useTakenProgress((codes) => applyTakenMd(plan, codes));
   return (
     <TakenCtx.Provider value={t.ui}>
-    <div className="flex flex-col gap-3.5">
-      <Hero
-        headline={`${plan.primary.dept} + ${md.name}`}
-        total={plan.primaryCredits + (known ?? 0)}
-        aLabel="본전공"
-        a={plan.primaryCredits}
-        bLabel="마이크로디그리"
-        b={known}
-      />
-      <SaveGoalButton a={actions} />
-      <ComboGuide primary={plan.primary.dept} kind="md" second={plan.input.id} />
-      {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
-      <TakenBox
-        t={t}
-        fullTotal={plan.primaryCredits + (known ?? md.course_credits)}
-        secondLabel="마이크로디그리"
-        secondName={md.name}
-        sharedWhat="본전공과 마이크로디그리에"
-        countsNote="본전공에도 있는 마이크로디그리 과목은 양쪽에 인정돼요."
-      />
-      <ProgramCard
-        role="본전공 · 단일전공"
-        name={plan.primary.dept}
-        status={plan.primary.status}
-        rows={creditRows(primaryCredits)}
-        tone="ink"
-        foot="단일전공 기준"
-        sum={plan.primaryCredits}
-        progress={t.progress?.primary}
-      >
-        <CourseDetails p={plan.primary} />
-      </ProgramCard>
-      <ProgramCard
-        role={`마이크로디그리 · ${md.depts.join("·")}`}
-        name={md.name}
-        status={md.status}
-        rows={md.courses.map((c) => ({ k: c.name, v: c.credits, ratio: c.credits / scale }))}
-        tone="accent"
-        labelWidth={104}
-        foot={groupRule(md.rule)}
-        sum={known ?? "?"}
-        progress={t.progress?.second}
-      >
-        {md.choice_note && <p className="text-xs leading-normal text-mute">{md.choice_note}</p>}
-        <Problems items={md.problems} />
-        <Foldable summary={t.ui ? "과목 보기 · 들은 과목 체크" : "과목 코드 보기"}>
-          <CourseList
-            courses={md.courses}
-            badge={(code) =>
-              also.has(code) && <span className="ml-1 rounded bg-ok-soft px-1 text-xs text-ok no-underline">본전공에도 있음</span>
-            }
-          />
-          <p className="text-xs text-mute">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
-        </Foldable>
-      </ProgramCard>
-      <section className="flex flex-col gap-1 rounded-[20px] border border-edge bg-card p-[18px]">
-        <h3 className="mb-1.5 text-[15px] font-bold">이 조합에 적용되는 규칙</h3>
-        <p className="border-t border-line-2 pb-1 pt-2.5 text-[13px] leading-[1.55] text-mute">
-          {rules.microdegree.definition} <span className="text-[11px]">p.{rules.microdegree.page}</span>
-        </p>
-        {plan.rules.map((n) => (
-          <RuleLine key={n.id} text={n.text} page={n.page} />
-        ))}
-      </section>
-      <div className="mt-1 flex flex-col gap-2">
-        <ResetButton onReset={onReset} quiz={actions} />
+      <div className="flex flex-col gap-4">
+        <Hero
+          headline={`${plan.primary.dept} + ${md.name}`}
+          total={plan.primaryCredits + (known ?? 0)}
+          aLabel="본전공"
+          a={plan.primaryCredits}
+          bLabel="마이크로디그리"
+          b={known}
+        />
+        <SaveGoalButton a={actions} />
+        {known === null && <Callout>마이크로디그리 필요 학점을 확인하지 못해 합계에 포함하지 않았어요. 학과 공식 안내를 확인하세요.</Callout>}
+        <TakenBox
+          t={t}
+          fullTotal={plan.primaryCredits + (known ?? md.course_credits)}
+          secondLabel="마이크로디그리"
+          secondName={md.name}
+          sharedWhat="본전공과 마이크로디그리에"
+          countsNote="본전공에도 있는 마이크로디그리 과목은 양쪽에 인정돼요."
+        />
+        <ComboGuide primary={plan.primary.dept} kind="md" second={plan.input.id} />
+        <CreditTable
+          cols={[{ role: "본전공", name: plan.primary.dept, status: plan.primary.status, b: primaryCredits, tone: "ink", progress: t.progress?.primary }]}
+        />
+        <section className={`${surface} flex flex-col gap-3 p-5`}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-mute">
+                <Dot tone="accent" />
+                마이크로디그리 · {md.depts.join("·")}
+              </span>
+              <span className="text-pretty text-[17px] font-bold">{md.name}</span>
+            </div>
+            <StatusTag status={md.status} />
+          </div>
+          {md.choice_note && <p className="text-xs leading-normal text-mute">{md.choice_note}</p>}
+          <ul className="flex flex-col">
+            {md.courses.map((c) => (
+              <li key={c.code} className="flex items-center justify-between gap-3 border-t border-line py-2.5 text-sm">
+                <span className="min-w-0 text-pretty">{c.name}</span>
+                <span className="whitespace-nowrap tabular-nums text-ink-2">{c.credits}학점</span>
+              </li>
+            ))}
+          </ul>
+          <div className="flex items-baseline justify-between gap-3 border-t border-line pt-3">
+            <span className="text-sm text-ink-2">{groupRule(md.rule)}</span>
+            <span className="text-xl font-bold tabular-nums">
+              {known ?? "?"}
+              <span className="text-xs font-semibold text-mute">학점</span>
+            </span>
+          </div>
+          {t.progress?.second && (
+            <div className="flex items-baseline justify-between gap-3 text-sm">
+              <span className="text-ink-2">남은 학점</span>
+              <span className="font-bold tabular-nums text-accent-deep">
+                {t.progress.second.remaining}학점 · {t.progress.second.coursesUnknown ? "최소 " : ""}
+                {t.progress.second.remainingCourses}과목
+              </span>
+            </div>
+          )}
+          <Problems items={md.problems} />
+        </section>
+        <Details>
+          <More title="본전공 과목·규정" hint={plan.primary.dept}>
+            <CourseDetailsBody p={plan.primary} />
+          </More>
+          <More title={t.ui ? "마이크로디그리 과목 · 들은 과목 체크" : "마이크로디그리 과목 코드"} hint={md.name}>
+            <CourseList
+              courses={md.courses}
+              badge={(code) =>
+                also.has(code) && <span className="ml-1 rounded bg-ok-soft px-1 text-xs text-ok no-underline">본전공에도 있음</span>
+              }
+            />
+            <p className="text-xs text-mute">교육과정 책 확인 쪽: {md.pages.join(", ")}</p>
+          </More>
+          <More title="이 조합에 적용되는 규칙">
+            <div>
+              <p className="pb-2.5 text-[13px] leading-[1.55] text-mute">
+                {rules.microdegree.definition} <span className="text-xs">p.{rules.microdegree.page}</span>
+              </p>
+              {plan.rules.map((n) => (
+                <RuleLine key={n.id} text={n.text} page={n.page} />
+              ))}
+            </div>
+          </More>
+        </Details>
+        <div className="mt-1 flex flex-col gap-2">
+          <ResetButton onReset={onReset} quiz={actions} />
+        </div>
+        <Source>
+          출처: {plan.source.pdf} ({plan.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.
+        </Source>
       </div>
-      <Source>
-        출처: {plan.source.pdf} ({plan.source.asOf}). 졸업요건은 학과 공식 안내로 최종 확인하세요.
-      </Source>
-    </div>
     </TakenCtx.Provider>
   );
 }

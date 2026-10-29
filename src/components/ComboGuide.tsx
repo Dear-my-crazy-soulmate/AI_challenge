@@ -43,7 +43,7 @@ function Items({ title, items }: { title: string; items: GuideItem[] }) {
           <li key={i} className="flex gap-2 text-sm leading-normal">
             <span aria-hidden className="text-accent-deep">•</span>
             <span className="text-pretty">
-              {it.text} <span className="whitespace-nowrap text-[11px] text-mute">p.{it.page}</span>
+              {it.text} <span className="whitespace-nowrap text-xs text-mute">p.{it.page}</span>
             </span>
           </li>
         ))}
@@ -90,10 +90,10 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
   };
 
   return (
-    <section className="flex flex-col gap-3 rounded-[20px] border border-accent/30 bg-card p-[18px]" aria-live="polite">
+    <section className="flex flex-col gap-3.5 rounded-3xl border border-edge bg-white p-5" aria-live="polite">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-[15px] font-bold">AI 조합 설명</h3>
-        <span className="rounded-md bg-accent-soft px-[7px] py-0.5 text-xs font-semibold text-accent-deep">ChatKHU</span>
+        <span className="rounded-md bg-sand-2 px-[7px] py-0.5 text-xs font-semibold text-ink-2">ChatKHU</span>
       </div>
 
       {!r && !current.failed && (
@@ -121,7 +121,7 @@ export function ComboGuide({ primary, kind, second }: { primary: string; kind: G
           <Items title={r.source === "ai" ? "이 조합의 강점" : "학과가 밝힌 교육목적"} items={r.guide.strengths} />
           <Items title="이어질 수 있는 진로" items={r.guide.paths} />
           {r.guide.fit && (
-            <p className="rounded-xl bg-accent-soft px-3 py-2.5 text-sm leading-normal">
+            <p className="border-l-2 border-accent pl-3 text-sm leading-normal">
               <b className="font-semibold text-accent-deep">이런 학생에게 잘 맞아요</b> · {r.guide.fit}
             </p>
           )}
