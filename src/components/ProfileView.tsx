@@ -22,6 +22,7 @@ import type { Profile } from "@/lib/auth/types";
 import { isDemoEmail } from "@/lib/demo";
 import type { DeptOption } from "@/lib/depts";
 import { MODE_NAME, clearGoal } from "@/lib/goal";
+import { topicLabel } from "@/lib/recommend/topics";
 import { checkProfile } from "@/lib/safety/input";
 
 const rowCls =
@@ -103,6 +104,8 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
           setInterests((cur) => cur.filter((d) => d !== next[0]));
         }}
       />
+      {/* short chips before the long 학과 list, so they are not missed */}
+      <TopicPicker selected={topics} onChange={setTopics} />
       <DeptPicker
         label="관심 있는 전공"
         hint="계산기에서 이 학과들을 먼저 보여 드려요."
@@ -111,7 +114,6 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
         max={MAX_INTERESTS}
         onChange={setInterests}
       />
-      <TopicPicker selected={topics} onChange={setTopics} />
       <SampleLoginNote />
       <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-10 -mx-[22px] flex flex-col gap-2 border-t border-line-2 bg-white px-[22px] py-3">
         <ErrorNote message={error} />
@@ -179,6 +181,11 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
 
       <section className="overflow-hidden rounded-3xl border border-edge bg-white">
         <Row label="프로필 수정" right={profile.primary} onClick={() => setEditing(true)} />
+        <Row
+          label="관심 분야"
+          right={profile.topics?.length ? profile.topics.map(topicLabel).join(", ") : "골라 주세요"}
+          onClick={() => setEditing(true)}
+        />
         <Row label="내 이수 과목" right={`${taken.codes.size}과목`} href="/profile/courses" />
         <Row
           label="다전공 목표"
