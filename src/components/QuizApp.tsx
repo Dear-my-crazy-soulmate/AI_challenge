@@ -17,7 +17,8 @@ import { feedbackFor, isCorrect, isShowable, pickQuestions, QUESTIONS_PER_ROUND,
 import type { QuizIndexEntry, QuizMajor, QuizQuestion } from "@/lib/quiz";
 import { reaction, recordBest } from "@/lib/quizProgress";
 
-type Stage = "pick" | "q" | "report";
+type Stage = "pick" | "kind" | "q" | "report";
+type Kind = "general" | "major";
 const LETTERS = "①②③④"; // the same marks the explanations use ("정답 ②")
 // Local look at questions nobody has approved yet (scripts/syllabus/export_quiz.py --preview). Never set in production.
 const PREVIEW = process.env.NEXT_PUBLIC_QUIZ_PREVIEW === "1";
@@ -95,8 +96,10 @@ export default function QuizApp({
   deptNames,
   initialMajor,
   map,
+  general = {},
 }: {
   majors: QuizMajor[];
+  general?: Record<string, QuizQuestion[]>; // 일반 상식 questions per department; a department with some asks 일반 상식 / 전공 문제 first
   deptNames: string[]; // departments the calculator knows, so the report only links to real combinations
   initialMajor?: string | null;
   map?: ReactNode; // the 학과 지도, shown next to the questions on the pick screen
@@ -105,6 +108,8 @@ export default function QuizApp({
   const { profile } = useAuth();
   const [major, setMajor] = useState<QuizMajor | null>(null);
   const [stage, setStage] = useState<Stage>("pick");
+  const [kind, setKind] = useState<Kind>("major");
+  const [chosen, setChosen] = useState<QuizIndexEntry | null>(null); // the department on the 일반 상식 / 전공 문제 screen
   const [entries, setEntries] = useState<QuizIndexEntry[] | null>(null); // departments that have questions; null until the list is read
   const [pool, setPool] = useState<QuizQuestion[]>([]); // every question of the chosen department; each round draws from it
   const [busy, setBusy] = useState(false);
@@ -139,7 +144,21 @@ export default function QuizApp({
     setPool(m.questions);
     start({ ...m, questions: pickQuestions(m.questions) });
   };
+  // a department with 일반 상식 questions first asks which kind; the others go straight to 전공 문제
+  const choose = (e: QuizIndexEntry) => {
+    if (!general[e.dept]?.length) return void startDept(e);
+    setChosen(e);
+    setStage("kind");
+    top();
+  };
+  const startGeneral = (e: QuizIndexEntry) => {
+    const g = general[e.dept];
+    setKind("general");
+    setPool(g);
+    start({ major: e.dept, college: e.college, questions: pickQuestions(g) });
+  };
   async function startDept(e: QuizIndexEntry) {
+    setKind("major");
     setBusy(true);
     setFailed(false);
     try {
@@ -167,7 +186,7 @@ export default function QuizApp({
         if (!initialMajor) return;
         const hit = list.find((e) => e.dept === initialMajor);
         const sample = majors.find((m) => m.major === initialMajor);
-        if (hit) void startDept(hit);
+        if (hit) choose(hit);
         else if (list.length === 0 && sample) startSample(sample);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reads the list once, when the screen opens
@@ -192,7 +211,7 @@ export default function QuizApp({
       mine={e.dept === profile?.primary}
       delay={Math.min(i, 8) * 70}
       disabled={busy}
-      onClick={() => void startDept(e)}
+      onClick={() => choose(e)}
     />
   );
 
@@ -222,7 +241,8 @@ export default function QuizApp({
       setRevealed(false);
     } else {
       const score = scoreOf(qs, next);
-      const updated = recordBest(best, major.major, score, qs.length);
+      // the stars count 전공 문제 only; an 일반 상식 round does not change them
+      const updated = kind === "major" ? recordBest(best, major.major, score, qs.length) : best;
       if (updated !== best) record(major.major, score, qs.length);
       setRecent({ major: major.major, score, n: qs.length, isNew: updated !== best && score > 0 });
       setStage("report");
@@ -231,7 +251,7 @@ export default function QuizApp({
     top();
   }
 
-  const title = major && stage !== "pick" ? major.major : "전공 체험 문제";
+  const title = stage === "kind" && chosen ? chosen.dept : major && stage !== "pick" ? `${major.major}${kind === "general" ? " · 일반 상식" : ""}` : "전공 체험 문제";
   const label = stage === "q" ? `${qi + 1}/${qs.length}` : "";
   const canCalc = !!profile && !!major && profile.primary !== major.major && deptNames.includes(major.major);
   const calcHref =
@@ -356,6 +376,32 @@ export default function QuizApp({
             <SampleTag />
             <span>시연용 문제예요. 실제 서비스에서는 AI가 만든 문제를 사람이 검수한 뒤에만 보여 줘요.</span>
           </p>
+        </div>
+      )}
+
+      {stage === "kind" && chosen && (
+        // pinned to the screen so the pair sits mirrored around its exact middle, whatever is above or below
+        <div className="pointer-events-none fixed inset-0 z-0 mx-auto flex w-full max-w-[430px] flex-col items-center justify-center gap-16 px-[30px]">
+          {[
+            { label: "일반 상식", hint: "전공을 몰라도 재미있게 풀 수 있어요", go: () => startGeneral(chosen), look: "bg-[#fef3c7] text-ink", sub: "text-ink-2" },
+            { label: "전공 문제", hint: "실제 수업 내용으로 만든 문제예요", go: () => void startDept(chosen), look: "bg-accent text-white", sub: "text-white/80" },
+          ].map((b) => (
+            <button
+              key={b.label}
+              type="button"
+              disabled={busy}
+              onClick={b.go}
+              className={`pointer-events-auto flex h-[88px] w-full flex-col items-center justify-center gap-1 rounded-full border-2 border-ink active:scale-[.98] disabled:opacity-60 ${b.look}`}
+            >
+              <span className="text-[26px] font-bold tracking-[-0.5px]">{b.label}</span>
+              <span className={`text-xs ${b.sub}`}>{b.hint}</span>
+            </button>
+          ))}
+          {failed && (
+            <p role="alert" className="pointer-events-auto absolute bottom-[calc(90px+env(safe-area-inset-bottom))] mx-[30px] rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent-deep">
+              문제를 불러오지 못했어요. 잠시 뒤에 다시 눌러 주세요.
+            </p>
+          )}
         </div>
       )}
 
