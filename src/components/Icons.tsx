@@ -28,6 +28,54 @@ export const SearchIcon = ({ className }: IconProps) => (
   </Svg>
 );
 
+export const BackIcon = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="m15 5-7 7 7 7" />
+  </Svg>
+);
+
+/** 학과 이야기 항목별 아이콘 (16px 안팎의 작은 크기로 쓴다) */
+const CATEGORY_PATHS: Record<string, ReactNode> = {
+  all: (
+    <>
+      <rect x="4" y="4" width="6.5" height="6.5" rx="1.5" />
+      <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" />
+      <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" />
+      <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
+    </>
+  ),
+  curriculum: (
+    <>
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H20v13H5.5A1.5 1.5 0 0 0 4 18.5z" />
+      <path d="M4 18.5A1.5 1.5 0 0 0 5.5 20H20v-3" />
+    </>
+  ),
+  culture: (
+    <>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20a6 6 0 0 1 12 0" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M17 14a5 5 0 0 1 4 6" />
+    </>
+  ),
+  clubs: <path d="M5 21V4M5 4h11l-2 4 2 4H5" />,
+  career: (
+    <>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18" />
+    </>
+  ),
+  multimajor: <path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5" />,
+  question: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01" />
+    </>
+  ),
+};
+
+export const CategoryIcon = ({ id, className }: { id: string; className?: string }) => <Svg className={className}>{CATEGORY_PATHS[id]}</Svg>;
+
 export const HomeIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />

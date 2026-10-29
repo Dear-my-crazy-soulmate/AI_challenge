@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import CommunityBadge, { SampleTag } from "@/components/CommunityBadge";
-import { Area, ErrorNote, primaryButton, secondaryButton } from "@/components/Field";
+import { ErrorNote, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
 import { commentStoreFor, getCommunityStore, isSamplePost, useCommunity } from "@/components/useCommunity";
 import { useAuth } from "@/lib/auth";
@@ -105,13 +105,13 @@ export default function PostDetail({ id }: { id: string | null }) {
           {post.is_sample && <SampleTag />}
         </span>
         <h2 className="text-pretty text-[22px] font-bold leading-[1.35] tracking-[-0.5px]">{post.title}</h2>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between gap-3">
           <CommunityBadge badge={post.badge} />
-          <span className="text-xs text-mute">{fmtDate(post.createdAt)}</span>
+          <span className="flex-none text-xs text-mute">{fmtDate(post.createdAt)}</span>
         </div>
 
         {rows.length > 0 && (
-          <section aria-label="학과 정보" className="flex flex-col gap-3 rounded-3xl border border-edge bg-card p-[18px]">
+          <section aria-label="학과 정보" className="flex flex-col rounded-3xl border border-edge bg-white p-[18px]">
             {rows.map((r) => (
               <Row key={r.f.key} k={r.f.label}>
                 {r.text}
@@ -136,9 +136,9 @@ export default function PostDetail({ id }: { id: string | null }) {
       </article>
 
       <section aria-label="댓글" className="flex flex-col gap-3">
-        <h3 className="text-[15px] font-bold">댓글 {list.length}</h3>
+        <h3 className="text-[17px] font-bold">댓글 {list.length}</h3>
         {list.map((c) => (
-          <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl border border-edge bg-card px-4 py-3.5">
+          <div key={c.id} className="flex flex-col gap-1.5 rounded-2xl border border-edge bg-white px-4 py-3.5">
             <div className="flex items-start justify-between gap-2">
               <CommunityBadge badge={c.badge} dept={post.dept} />
               {c.is_sample && <SampleTag />}
@@ -158,11 +158,31 @@ export default function PostDetail({ id }: { id: string | null }) {
 
         {profile ? (
           <div className="flex flex-col gap-2">
-            <Area label="댓글 쓰기" value={text} maxLength={LIMITS.comment} onChange={(e) => setText(e.target.value)} placeholder="경험이나 의견을 나눠 주세요" />
+            <div className="flex flex-col rounded-2xl border border-edge bg-white focus-within:border-accent">
+              <textarea
+                aria-label="댓글 쓰기"
+                rows={2}
+                value={text}
+                maxLength={LIMITS.comment}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="경험이나 의견을 나눠 주세요"
+                className="field-sizing-content max-h-40 min-h-[3.5rem] resize-none rounded-t-2xl bg-transparent px-3.5 pt-3 text-base leading-normal outline-none"
+              />
+              <div className="flex items-center justify-between gap-2 px-3 pb-2.5 pt-1">
+                <span className="text-xs tabular-nums text-mute">
+                  {text.length}/{LIMITS.comment}
+                </span>
+                <button
+                  type="button"
+                  onClick={send}
+                  disabled={busy || text.trim() === ""}
+                  className="hit h-8 rounded-full bg-accent px-4 text-[13px] font-bold text-white active:opacity-90 disabled:bg-sand-2 disabled:text-ink-2"
+                >
+                  {busy ? "올리는 중…" : "올리기"}
+                </button>
+              </div>
+            </div>
             <ErrorNote message={error} />
-            <button type="button" onClick={send} disabled={busy || text.trim() === ""} className={primaryButton}>
-              {busy ? "올리는 중…" : "댓글 올리기"}
-            </button>
             {isSamplePost(post.id) && getCommunityStore().kind === "server" && (
               <p className="text-xs leading-normal text-mute">예시 글에 단 댓글은 이 기기에만 저장돼요. 직접 쓴 글의 댓글은 모두에게 보여요.</p>
             )}

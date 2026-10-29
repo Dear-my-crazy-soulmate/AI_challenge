@@ -24,13 +24,20 @@ import { MODE_NAME, clearGoal } from "@/lib/goal";
 import { checkProfile } from "@/lib/safety/input";
 
 const rowCls =
-  "box-border flex min-h-14 w-full items-center justify-between gap-3 border-t border-line-2 px-[18px] text-left first:border-t-0 active:bg-paper";
+  "box-border flex min-h-14 w-full items-center justify-between gap-3 border-t border-line-2 px-[18px] text-left first:border-t-0 active:bg-card";
 
 function Row({ label, right, tone = "", href, onClick }: { label: string; right?: ReactNode; tone?: string; href?: string; onClick?: () => void }) {
   const inner = (
     <>
       <span className={`text-[15px] font-semibold ${tone}`}>{label}</span>
-      {right !== undefined && <span className="min-w-0 text-pretty text-right text-[13px] text-mute">{right}</span>}
+      <span className="flex min-w-0 items-center gap-1.5">
+        {right !== undefined && <span className="min-w-0 text-pretty text-right text-sm text-mute">{right}</span>}
+        {(href || onClick) && right !== undefined && (
+          <span aria-hidden className="text-xl leading-none text-mute">
+            ›
+          </span>
+        )}
+      </span>
     </>
   );
   return href ? (
@@ -53,6 +60,17 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
 
   const [busy, setBusy] = useState(false);
 
+  const same = (a: string[], b: string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
+  const dirty =
+    !same(primary, profile.primary ? [profile.primary] : []) ||
+    !same(interests, profile.interests) ||
+    personal.name !== profile.name ||
+    personal.studentId !== profile.studentId ||
+    personal.grade !== profile.grade;
+  const leave = () => {
+    if (!dirty || window.confirm("바꾼 내용이 저장되지 않았어요. 나갈까요?")) onDone();
+  };
+
   async function save() {
     const main = primary[0] ?? "";
     // The character follows the major, unless it was changed to another department's earlier.
@@ -69,8 +87,8 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
   }
 
   return (
-    <>
-      <ScreenHeader title={title} onBack={onDone} />
+    <div className="flex flex-col gap-6">
+      <ScreenHeader title={title} onBack={leave} />
       <PersonalFields value={personal} onChange={setPersonal} />
       <DeptPicker
         label="내 본전공"
@@ -90,26 +108,29 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
         max={MAX_INTERESTS}
         onChange={setInterests}
       />
-      <ErrorNote message={error} />
-      <div className="flex flex-col gap-2">
-        <button type="button" onClick={save} disabled={busy || primary.length === 0} className={primaryButton}>
-          {busy ? "저장하는 중…" : "저장하기"}
-        </button>
-        <button type="button" onClick={onDone} className={secondaryButton}>
-          취소
-        </button>
-      </div>
       <SampleLoginNote />
-    </>
+      <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-10 -mx-[22px] flex flex-col gap-2 border-t border-line-2 bg-white px-[22px] py-3">
+        <ErrorNote message={error} />
+        <div className="flex gap-2">
+          <div className="w-24 flex-none">
+            <button type="button" onClick={leave} className={`${secondaryButton} h-[54px]`}>
+              취소
+            </button>
+          </div>
+          <button type="button" onClick={save} disabled={busy || primary.length === 0} className={primaryButton}>
+            {busy ? "저장하는 중…" : "저장하기"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
+function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: DeptOption[]; editing: boolean; setEditing: (v: boolean) => void }) {
   const router = useRouter();
   const { auth, email } = useAuth();
   const goal = useGoal();
   const taken = useTaken();
-  const [editing, setEditing] = useState(false);
   const [account, setAccount] = useState<AccountAction | null>(null);
 
   if (editing) return <Editor profile={profile} depts={depts} onDone={() => setEditing(false)} />;
@@ -121,12 +142,12 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const stats = [
     { k: "학년", v: `${profile.grade}학년` },
     { k: "관심 전공", v: `${profile.interests.length}개` },
-    { k: "내 목표", v: goal ? "설정됨" : "미정" },
+    { k: "내 목표", v: goal ? "설정됨" : "미정", empty: !goal },
   ];
   const goalHref = goal ? `/onboarding?${new URLSearchParams({ primary: goal.primary, mode: goal.mode, second: goal.second })}` : "/onboarding";
   return (
     <>
-      <section className="flex items-center gap-4 rounded-3xl border border-edge bg-card p-[18px]">
+      <section className="flex items-center gap-4 rounded-3xl border border-edge bg-white p-[18px]">
         <Avatar dept={profile.primary} goal={goal} size={136} variant="full" />
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-pretty text-lg font-bold">{profile.name || "내 정보"}</span>
@@ -145,14 +166,14 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
 
       <div className="grid grid-cols-3 gap-2">
         {stats.map((s) => (
-          <div key={s.k} className="flex flex-col gap-1 rounded-2xl border border-edge bg-card px-3 py-3.5">
+          <div key={s.k} className="flex flex-col gap-1 rounded-2xl border border-edge bg-white px-3 py-3.5">
             <span className="text-xs text-mute">{s.k}</span>
-            <span className="text-xl font-bold tabular-nums text-accent-deep">{s.v}</span>
+            <span className={`text-xl font-bold tabular-nums ${s.empty ? "text-mute" : "text-accent-deep"}`}>{s.v}</span>
           </div>
         ))}
       </div>
 
-      <section className="overflow-hidden rounded-3xl border border-edge bg-card">
+      <section className="overflow-hidden rounded-3xl border border-edge bg-white">
         <Row label="프로필 수정" right={profile.primary} onClick={() => setEditing(true)} />
         <Row label="내 이수 과목" right={`${taken.codes.size}과목`} href="/profile/courses" />
         <Row
@@ -164,7 +185,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
       </section>
 
       <h2 className="px-1 pt-2 text-sm font-bold">계정</h2>
-      <section className="overflow-hidden rounded-3xl border border-edge bg-card">
+      <section className="overflow-hidden rounded-3xl border border-edge bg-white">
         {demo ? (
           <Row label="이메일" right={email ?? ""} />
         ) : (
@@ -173,6 +194,8 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
             <Row label="비밀번호 변경" onClick={() => setAccount("password")} />
           </>
         )}
+      </section>
+      <section className="mt-1 overflow-hidden rounded-3xl border border-edge bg-white">
         <Row
           label="로그아웃"
           tone="text-accent-deep"
@@ -204,12 +227,17 @@ const EMPTY_PROFILE: Profile = { primary: "", interests: [], avatar: null, grade
 
 export default function ProfileView({ depts }: { depts: DeptOption[] }) {
   const { ready, signedIn, profile } = useAuth();
+  const [editing, setEditing] = useState(false);
+  // the editor has its own header, so "MY" is not drawn twice
+  const sub = editing || (ready && signedIn && !profile);
   return (
-    <main className="flex flex-col gap-3.5 px-[22px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
-      <h1 className="flex items-center gap-2 px-1 text-[22px] font-bold tracking-[-0.5px]">
-        <BrandMark />
-        MY
-      </h1>
+    <main className={`flex flex-col gap-3.5 px-[22px] pb-8 ${sub ? "pt-[max(6px,env(safe-area-inset-top))]" : "pt-[max(14px,env(safe-area-inset-top))]"}`}>
+      {!sub && (
+        <h1 className="flex items-center gap-2 px-1 text-[22px] font-bold tracking-[-0.5px]">
+          <BrandMark />
+          MY
+        </h1>
+      )}
       {!ready && <p className="text-sm text-mute">불러오는 중…</p>}
       {ready && !signedIn && (
         <div className="flex flex-col gap-3 px-1 pt-2">
@@ -226,7 +254,7 @@ export default function ProfileView({ depts }: { depts: DeptOption[] }) {
           </Link>
         </div>
       )}
-      {ready && signedIn && profile && <Me profile={profile} depts={depts} />}
+      {ready && signedIn && profile && <Me profile={profile} depts={depts} editing={editing} setEditing={setEditing} />}
       {/* signed in without a profile (e.g. an account made in the Supabase dashboard): ask for the 본전공 first */}
       {ready && signedIn && !profile && <Editor profile={EMPTY_PROFILE} depts={depts} onDone={() => {}} title="프로필 만들기" />}
     </main>

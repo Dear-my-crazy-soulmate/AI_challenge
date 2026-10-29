@@ -41,6 +41,7 @@ export default function DeptPicker({
         {max > 1 && (
           <span className="text-xs tabular-nums text-mute">
             {selected.length}/{max}
+            {full && " · 다 골랐어요"}
           </span>
         )}
       </div>
@@ -53,7 +54,7 @@ export default function DeptPicker({
               type="button"
               onClick={() => toggle(d)}
               aria-label={`${d} 선택 해제`}
-              className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-[7px] text-[13px] font-semibold text-paper"
+              className="flex items-center gap-1.5 min-h-11 rounded-full bg-ink px-4 text-[13px] font-semibold text-paper"
             >
               {d}
               <span aria-hidden className="opacity-60">
@@ -66,7 +67,7 @@ export default function DeptPicker({
       {trackNote && (
         <p className="-mt-1 text-xs text-mute">{trackNote} 아직 트랙을 정하지 않았다면 관심 있는 트랙을 골라 두세요. 나중에 바꿀 수 있어요.</p>
       )}
-      <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+      <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5">
         <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
         <input
           type="search"
@@ -77,7 +78,7 @@ export default function DeptPicker({
           className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
         />
       </label>
-      <div className="max-h-64 overflow-y-auto rounded-2xl border border-edge bg-card">
+      <div className="max-h-64 overflow-y-auto rounded-2xl border border-edge bg-white">
         {shown.map((o) => {
           const on = selected.includes(o.dept);
           const locked = full && !on;
@@ -88,7 +89,7 @@ export default function DeptPicker({
               disabled={locked}
               aria-pressed={on}
               onClick={() => toggle(o.dept)}
-              className="box-border flex min-h-14 w-full items-center gap-3 border-t border-line-2 px-4 py-3 text-left first:border-t-0 enabled:active:bg-paper disabled:opacity-40"
+              className="box-border flex min-h-14 w-full items-center gap-3 border-t border-line-2 px-4 py-3 text-left first:border-t-0 enabled:active:bg-card disabled:opacity-40"
             >
               <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
                 <span className="text-pretty text-[15px] font-semibold">{o.dept}</span>

@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import { SearchIcon } from "@/components/Icons";
+import { BackIcon, SearchIcon } from "@/components/Icons";
 import { primaryButton } from "@/components/Field";
 import { MicrodegreeView, PlanView, Unavailable } from "@/components/PlanResult";
 import type { Breakdown, ResultActions } from "@/components/PlanResult";
@@ -372,7 +372,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
     crumbs.push({ k: "희망", v, go: () => goto(3) });
   }
 
-  const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
+  const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center";
 
   return (
     <main className={`flex flex-col px-[22px] pt-[max(6px,env(safe-area-inset-top))] ${step === 2 && !needPrimary ? "min-h-[calc(100dvh-62px-env(safe-area-inset-bottom))] gap-4 pb-3" : "gap-5 pb-8"}`}>
@@ -381,7 +381,7 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
           <span aria-hidden className="w-11" /> // a tab's first screen has nowhere to go back to
         ) : (
           <button type="button" aria-label="이전 단계" onClick={() => goto((step - 1) as Step)} className={backBtn}>
-            ‹
+            <BackIcon className="h-6 w-6" />
           </button>
         )}
         <h1 className="text-base font-bold">다전공 계산기</h1>

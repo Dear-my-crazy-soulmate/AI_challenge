@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
-import { SearchIcon } from "@/components/Icons";
+import { BackIcon, SearchIcon } from "@/components/Icons";
 import { CardGridSkeleton } from "@/components/Skeleton";
 import Avatar from "@/components/Avatar";
 import { primaryButton, secondaryButton } from "@/components/Field";
@@ -26,7 +26,7 @@ const chip = (on: boolean) =>
   `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
 const CONFETTI = ["bg-accent", "bg-ink", "bg-ok", "bg-accent-soft", "bg-chip"];
 
-const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
+const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center";
 const SampleTag = ({ className = "" }: { className?: string }) => (
   <span className={`flex-none rounded-md bg-sand-2 px-[7px] py-0.5 font-semibold text-ink-2 ${className}`}>예시 데이터</span>
 );
@@ -247,7 +247,7 @@ export default function QuizApp({
           <span aria-hidden className="w-11" /> // a tab's first screen has nowhere to go back to
         ) : (
           <button type="button" aria-label="전공 고르기로" onClick={toPick} className={backBtn}>
-            ‹
+            <BackIcon className="h-6 w-6" />
           </button>
         )}
         <h1 className="text-base font-bold">{title}</h1>

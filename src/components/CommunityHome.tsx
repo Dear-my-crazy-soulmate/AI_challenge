@@ -15,7 +15,7 @@ import { newestFirst, statsByDept } from "@/lib/community/query";
 import type { DeptOption } from "@/lib/depts";
 
 const chip = (on: boolean) =>
-  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-white text-ink-2"}`;
 const deptHref = (dept: string) => `/community/dept?name=${encodeURIComponent(dept)}`;
 
 export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
@@ -75,18 +75,21 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
         </Link>
       )}
       {profile && profile.interests.length > 0 && (
-        <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]" aria-label="관심 학과">
-          {profile.interests.map((d) => (
-            <Link key={d} href={deptHref(d)} className={chip(false)}>
-              {d}
-            </Link>
-          ))}
-        </div>
+        <section aria-label="관심 학과" className="flex flex-col gap-2.5">
+          <h2 className="px-1 text-sm font-bold">관심 학과</h2>
+          <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]">
+            {profile.interests.map((d) => (
+              <Link key={d} href={deptHref(d)} className={chip(false)}>
+                {d}
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
 
       <section aria-label="학과 찾기" className="flex flex-col gap-2.5">
         <h2 className="px-1 text-sm font-bold">학과별 이야기</h2>
-        <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+        <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-white px-3.5">
           <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
           <input
             type="search"
@@ -128,7 +131,7 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
           {rows.length === 0 && <li className="rounded-2xl border border-line bg-white px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</li>}
         </ul>
         {!filtering && rows.length > 8 && (
-          <button type="button" onClick={() => setShowAll((v) => !v)} className="box-border flex h-12 items-center justify-center rounded-2xl border border-edge bg-card text-sm font-semibold">
+          <button type="button" onClick={() => setShowAll((v) => !v)} className="box-border flex h-12 items-center justify-center rounded-2xl border border-edge bg-white text-sm font-semibold">
             {showAll ? "접기" : `전체 ${rows.length}개 학과 보기`}
           </button>
         )}

@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { BackIcon } from "@/components/Icons";
 import type { ReactNode } from "react";
 
 /** Top bar of a sub screen: back arrow, title, optional right label (same look as the calculator). */
@@ -15,18 +17,18 @@ export default function ScreenHeader({
   right?: ReactNode;
   noBack?: boolean; // first screen (login before anything else): nowhere to go back to
 }) {
-  const cls = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
+  const cls = "-ml-3 flex h-11 w-11 items-center justify-center";
   return (
     <div className="flex h-11 items-center justify-between">
       {noBack ? (
         <span className="w-11" />
       ) : onBack ? (
         <button type="button" aria-label="이전 단계" onClick={onBack} className={cls}>
-          ‹
+          <BackIcon className="h-6 w-6" />
         </button>
       ) : (
         <Link href={backHref ?? "/"} aria-label="뒤로" className={cls}>
-          ‹
+          <BackIcon className="h-6 w-6" />
         </Link>
       )}
       <h1 className="text-base font-bold">{title}</h1>

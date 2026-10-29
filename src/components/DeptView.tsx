@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { CategoryIcon } from "@/components/Icons";
 import PostRow from "@/components/PostRow";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useCommunity } from "@/components/useCommunity";
@@ -15,8 +16,16 @@ import type { Category } from "@/lib/community/types";
 import type { DeptOption } from "@/lib/depts";
 
 type View = "all" | "question" | Category;
-const chip = (on: boolean) =>
-  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+// each tab keeps its own colour: a soft tile when off, the full colour when chosen
+const TONE: Record<string, { fg: string; bg: string }> = {
+  all: { fg: "#475569", bg: "#f1f5f9" },
+  curriculum: { fg: "#2563eb", bg: "#dbeafe" },
+  culture: { fg: "#db2777", bg: "#fce7f3" },
+  clubs: { fg: "#ea580c", bg: "#ffedd5" },
+  career: { fg: "#15803d", bg: "#dcfce7" },
+  multimajor: { fg: "#7c3aed", bg: "#ede9fe" },
+  question: { fg: "#b45309", bg: "#fef3c7" },
+};
 const writeHref = (dept: string, extra = "") => `/community/write?dept=${encodeURIComponent(dept)}${extra}`;
 
 export default function DeptView({ depts, name }: { depts: DeptOption[]; name: string | null }) {
@@ -39,6 +48,11 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
   const mine = posts.filter((p) => p.dept === dept.dept);
   const stat = statsByDept(mine).get(dept.dept);
   const commentCount = (id: string) => comments.filter((c) => c.postId === id).length;
+  const tabs: { id: View; label: string }[] = [
+    { id: "all", label: "전체" },
+    ...CATEGORY_IDS.map((c) => ({ id: c as View, label: CATEGORIES[c].label })),
+    { id: "question", label: "질문" },
+  ];
   const shown = newestFirst(
     view === "all" ? mine : view === "question" ? mine.filter((p) => p.type === "question") : mine.filter((p) => p.type === "info" && p.category === view),
   );
@@ -60,60 +74,35 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
         </Link>
       </section>
 
-      <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]" role="group" aria-label="보기">
-        <button type="button" aria-pressed={view === "all"} onClick={() => setView("all")} className={chip(view === "all")}>
-          전체
-        </button>
-        {CATEGORY_IDS.map((c) => (
-          <button key={c} type="button" aria-pressed={view === c} onClick={() => setView(c)} className={chip(view === c)}>
-            {CATEGORIES[c].label}
-            {stat?.byCategory[c] ? ` ${stat.byCategory[c]}` : ""}
-          </button>
-        ))}
-        <button type="button" aria-pressed={view === "question"} onClick={() => setView("question")} className={chip(view === "question")}>
-          질문{stat?.questions ? ` ${stat.questions}` : ""}
-        </button>
+      <div className="no-scrollbar -mx-[22px] flex gap-1 overflow-x-auto px-[22px]" role="group" aria-label="보기">
+        {tabs.map((t) => {
+          const on = view === t.id;
+          const n = t.id === "all" ? 0 : t.id === "question" ? (stat?.questions ?? 0) : (stat?.byCategory[t.id] ?? 0);
+          return (
+            <button key={t.id} type="button" aria-pressed={on} onClick={() => setView(t.id)} className="flex w-[76px] flex-none flex-col items-center gap-1.5 pb-1 pt-1 active:opacity-70">
+              <span
+                className="relative flex h-12 w-12 items-center justify-center rounded-2xl transition-colors"
+                style={{ background: on ? TONE[t.id].fg : TONE[t.id].bg, color: on ? "#ffffff" : TONE[t.id].fg }}
+              >
+                <CategoryIcon id={t.id} className="h-6 w-6" />
+                {n > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-ink px-1 text-[11px] font-bold leading-none text-white tabular-nums">
+                    {n}
+                  </span>
+                )}
+              </span>
+              <span className={`text-pretty text-center text-xs leading-tight ${on ? "font-bold text-ink" : "font-medium text-ink-2"}`}>{t.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {view === "all" && (
-        <section aria-label="항목별 요약" className="flex flex-col gap-2.5">
-          {CATEGORY_IDS.map((c) => {
-            const lines = highlights(c, mine);
-            const def = CATEGORIES[c];
-            return (
-              <div key={c} className="flex flex-col gap-2.5 rounded-3xl border border-edge bg-card p-[18px]">
-                <button type="button" onClick={() => setView(c)} className="flex items-start justify-between gap-3 text-left">
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-[15px] font-bold">{def.label}</span>
-                    <span className="text-xs text-mute">{def.desc}</span>
-                  </span>
-                  <span className={`whitespace-nowrap text-xs font-semibold ${lines.length ? "text-accent-deep" : "text-mute"}`}>
-                    {stat?.byCategory[c] ? `글 ${stat.byCategory[c]}개 ›` : "아직 없어요"}
-                  </span>
-                </button>
-                {lines.length > 0 ? (
-                  <dl className="flex flex-col gap-1.5 border-t border-line-2 pt-2.5">
-                    {lines.slice(0, 3).map((l) => (
-                      <div key={l.label} className="grid grid-cols-[84px_1fr] gap-2 text-[13px] leading-normal">
-                        <dt className="text-mute">{l.label}</dt>
-                        <dd className="text-pretty font-semibold">{l.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : (
-                  <Link href={writeHref(dept.dept, `&category=${c}`)} className="text-[13px] font-semibold text-accent-deep">
-                    첫 번째로 알려 주세요 ›
-                  </Link>
-                )}
-              </div>
-            );
-          })}
-        </section>
-      )}
-
       {view !== "all" && view !== "question" && (
-        <section aria-label={`${CATEGORIES[view].label} 요약`} className="flex flex-col gap-2 rounded-3xl border border-edge bg-card p-[18px]">
-          <h3 className="text-[15px] font-bold">{CATEGORIES[view].label}</h3>
+        <section aria-label={`${CATEGORIES[view].label} 요약`} className="flex flex-col gap-2 rounded-3xl border border-edge bg-white p-[18px]">
+          <h3 className="flex items-center gap-1.5 text-[15px] font-bold">
+            <CategoryIcon id={view} className="h-[18px] w-[18px] flex-none text-accent-deep" />
+            {CATEGORIES[view].label}
+          </h3>
           {highlights(view, mine).length > 0 ? (
             <dl className="flex flex-col gap-1.5">
               {highlights(view, mine).map((l) => (
@@ -136,7 +125,7 @@ export default function DeptView({ depts, name }: { depts: DeptOption[]; name: s
           <PostRow key={p.id} post={p} comments={commentCount(p.id)} />
         ))}
         {shown.length === 0 && (
-          <div className="flex flex-col gap-2 rounded-3xl border border-edge bg-card px-[18px] py-6 text-center">
+          <div className="flex flex-col gap-2 rounded-3xl border border-edge bg-white px-[18px] py-6 text-center">
             <span className="text-[15px] font-semibold">아직 글이 없어요</span>
             <Link href={writeHref(dept.dept, view !== "all" && view !== "question" ? `&category=${view}` : view === "question" ? "&type=question" : "")} className="text-[13px] font-semibold text-accent-deep">
               첫 번째로 남겨 보세요 ›
