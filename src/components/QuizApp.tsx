@@ -4,7 +4,7 @@
 // 쿠옹이 dressed for the major cheers along, and the best result per major is kept as stars on the account.
 // Which questions show and how they are graded lives in src/lib/quiz.ts.
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { SearchIcon } from "@/components/Icons";
@@ -40,6 +40,56 @@ const Stars = ({ got, of, className = "" }: { got: number; of: number; className
   </span>
 );
 
+/** A department on the pick screen. Not tried yet: a "도전하기" button. After that: its best stars. */
+function DeptCard({
+  college,
+  dept,
+  best,
+  of,
+  mine = false,
+  delay,
+  disabled = false,
+  onClick,
+}: {
+  college: string;
+  dept: string;
+  best?: { score: number; n: number };
+  of: number;
+  mine?: boolean;
+  delay: number;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="quiz-pop relative box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {mine && <span className="absolute left-3 top-3 z-10 rounded-md bg-accent px-1.5 py-0.5 text-xs font-bold text-white">내 학과</span>}
+      <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
+        <Avatar dept={dept} variant="full" size={120} />
+      </span>
+      <span className="flex flex-col gap-0.5">
+        <span className="text-xs text-mute">{college}</span>
+        <span className="text-[17px] font-bold leading-snug">{dept}</span>
+      </span>
+      {best ? (
+        <>
+          <Stars got={best.score} of={of} className="text-lg leading-none" />
+          <span className="text-xs font-semibold text-accent-deep">
+            최고 {best.score}/{best.n}
+          </span>
+        </>
+      ) : (
+        <span className="rounded-full bg-accent px-4 py-1.5 text-xs font-bold text-white">도전하기</span>
+      )}
+    </button>
+  );
+}
+
 export default function QuizApp({
   majors,
   deptNames,
@@ -69,6 +119,7 @@ export default function QuizApp({
   const { best, record } = useQuizBest();
 
   const top = () => window.scrollTo({ top: 0 });
+  const nextRef = useRef<HTMLButtonElement>(null);
   const start = (m: QuizMajor) => {
     setMajor(m);
     setStage("q");
@@ -127,6 +178,24 @@ export default function QuizApp({
     .filter((e) => (!needle || e.dept.replace(/\s/g, "").includes(needle)) && (needle || !college || e.college === college))
     .sort((a, b) => Number(b.dept === profile?.primary) - Number(a.dept === profile?.primary)); // the student's own department first
 
+  const mineRow = rows.find((e) => e.dept === profile?.primary);
+  const byCollege = colleges
+    .map((c) => ({ college: c, items: rows.filter((e) => e.college === c && e.dept !== profile?.primary) }))
+    .filter((sec) => sec.items.length > 0);
+  const card = (e: QuizIndexEntry, i: number) => (
+    <DeptCard
+      key={e.id}
+      college={e.college}
+      dept={e.dept}
+      best={best[e.dept]}
+      of={QUESTIONS_PER_ROUND}
+      mine={e.dept === profile?.primary}
+      delay={Math.min(i, 8) * 70}
+      disabled={busy}
+      onClick={() => void startDept(e)}
+    />
+  );
+
   const qs = major?.questions ?? [];
   const cur = stage === "q" ? qs[qi] : undefined;
   const last = qi === qs.length - 1;
@@ -134,6 +203,13 @@ export default function QuizApp({
   // right answers in a row, counting the one just revealed
   let run = right ? 1 : 0;
   for (let i = qi - 1; right && i >= 0 && isCorrect(qs[i], picks[i]); i--) run++;
+
+  // the explanation appears below the options: bring it and the next button into view
+  useEffect(() => {
+    if (!revealed) return;
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    nextRef.current?.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "end" });
+  }, [revealed]);
 
   function action() {
     if (!major || !cur || sel === null) return;
@@ -229,31 +305,27 @@ export default function QuizApp({
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {rows.map((e, i) => {
-              const b = best[e.dept];
-              return (
-                <button
-                  key={e.id}
-                  type="button"
-                  disabled={busy}
-                  onClick={() => startDept(e)}
-                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
-                  style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}
-                >
-                  <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
-                    <Avatar dept={e.dept} variant="full" size={120} />
-                  </span>
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-xs text-mute">{e.college}</span>
-                    <span className="text-[15px] font-bold">{e.dept}</span>
-                  </span>
-                  <Stars got={b?.score ?? 0} of={QUESTIONS_PER_ROUND} className="text-lg leading-none" />
-                  <span className="text-xs font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
-                </button>
-              );
-            })}
-          </div>
+          {!needle && !college ? (
+            <div className="flex flex-col gap-6">
+              {mineRow && (
+                <section className="flex flex-col gap-2.5">
+                  <h3 className="pl-0.5 text-sm font-bold">내 학과</h3>
+                  <div className="grid grid-cols-2 gap-3">{card(mineRow, 0)}</div>
+                </section>
+              )}
+              {byCollege.map((sec) => (
+                <section key={sec.college} className="flex flex-col gap-2.5">
+                  <h3 className="flex items-center gap-1.5 pl-0.5 text-sm font-bold">
+                    {sec.college}
+                    <span className="text-xs font-semibold text-mute">{sec.items.length}</span>
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">{sec.items.map((e, i) => card(e, i))}</div>
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">{rows.map((e, i) => card(e, i))}</div>
+          )}
           {rows.length === 0 && <p className="rounded-2xl border border-line bg-white px-4 py-5 text-sm text-mute">찾는 학과가 없어요.</p>}
           {failed && <p role="alert" className="rounded-2xl bg-accent-soft px-4 py-3 text-sm text-accent-deep">문제를 불러오지 못했어요. 잠시 뒤에 다시 눌러 주세요.</p>}
           <p className="px-1 text-xs leading-normal text-mute">
@@ -276,28 +348,9 @@ export default function QuizApp({
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {majors.map((m, i) => {
-              const b = best[m.major];
-              return (
-                <button
-                  key={m.major}
-                  type="button"
-                  onClick={() => startSample(m)}
-                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97]"
-                  style={{ animationDelay: `${i * 70}ms` }}
-                >
-                  <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
-                    <Avatar dept={m.major} variant="full" size={120} />
-                  </span>
-                  <span className="flex flex-col gap-0.5">
-                    <span className="text-xs text-mute">{m.college}</span>
-                    <span className="text-[15px] font-bold">{m.major}</span>
-                  </span>
-                  <Stars got={b?.score ?? 0} of={m.questions.length} className="text-lg leading-none" />
-                  <span className="text-xs font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
-                </button>
-              );
-            })}
+            {majors.map((m, i) => (
+              <DeptCard key={m.major} college={m.college} dept={m.major} best={best[m.major]} of={m.questions.length} delay={i * 70} onClick={() => startSample(m)} />
+            ))}
           </div>
           <p className="flex items-start gap-2 text-xs leading-normal text-mute">
             <SampleTag />
@@ -343,22 +396,25 @@ export default function QuizApp({
             {cur.options.map((text, i) => {
               const chosen = sel === i;
               const isRight = i === cur.answer;
-              let box = "border-edge bg-card text-ink";
-              let dot = "bg-sand text-ink-2";
+              let box = "border-edge bg-white text-ink";
+              let dot = "bg-sand-2 text-ink";
               let mark = "";
+              let markTone = "text-ink";
               if (chosen && !revealed) {
-                box = "border-accent bg-card text-ink";
+                box = "border-accent bg-white text-ink";
                 dot = "bg-accent text-white";
               }
               if (revealed && isRight) {
-                box = "border-ok bg-ok-soft text-ok";
+                box = "border-ok bg-ok-soft text-ink";
                 dot = "bg-ok text-white";
                 mark = "정답";
+                markTone = "text-ok";
               }
               if (revealed && chosen && !isRight) {
-                box = "border-accent bg-accent-soft text-accent";
+                box = "border-accent bg-accent-soft text-ink";
                 dot = "bg-accent text-white";
                 mark = "내 선택";
+                markTone = "text-accent";
               }
               return (
                 <button
@@ -370,17 +426,17 @@ export default function QuizApp({
                   onClick={() => setSel(i)}
                   className={`box-border flex min-h-14 items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 text-left transition-transform active:scale-[.985] disabled:cursor-default ${chosen && !revealed ? "scale-[1.01]" : ""} ${box}`}
                 >
-                  <span className={`flex h-7 w-7 flex-none items-center justify-center rounded-full text-[13px] font-bold ${dot}`}>
+                  <span className={`flex h-7 w-7 flex-none items-center justify-center rounded-full text-base font-bold leading-none ${dot}`}>
                     {LETTERS[i]}
                   </span>
                   <span className="flex-1 text-pretty text-[15px] leading-[1.45]">{text}</span>
-                  <span className="whitespace-nowrap text-xs font-bold">{mark}</span>
+                  <span className={`whitespace-nowrap text-xs font-bold ${markTone}`}>{mark}</span>
                 </button>
               );
             })}
           </div>
           {revealed && (
-            <div className="quiz-pop flex flex-col gap-1.5 rounded-2xl border border-edge bg-card px-[18px] py-4">
+            <div className="quiz-pop flex flex-col gap-1.5 rounded-2xl border border-edge bg-white px-[18px] py-4">
               <span className={`text-[15px] font-bold ${right ? "text-ok" : "text-accent"}`}>{right ? "정답이에요" : "아쉬워요"}</span>
               <span className="text-pretty text-sm leading-[1.6] text-ink-3">{cur.explanation}</span>
               {cur.flow && <span className="mt-1 text-pretty text-sm leading-[1.6] text-ink-3">{cur.flow}</span>}
@@ -391,8 +447,16 @@ export default function QuizApp({
               )}
             </div>
           )}
-          <button type="button" onClick={action} disabled={sel === null} className={`${primaryButton} mt-1`}>
-            {!revealed ? "정답 확인" : last ? "결과 보기" : "다음 문제"}
+          <button
+            ref={nextRef}
+            type="button"
+            onClick={action}
+            disabled={sel === null}
+            className={`mt-1 box-border flex h-[54px] w-full scroll-mb-24 items-center justify-center rounded-2xl border-2 text-base font-bold transition-colors ${
+              sel === null ? "border-edge bg-white text-mute" : "border-accent bg-accent text-white active:opacity-90"
+            }`}
+          >
+            {sel === null ? "보기를 골라 주세요" : !revealed ? "정답 확인" : last ? "결과 보기" : "다음 문제"}
           </button>
         </div>
       )}
