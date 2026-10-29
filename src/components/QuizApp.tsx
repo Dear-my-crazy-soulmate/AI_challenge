@@ -1,18 +1,19 @@
 "use client";
 
 // 전공 체험 문제: pick a major -> 3 questions (answer is checked right away) -> report.
-// 쿠옹이 dressed for the major cheers along, and the best result per major is kept as stars on this device.
+// 쿠옹이 dressed for the major cheers along, and the best result per major is kept as stars on the account.
 // Which questions show and how they are graded lives in src/lib/quiz.ts.
 import Link from "next/link";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import Avatar from "@/components/Avatar";
 import { primaryButton, secondaryButton } from "@/components/Field";
+import { useQuizBest } from "@/components/useQuizBest";
 import { useAuth } from "@/lib/auth";
 import { feedbackFor, isCorrect, isShowable, pickQuestions, QUESTIONS_PER_ROUND, quizBase, reportTitle, scoreOf } from "@/lib/quiz";
 import type { QuizIndexEntry, QuizMajor, QuizQuestion } from "@/lib/quiz";
-import { parseBest, reaction, readBestRaw, recordBest, saveBest, subscribeBest } from "@/lib/quizProgress";
+import { reaction, recordBest } from "@/lib/quizProgress";
 
 type Stage = "pick" | "q" | "report";
 const LETTERS = "①②③④"; // the same marks the explanations use ("정답 ②")
@@ -63,8 +64,7 @@ export default function QuizApp({
   const [revealed, setRevealed] = useState(false);
   const [picks, setPicks] = useState<number[]>([]);
   const [recent, setRecent] = useState<{ major: string; score: number; n: number; isNew: boolean } | null>(null);
-  const bestRaw = useSyncExternalStore(subscribeBest, readBestRaw, () => null);
-  const best = useMemo(() => parseBest(bestRaw), [bestRaw]);
+  const { best, record } = useQuizBest();
 
   const top = () => window.scrollTo({ top: 0 });
   const start = (m: QuizMajor) => {
@@ -145,7 +145,7 @@ export default function QuizApp({
     } else {
       const score = scoreOf(qs, next);
       const updated = recordBest(best, major.major, score, qs.length);
-      if (updated !== best) saveBest(updated);
+      if (updated !== best) record(major.major, score, qs.length);
       setRecent({ major: major.major, score, n: qs.length, isNew: updated !== best && score > 0 });
       setStage("report");
       setRevealed(false);
