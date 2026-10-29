@@ -198,17 +198,17 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
             ["확대", "+", () => move((v) => zoomAt(v, 1.4, 0, 0))],
             ["축소", "−", () => move((v) => zoomAt(v, 1 / 1.4, 0, 0))],
           ].map(([label, text, run]) => (
-            <button key={label as string} type="button" aria-label={label as string} onClick={run as () => void} className="h-10 w-10 rounded-full bg-white/15 text-xl font-bold leading-none text-white active:bg-white/30">
+            <button key={label as string} type="button" aria-label={label as string} onClick={run as () => void} className="hit h-10 w-10 rounded-full bg-white/15 text-xl font-bold leading-none text-white active:bg-white/30">
               {text as string}
             </button>
           ))}
-          <button type="button" onClick={fit} className="h-10 rounded-full bg-white/15 px-3 text-xs font-bold text-white active:bg-white/30">
+          <button type="button" onClick={fit} className="hit h-10 rounded-full bg-white/15 px-3 text-xs font-bold text-white active:bg-white/30">
             전체
           </button>
         </div>
       </div>
 
-      <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 text-[11px] text-mute" aria-label="단과대학 색">
+      <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-1 text-xs text-mute" aria-label="단과대학 색">
         {colleges.map((c) => (
           <li key={c} className="flex items-center gap-1.5">
             <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: color(c) }} />
@@ -223,7 +223,7 @@ export default function DeptMap({ nodes, edges, asOf }: { nodes: MapNode[]; edge
       </ul>
 
       {node ? (
-        <section className="quiz-pop flex flex-col gap-3 rounded-[20px] border border-edge bg-card p-[18px]">
+        <section className="quiz-pop flex flex-col gap-3 rounded-3xl border border-edge bg-card p-[18px]">
           <div className="flex items-center gap-3">
             <Avatar dept={node.dept} size={44} />
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">

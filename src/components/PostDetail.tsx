@@ -95,13 +95,13 @@ export default function PostDetail({ id }: { id: string | null }) {
 
       <article className="flex flex-col gap-3">
         <span className="flex flex-wrap items-center gap-1.5">
-          <Link href={deptHref} className="rounded-md bg-ink px-1.5 py-px text-[11px] font-bold text-paper">
+          <Link href={deptHref} className="rounded-md bg-ink px-1.5 py-px text-xs font-bold text-paper">
             {post.dept}
           </Link>
-          <span className={`rounded-md px-1.5 py-px text-[11px] font-bold ${post.type === "question" ? "bg-sand text-ink-2" : "bg-accent-soft text-accent-deep"}`}>
+          <span className={`rounded-md px-1.5 py-px text-xs font-bold ${post.type === "question" ? "bg-sand text-ink-2" : "bg-accent-soft text-accent-deep"}`}>
             {post.type === "question" ? TYPE_LABEL.question : def?.label}
           </span>
-          {post.type === "question" && def && <span className="rounded-md bg-sand px-1.5 py-px text-[11px] font-semibold text-ink-2">{def.label}</span>}
+          {post.type === "question" && def && <span className="rounded-md bg-sand px-1.5 py-px text-xs font-semibold text-ink-2">{def.label}</span>}
           {post.is_sample && <SampleTag />}
         </span>
         <h2 className="text-pretty text-[22px] font-bold leading-[1.35] tracking-[-0.5px]">{post.title}</h2>
@@ -111,7 +111,7 @@ export default function PostDetail({ id }: { id: string | null }) {
         </div>
 
         {rows.length > 0 && (
-          <section aria-label="학과 정보" className="flex flex-col gap-3 rounded-[20px] border border-edge bg-card p-[18px]">
+          <section aria-label="학과 정보" className="flex flex-col gap-3 rounded-3xl border border-edge bg-card p-[18px]">
             {rows.map((r) => (
               <Row key={r.f.key} k={r.f.label}>
                 {r.text}

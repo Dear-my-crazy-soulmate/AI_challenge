@@ -37,12 +37,10 @@ export default function Home() {
 
       <GoalCard />
 
-      <Timetable />
-
       <div className="grid grid-cols-2 gap-3">
         <Link
           href="/onboarding"
-          className="box-border flex h-[228px] flex-col justify-between rounded-3xl bg-ink px-[18px] pb-[18px] pt-5 text-paper transition-transform active:scale-[.98]"
+          className="box-border flex min-h-[228px] flex-col justify-between rounded-3xl bg-ink px-[18px] pb-[18px] pt-5 text-paper transition-transform active:scale-[.98]"
         >
           <span className="flex items-start justify-between">
             <span className="text-xs font-semibold opacity-60">01</span>
@@ -57,16 +55,16 @@ export default function Home() {
               <br />
               계산기
             </span>
-            <span className="text-[13px] leading-[1.45] opacity-70">본전공과 희망 전공을 고르면 필요한 학점을 계산해요</span>
+            <span className="text-sm leading-[1.45] opacity-70">본전공과 희망 전공을 고르면 필요한 학점을 계산해요</span>
           </span>
         </Link>
 
         <Link
           href="/experience"
-          className="box-border flex h-[228px] flex-col justify-between rounded-3xl bg-accent px-[18px] pb-[18px] pt-5 text-white transition-transform active:scale-[.98]"
+          className="box-border flex min-h-[228px] flex-col justify-between rounded-3xl bg-accent px-[18px] pb-[18px] pt-5 text-white transition-transform active:scale-[.98]"
         >
           <span className="flex items-start justify-between">
-            <span className="text-xs font-semibold opacity-70">02</span>
+            <span className="text-xs font-bold">02</span>
             <span aria-hidden className="grid grid-cols-[13px_13px] gap-1">
               <span className="h-[13px] w-[13px] rounded-[3px] bg-white" />
               <span className="box-border h-[13px] w-[13px] rounded-[3px] border-2 border-white" />
@@ -80,11 +78,12 @@ export default function Home() {
               <br />
               문제
             </span>
-            <span className="text-[13px] leading-[1.45] opacity-90">입문 문제를 풀며 나와 맞는지 가늠해 봐요</span>
-            <span className="self-start rounded-md bg-white/25 px-2 py-0.5 text-[11px] font-semibold">예시 데이터</span>
+            <span className="text-sm leading-[1.45] opacity-90">학과 수업 내용으로 만든 문제를 풀며 나와 맞는지 가늠해 봐요</span>
           </span>
         </Link>
       </div>
+
+      <Timetable />
 
       <RecentCalc />
 
@@ -96,15 +95,20 @@ export default function Home() {
               {String(i + 1).padStart(2, "0")}
             </span>
             <span className="flex-1 text-pretty text-sm leading-normal">{n.text}</span>
-            <span className="flex-none pt-[3px] text-[11px] text-mute">p.{n.page}</span>
+            <span className="flex-none pt-[3px] text-xs text-mute">p.{n.page}</span>
           </div>
         ))}
       </section>
 
-      <p className="text-xs leading-normal text-mute">
-        출처: 2026 경희대 교육과정. 졸업요건은 학과 공식 안내로 최종 확인하세요. 휴대폰 브라우저 메뉴의 &ldquo;홈 화면에
-        추가&rdquo;로 앱처럼 설치할 수 있어요.
-      </p>
+      <details className="group -mt-2 text-xs leading-normal text-mute">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2">
+          <span>출처: 2026 경희대 교육과정</span>
+          <span aria-hidden className="transition-transform group-open:rotate-180">
+            ▾
+          </span>
+        </summary>
+        <p className="pb-2">졸업요건은 학과 공식 안내로 최종 확인하세요. 브라우저 메뉴의 &ldquo;홈 화면에 추가&rdquo;로 앱처럼 쓸 수 있어요.</p>
+      </details>
     </main>
   );
 }

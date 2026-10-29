@@ -1,7 +1,7 @@
 import { RELATION_LABEL } from "@/lib/community/types";
 import type { Badge, CommentBadge } from "@/lib/community/types";
 
-export const SampleTag = () => <span className="rounded-md bg-sand-2 px-1.5 py-px text-[11px] font-semibold text-ink-2">예시 데이터</span>;
+export const SampleTag = () => <span className="rounded-md bg-sand-2 px-1.5 py-px text-xs font-semibold text-ink-2">예시 데이터</span>;
 
 /**
  * Who wrote it, without a name: their own 본전공 and 학년, and how they relate to the department the

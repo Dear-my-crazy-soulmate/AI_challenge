@@ -23,7 +23,7 @@ export default function GoalCard() {
         </p>
         <Link
           href="/onboarding"
-          className="box-border flex h-[46px] items-center justify-center rounded-[14px] bg-accent text-[15px] font-bold text-white active:opacity-90"
+          className="box-border flex h-[46px] items-center justify-center rounded-xl bg-accent text-[15px] font-bold text-white active:opacity-90"
         >
           계산기로 목표 정하기
         </Link>

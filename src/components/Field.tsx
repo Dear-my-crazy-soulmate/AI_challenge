@@ -16,7 +16,7 @@ export function Field({ label, ...props }: { label: string } & InputHTMLAttribut
       {label}
       <input
         {...props}
-        className="h-12 rounded-[14px] border border-edge bg-card px-3.5 text-base font-normal outline-none focus:border-accent"
+        className="h-12 rounded-xl border border-edge bg-card px-3.5 text-base font-normal outline-none focus:border-accent"
       />
     </label>
   );
@@ -30,7 +30,7 @@ export function Area({ label, hint, ...props }: { label: string; hint?: string }
       {hint && <span className="-mt-1 text-xs font-normal text-mute">{hint}</span>}
       <textarea
         {...props}
-        className="min-h-24 resize-y rounded-[14px] border border-edge bg-card px-3.5 py-3 text-base font-normal leading-normal outline-none focus:border-accent"
+        className="min-h-24 resize-y rounded-xl border border-edge bg-card px-3.5 py-3 text-base font-normal leading-normal outline-none focus:border-accent"
       />
     </label>
   );
@@ -61,7 +61,7 @@ export function SampleLoginNote() {
 export function ErrorNote({ message }: { message: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-[14px] border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-ink">
+    <p role="alert" className="rounded-xl border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-ink">
       {message}
     </p>
   );

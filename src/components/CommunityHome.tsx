@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { SearchIcon } from "@/components/Icons";
 import Avatar from "@/components/Avatar";
 import BrandMark from "@/components/BrandMark";
 import PostRow from "@/components/PostRow";
@@ -14,7 +15,7 @@ import { newestFirst, statsByDept } from "@/lib/community/query";
 import type { DeptOption } from "@/lib/depts";
 
 const chip = (on: boolean) =>
-  `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
 const deptHref = (dept: string) => `/community/dept?name=${encodeURIComponent(dept)}`;
 
 export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
@@ -47,13 +48,13 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
   };
 
   return (
-    <main className="flex flex-col gap-3.5 px-[18px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
+    <main className="flex flex-col gap-3.5 px-[22px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between px-1">
         <h1 className="flex items-center gap-2 text-[22px] font-bold tracking-[-0.5px]">
           <BrandMark />
           커뮤니티
         </h1>
-        <Link href="/community/write" className="flex h-9 items-center rounded-[18px] bg-accent px-3.5 text-[13px] font-bold text-white active:opacity-90">
+        <Link href="/community/write" className="hit flex h-9 items-center rounded-full bg-accent px-3.5 text-[13px] font-bold text-white active:opacity-90">
           글쓰기
         </Link>
       </header>
@@ -62,7 +63,7 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
       </p>
 
       {mine && (
-        <Link href={deptHref(mine.dept)} className="flex items-center justify-between gap-3 rounded-[20px] bg-ink px-[18px] py-4 text-paper active:opacity-90">
+        <Link href={deptHref(mine.dept)} className="flex items-center justify-between gap-3 rounded-3xl bg-ink px-[18px] py-4 text-paper active:opacity-90">
           <span className="flex min-w-0 flex-col gap-1">
             <span className="text-xs opacity-65">내 학과</span>
             <span className="text-pretty text-lg font-bold">{mine.dept}</span>
@@ -74,7 +75,7 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
         </Link>
       )}
       {profile && profile.interests.length > 0 && (
-        <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" aria-label="관심 학과">
+        <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]" aria-label="관심 학과">
           {profile.interests.map((d) => (
             <Link key={d} href={deptHref(d)} className={chip(false)}>
               {d}
@@ -85,8 +86,8 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
 
       <section aria-label="학과 찾기" className="flex flex-col gap-2.5">
         <h2 className="px-1 text-sm font-bold">학과별 이야기</h2>
-        <label className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5">
-          <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+        <label className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
+          <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
           <input
             type="search"
             value={text}
@@ -96,7 +97,7 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
             className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
           />
         </label>
-        <div className="no-scrollbar -mx-[18px] flex gap-1.5 overflow-x-auto px-[18px]" role="group" aria-label="단과대학">
+        <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]" role="group" aria-label="단과대학">
           {[null, ...colleges].map((c) => (
             <button key={c ?? "all"} type="button" aria-pressed={college === c} onClick={() => setCollege(c)} className={chip(college === c)}>
               {c ?? "전체"}
@@ -118,7 +119,7 @@ export default function CommunityHome({ depts }: { depts: DeptOption[] }) {
                   {has ? (
                     <span className="whitespace-nowrap rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent-deep">{countText(d.dept)}</span>
                   ) : (
-                    <span className="whitespace-nowrap text-xs text-faint">첫 글 기다리는 중</span>
+                    <span className="whitespace-nowrap text-xs text-mute">첫 글 기다리는 중</span>
                   )}
                 </Link>
               </li>

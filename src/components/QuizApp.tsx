@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
+import { SearchIcon } from "@/components/Icons";
+import { CardGridSkeleton } from "@/components/Skeleton";
 import Avatar from "@/components/Avatar";
 import { primaryButton, secondaryButton } from "@/components/Field";
 import { useQuizBest } from "@/components/useQuizBest";
@@ -21,7 +23,7 @@ const LETTERS = "①②③④"; // the same marks the explanations use ("정답 
 const PREVIEW = process.env.NEXT_PUBLIC_QUIZ_PREVIEW === "1";
 const BASE = quizBase(PREVIEW);
 const chip = (on: boolean) =>
-  `flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
+  `hit flex-none whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-semibold ${on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink-2"}`;
 const CONFETTI = ["bg-accent", "bg-ink", "bg-ok", "bg-accent-soft", "bg-chip"];
 
 const backBtn = "-ml-3 flex h-11 w-11 items-center justify-center text-[28px] leading-none";
@@ -31,8 +33,8 @@ const SampleTag = ({ className = "" }: { className?: string }) => (
 const Stars = ({ got, of, className = "" }: { got: number; of: number; className?: string }) => (
   <span aria-label={`${of}개 중 ${got}개`} className={`tracking-[2px] ${className}`}>
     {Array.from({ length: of }, (_, i) => (
-      <span key={i} aria-hidden className={i < got ? "text-accent" : "text-edge"}>
-        ★
+      <span key={i} aria-hidden className={i < got ? "text-accent" : "text-off"}>
+        {i < got ? "★" : "☆"}
       </span>
     ))}
   </span>
@@ -166,9 +168,7 @@ export default function QuizApp({
     <main className="flex flex-col gap-5 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
       <div className="flex h-11 items-center justify-between">
         {stage === "pick" ? (
-          <Link href="/" aria-label="홈으로" className={backBtn}>
-            ‹
-          </Link>
+          <span aria-hidden className="w-11" /> // a tab's first screen has nowhere to go back to
         ) : (
           <button type="button" aria-label="전공 고르기로" onClick={toPick} className={backBtn}>
             ‹
@@ -187,7 +187,7 @@ export default function QuizApp({
               role="tab"
               aria-selected={view === v}
               onClick={() => setView(v)}
-              className={`h-10 rounded-xl text-sm font-bold ${view === v ? "bg-white text-accent-deep shadow-[0_1px_3px_rgba(28,27,24,.12)]" : "text-mute"}`}
+              className={`hit h-10 rounded-xl text-sm font-bold ${view === v ? "bg-white text-accent-deep shadow-[0_1px_3px_rgba(28,27,24,.12)]" : "text-mute"}`}
             >
               {v === "quiz" ? "문제 풀기" : "학과 지도"}
             </button>
@@ -197,7 +197,7 @@ export default function QuizApp({
 
       {stage === "pick" && view === "map" && map}
 
-      {stage === "pick" && view === "quiz" && entries === null && <p className="px-1 py-6 text-center text-sm text-mute">학과를 불러오는 중이에요…</p>}
+      {stage === "pick" && view === "quiz" && entries === null && <CardGridSkeleton />}
 
       {stage === "pick" && view === "quiz" && entries !== null && entries.length > 0 && (
         <div className="flex flex-col gap-3.5">
@@ -212,7 +212,7 @@ export default function QuizApp({
             </p>
           </div>
           <label className="flex h-10 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5">
-            <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+            <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
             <input
               type="search"
               value={text}
@@ -222,7 +222,7 @@ export default function QuizApp({
               className="h-full min-w-0 flex-1 bg-transparent text-base outline-none"
             />
           </label>
-          <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px]" role="group" aria-label="단과대학">
+          <div className="no-scrollbar -mx-[22px] flex gap-1.5 overflow-x-auto px-[22px] -my-[3px] py-[3px]" role="group" aria-label="단과대학">
             {[null, ...colleges].map((c) => (
               <button key={c ?? "all"} type="button" aria-pressed={college === c} onClick={() => setCollege(c)} className={chip(college === c)}>
                 {c ?? "전체"}
@@ -238,18 +238,18 @@ export default function QuizApp({
                   type="button"
                   disabled={busy}
                   onClick={() => startDept(e)}
-                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-[22px] border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
+                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97] disabled:opacity-60"
                   style={{ animationDelay: `${Math.min(i, 8) * 70}ms` }}
                 >
                   <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
                     <Avatar dept={e.dept} variant="full" size={120} />
                   </span>
                   <span className="flex flex-col gap-0.5">
-                    <span className="text-[11px] text-mute">{e.college}</span>
+                    <span className="text-xs text-mute">{e.college}</span>
                     <span className="text-[15px] font-bold">{e.dept}</span>
                   </span>
                   <Stars got={b?.score ?? 0} of={QUESTIONS_PER_ROUND} className="text-lg leading-none" />
-                  <span className="text-[11px] font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
+                  <span className="text-xs font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
                 </button>
               );
             })}
@@ -283,18 +283,18 @@ export default function QuizApp({
                   key={m.major}
                   type="button"
                   onClick={() => startSample(m)}
-                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-[22px] border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97]"
+                  className="quiz-pop box-border flex flex-col items-center gap-2 rounded-3xl border border-edge bg-card px-3 pb-3.5 pt-4 text-center active:scale-[.97]"
                   style={{ animationDelay: `${i * 70}ms` }}
                 >
                   <span className="flex h-[128px] items-end justify-center rounded-2xl bg-white px-6">
                     <Avatar dept={m.major} variant="full" size={120} />
                   </span>
                   <span className="flex flex-col gap-0.5">
-                    <span className="text-[11px] text-mute">{m.college}</span>
+                    <span className="text-xs text-mute">{m.college}</span>
                     <span className="text-[15px] font-bold">{m.major}</span>
                   </span>
                   <Stars got={b?.score ?? 0} of={m.questions.length} className="text-lg leading-none" />
-                  <span className="text-[11px] font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
+                  <span className="text-xs font-semibold text-accent-deep">{b ? `최고 ${b.score}/${b.n}` : "아직 도전 전"}</span>
                 </button>
               );
             })}
@@ -323,7 +323,7 @@ export default function QuizApp({
             <div role="status" className="relative mb-3 flex-1 rounded-2xl border border-edge bg-white px-3.5 py-2.5 text-[13px] font-semibold leading-snug">
               <span aria-hidden className="absolute -left-[7px] bottom-4 h-3 w-3 rotate-45 border-b border-l border-edge bg-white" />
               {said}
-              {run >= 2 && revealed && right && <span className="ml-2 rounded-lg bg-accent px-2 py-0.5 text-[11px] font-bold text-white">연속 {run}</span>}
+              {run >= 2 && revealed && right && <span className="ml-2 rounded-lg bg-accent px-2 py-0.5 text-xs font-bold text-white">연속 {run}</span>}
             </div>
           </div>
           <div className="flex flex-col gap-3">
@@ -334,7 +334,7 @@ export default function QuizApp({
             </div>
             <h2 className="text-pretty text-[21px] font-bold leading-[1.45] tracking-[-0.4px]">{cur.question}</h2>
             {cur.code && (
-              <pre className="whitespace-pre-wrap rounded-[14px] bg-ink px-4 py-3.5 font-mono text-sm font-medium leading-[1.6] text-[#edeae2]">
+              <pre className="whitespace-pre-wrap rounded-xl bg-ink px-4 py-3.5 font-mono text-sm font-medium leading-[1.6] text-[#edeae2]">
                 {cur.code}
               </pre>
             )}
@@ -380,12 +380,12 @@ export default function QuizApp({
             })}
           </div>
           {revealed && (
-            <div className="quiz-pop flex flex-col gap-1.5 rounded-[18px] border border-edge bg-card px-[18px] py-4">
+            <div className="quiz-pop flex flex-col gap-1.5 rounded-2xl border border-edge bg-card px-[18px] py-4">
               <span className={`text-[15px] font-bold ${right ? "text-ok" : "text-accent"}`}>{right ? "정답이에요" : "아쉬워요"}</span>
               <span className="text-pretty text-sm leading-[1.6] text-ink-3">{cur.explanation}</span>
               {cur.flow && <span className="mt-1 text-pretty text-sm leading-[1.6] text-ink-3">{cur.flow}</span>}
               {cur.evidence && cur.source && (
-                <span className="mt-1 text-pretty text-[11px] leading-normal text-mute">
+                <span className="mt-1 text-pretty text-xs leading-normal text-mute">
                   근거: {cur.evidence.week}주차 &ldquo;{cur.evidence.topic}&rdquo; · 출처: {cur.source.path} ({cur.source.as_of})
                 </span>
               )}
@@ -434,26 +434,26 @@ export default function QuizApp({
             </div>
             <span className="relative text-pretty text-[15px] font-semibold leading-normal">
               {reportTitle(recent.score, recent.n)}
-              {recent.isNew && <span className="ml-2 rounded-lg bg-white px-2 py-0.5 text-[11px] font-bold text-accent">새 기록</span>}
+              {recent.isNew && <span className="ml-2 rounded-lg bg-white px-2 py-0.5 text-xs font-bold text-accent">새 기록</span>}
             </span>
           </section>
 
-          <section className="flex flex-col gap-2.5 rounded-[20px] border border-edge bg-card p-[18px]">
+          <section className="flex flex-col gap-2.5 rounded-3xl border border-edge bg-card p-[18px]">
             <div className="flex items-center gap-2">
               <h3 className="text-[15px] font-bold">체험 피드백</h3>
-              {qs.some((q) => q.is_sample) && <SampleTag className="text-[11px]" />}
+              {qs.some((q) => q.is_sample) && <SampleTag className="text-xs" />}
             </div>
             <p className="text-pretty text-sm leading-[1.65] text-ink-3">{feedbackFor(major.major, qs, picks)}</p>
             <p className="text-xs leading-normal text-mute">점수는 참고 지표예요. 전공 적합성을 판정하지 않아요.</p>
           </section>
 
-          <section className="rounded-[20px] border border-edge bg-card px-[18px] py-1.5">
+          <section className="rounded-3xl border border-edge bg-card px-[18px] py-1.5">
             {qs.map((q, i) => {
               const ok = isCorrect(q, picks[i]);
               return (
                 <div key={q.id} className="flex flex-col gap-1.5 border-t border-line-2 py-3.5 first:border-t-0">
                   <div className="flex items-center gap-2">
-                    <span className={`rounded-lg px-2 py-[3px] text-[11px] font-bold ${ok ? "bg-ok-soft text-ok" : "bg-accent-soft text-accent"}`}>
+                    <span className={`rounded-lg px-2 py-[3px] text-xs font-bold ${ok ? "bg-ok-soft text-ok" : "bg-accent-soft text-accent"}`}>
                       {ok ? "정답" : "오답"}
                     </span>
                     <span className="text-xs text-mute">{q.skill}</span>

@@ -31,7 +31,7 @@ export default function Avatar({
       <span
         aria-hidden
         style={{ width: size, height: size, fontSize: size * 0.4 }}
-        className={`flex flex-none items-center justify-center rounded-full border-2 font-bold ${onDark ? "border-paper/40 text-paper/60" : "border-chip text-faint"}`}
+        className={`flex flex-none items-center justify-center rounded-full border-2 font-bold ${onDark ? "border-paper/40 text-paper/60" : "border-chip text-mute"}`}
       >
         ?
       </span>

@@ -126,7 +126,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
   const goalHref = goal ? `/onboarding?${new URLSearchParams({ primary: goal.primary, mode: goal.mode, second: goal.second })}` : "/onboarding";
   return (
     <>
-      <section className="flex items-center gap-4 rounded-[22px] border border-edge bg-card p-[18px]">
+      <section className="flex items-center gap-4 rounded-3xl border border-edge bg-card p-[18px]">
         <Avatar dept={profile.primary} goal={goal} size={136} variant="full" />
         <div className="flex min-w-0 flex-col gap-[3px]">
           <span className="text-pretty text-lg font-bold">{profile.name || "내 정보"}</span>
@@ -152,7 +152,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
         ))}
       </div>
 
-      <section className="overflow-hidden rounded-[22px] border border-edge bg-card">
+      <section className="overflow-hidden rounded-3xl border border-edge bg-card">
         <Row label="프로필 수정" right={profile.primary} onClick={() => setEditing(true)} />
         <Row label="내 이수 과목" right={`${taken.codes.size}과목`} href="/profile/courses" />
         <Row
@@ -164,7 +164,7 @@ function Me({ profile, depts }: { profile: Profile; depts: DeptOption[] }) {
       </section>
 
       <h2 className="px-1 pt-2 text-sm font-bold">계정</h2>
-      <section className="overflow-hidden rounded-[22px] border border-edge bg-card">
+      <section className="overflow-hidden rounded-3xl border border-edge bg-card">
         {demo ? (
           <Row label="이메일" right={email ?? ""} />
         ) : (
@@ -205,7 +205,7 @@ const EMPTY_PROFILE: Profile = { primary: "", interests: [], avatar: null, grade
 export default function ProfileView({ depts }: { depts: DeptOption[] }) {
   const { ready, signedIn, profile } = useAuth();
   return (
-    <main className="flex flex-col gap-3.5 px-[18px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
+    <main className="flex flex-col gap-3.5 px-[22px] pb-8 pt-[max(14px,env(safe-area-inset-top))]">
       <h1 className="flex items-center gap-2 px-1 text-[22px] font-bold tracking-[-0.5px]">
         <BrandMark />
         MY

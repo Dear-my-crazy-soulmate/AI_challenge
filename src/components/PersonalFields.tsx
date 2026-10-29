@@ -25,7 +25,7 @@ export default function PersonalFields({ value, onChange }: { value: Personal; o
         />
         <div className="flex flex-col gap-2 text-sm font-semibold">
           학년
-          <div role="radiogroup" aria-label="학년" className="grid h-12 grid-cols-4 gap-1 rounded-[14px] bg-sand-2 p-1">
+          <div role="radiogroup" aria-label="학년" className="grid h-12 grid-cols-4 gap-1 rounded-xl bg-sand-2 p-1">
             {GRADES.map((g) => {
               const on = value.grade === g;
               return (

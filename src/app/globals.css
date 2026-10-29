@@ -10,7 +10,8 @@
   --color-ink-2: #4a4a4a;
   --color-ink-3: #333333;
   --color-mute: #6b6b6b;
-  --color-faint: #9b9b9b;
+  --color-faint: #9b9b9b; /* decoration only (rings, chevrons): too light for text, which uses --color-mute */
+  --color-off: #8c8c8c; /* an empty star or a switched-off mark: at least 3:1 on white and on --color-card */
   --color-line: #e6e6e6;
   --color-line-2: #e2e2e2; /* dividers inside cards, so it must show on --color-card */
   --color-edge: #d6d6d6; /* outline of cards, inputs and chips on the white page */
@@ -40,6 +41,22 @@ body {
 
 input::placeholder {
   color: var(--color-faint);
+}
+
+/* Keeps the look of a small control but lets a finger hit a 44px box around it (put it on a button or link that is not already positioned). */
+@layer components {
+  .hit {
+    position: relative;
+  }
+  .hit::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
 }
 
 .no-scrollbar {

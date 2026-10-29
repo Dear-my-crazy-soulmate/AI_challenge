@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 
+import { PageSkeleton } from "@/components/Skeleton";
 import TabBar from "@/components/TabBar";
 import { useAuth } from "@/lib/auth";
 
@@ -37,10 +38,11 @@ export default function AuthGate({ children }: { children: ReactNode }) {
       </>
     );
   }
-  if (!ready || !signedIn) {
+  if (!ready) return <PageSkeleton />;
+  if (!signedIn) {
     return (
       <p role="status" className="px-[22px] pt-10 text-sm text-mute">
-        {ready ? "로그인 화면으로 이동하는 중…" : "불러오는 중…"}
+        로그인 화면으로 이동하는 중…
       </p>
     );
   }

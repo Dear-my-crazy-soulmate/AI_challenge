@@ -178,7 +178,7 @@ export default function SignupForm({ depts }: { depts: DeptOption[] }) {
             onChange={setInterests}
           />
           {primary[0] && (
-            <section className="flex items-center gap-4 rounded-[20px] border border-edge bg-card p-4" aria-label="내 캐릭터 미리보기">
+            <section className="flex items-center gap-4 rounded-3xl border border-edge bg-card p-4" aria-label="내 캐릭터 미리보기">
               <Avatar dept={primary[0]} size={120} variant="full" />
               <div className="flex flex-col gap-1">
                 <span className="text-[15px] font-bold">내 캐릭터</span>

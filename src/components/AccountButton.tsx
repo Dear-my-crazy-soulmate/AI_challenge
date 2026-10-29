@@ -13,7 +13,7 @@ export default function AccountButton() {
   if (!ready) return <span className="h-8 w-8" aria-hidden />;
   if (signedIn) {
     return (
-      <Link href="/profile" aria-label="내 정보" className="flex">
+      <Link href="/profile" aria-label="내 정보" className="hit flex">
         <Avatar dept={profile?.primary ?? null} goal={goal} size={32} />
       </Link>
     );

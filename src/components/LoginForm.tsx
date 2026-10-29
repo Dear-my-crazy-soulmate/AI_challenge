@@ -79,7 +79,7 @@ export default function LoginForm() {
           />
           <ErrorNote message={error} />
           {demo && (
-            <div className="flex flex-col gap-2 rounded-[16px] border border-edge bg-card p-4 text-sm">
+            <div className="flex flex-col gap-2 rounded-2xl border border-edge bg-card p-4 text-sm">
               <p className="font-bold">심사·체험용 계정</p>
               <p className="text-mute">가입하지 않고 이 계정으로 둘러볼 수 있어요. 여러 사람이 함께 쓰는 계정이에요.</p>
               <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">

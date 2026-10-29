@@ -6,6 +6,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import { SearchIcon } from "@/components/Icons";
 import { primaryButton, secondaryButton } from "@/components/Field";
 import ScreenHeader from "@/components/ScreenHeader";
 import { useGoal } from "@/components/useGoal";
@@ -122,7 +123,7 @@ export default function MyCourses() {
     <main className="flex flex-col gap-4 px-[22px] pb-8 pt-[max(6px,env(safe-area-inset-top))]">
       <ScreenHeader title="내 이수 과목" backHref="/profile" />
 
-      <section className="flex flex-col gap-3 rounded-[20px] bg-ink px-[18px] py-4 text-paper">
+      <section className="flex flex-col gap-3 rounded-3xl bg-ink px-[18px] py-4 text-paper">
         <span className="text-xs opacity-65">이미 들은 전공 과목</span>
         <span className="text-[26px] font-bold tabular-nums">
           {codes.length}과목 · {credits}학점
@@ -130,7 +131,7 @@ export default function MyCourses() {
         <span className="text-[13px] leading-normal opacity-75">
           여기 저장한 과목은 다전공·부전공·마이크로디그리를 계산할 때 자동으로 빠지고, 남은 학점과 과목 수가 다시 계산돼요.
         </span>
-        <Link href={calcHref} className="self-start rounded-xl bg-accent px-3.5 py-2 text-sm font-semibold text-white">
+        <Link href={calcHref} className="hit self-start rounded-xl bg-accent px-3.5 py-2 text-sm font-semibold text-white">
           {goal ? "내 목표로 남은 학점 보기 ›" : "계산기에서 남은 학점 보기 ›"}
         </Link>
       </section>
@@ -139,7 +140,7 @@ export default function MyCourses() {
       {codes.length > 0 && (
         <section className="flex flex-col gap-2">
           <h2 className="px-1 text-sm font-bold">내가 들은 과목</h2>
-          <div className="flex flex-col overflow-hidden rounded-[18px] border border-edge bg-card">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
             {known.map((c) => (
               <div key={c.code} className="flex min-h-12 items-center gap-3 border-t border-line-2 px-4 py-2.5 first:border-t-0">
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -168,13 +169,13 @@ export default function MyCourses() {
       <section className="flex flex-col gap-3">
         <h2 className="px-1 text-sm font-bold">들은 과목 추가</h2>
         <form
-          className="flex h-12 items-center gap-2.5 rounded-[14px] border border-edge bg-card px-3.5"
+          className="flex h-12 items-center gap-2.5 rounded-xl border border-edge bg-card px-3.5"
           onSubmit={(e) => {
             e.preventDefault();
             setQuery(text.trim());
           }}
         >
-          <span aria-hidden className="box-border h-3.5 w-3.5 flex-none rounded-full border-2 border-faint" />
+          <SearchIcon className="h-[18px] w-[18px] flex-none text-mute" />
           <input
             type="search"
             value={text}
@@ -204,7 +205,7 @@ export default function MyCourses() {
                     on ? "border-accent bg-accent text-white" : "border-edge bg-card text-ink"
                   }`}
                 >
-                  <span className={`text-[11px] ${on ? "opacity-80" : "text-mute"}`}>{d.tag}</span>
+                  <span className={`text-xs ${on ? "opacity-80" : "text-mute"}`}>{d.tag}</span>
                   <span className="whitespace-nowrap text-[13px] font-semibold">{d.dept}</span>
                 </button>
               );
@@ -220,7 +221,7 @@ export default function MyCourses() {
           ) : search.value.sections.length === 0 ? (
             <p className="text-sm text-mute">찾는 과목이 없어요. 학수번호로도 검색해 보세요.</p>
           ) : (
-            <div className="flex flex-col overflow-hidden rounded-[18px] border border-edge bg-card">
+            <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
               {search.value.sections[0].rows.map((c) => (
                 <CheckRow key={c.code} c={c} on={taken.codes.has(c.code)} onToggle={(on) => toggle(c.code, on)} />
               ))}
@@ -238,7 +239,7 @@ export default function MyCourses() {
               <h3 className="px-1 text-[13px] font-semibold text-ink-2">
                 {g.category} <span className="font-normal text-mute">{g.courses.length}과목</span>
               </h3>
-              <div className="flex flex-col overflow-hidden rounded-[18px] border border-edge bg-card">
+              <div className="flex flex-col overflow-hidden rounded-2xl border border-edge bg-card">
                 {g.courses.map((c) => (
                   <CheckRow key={c.code} c={c} on={taken.codes.has(c.code)} onToggle={(on) => toggle(c.code, on)} />
                 ))}

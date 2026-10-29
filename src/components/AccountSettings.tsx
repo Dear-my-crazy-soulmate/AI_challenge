@@ -79,7 +79,7 @@ export default function AccountSettings({ action, onDone }: { action: AccountAct
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <ScreenHeader title={TITLE[action]} onBack={onDone} />
       {action === "delete" && (
-        <p className="rounded-[14px] border border-warn/30 bg-warn-soft px-4 py-3 text-sm leading-normal text-ink">
+        <p className="rounded-xl border border-warn/30 bg-warn-soft px-4 py-3 text-sm leading-normal text-ink">
           계정과 프로필(본전공, 관심 전공, 이름·학번)이 지워지고 되돌릴 수 없어요. 이 기기에 저장된 목표도 함께 지워요.
         </p>
       )}

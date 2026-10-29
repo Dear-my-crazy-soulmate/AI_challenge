@@ -142,7 +142,7 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
     <main className="flex flex-col gap-5 px-[22px] pb-10 pt-[max(6px,env(safe-area-inset-top))]">
       <ScreenHeader title="글쓰기" backHref={dept ? `/community/dept?name=${encodeURIComponent(dept)}` : "/community"} />
 
-      <p className="rounded-[14px] bg-sand px-3.5 py-3 text-xs leading-normal text-ink-2">
+      <p className="rounded-xl bg-sand px-3.5 py-3 text-xs leading-normal text-ink-2">
         익명으로 올라가고 <b>{profile.primary} {profile.grade}학년</b>과 이 학과와의 관계만 보여요. 전화번호·이메일·학번은 쓸 수 없어요.
       </p>
 
@@ -151,7 +151,7 @@ export default function PostForm({ depts, start }: { depts: DeptOption[]; start:
       <section className="flex flex-col gap-2">
         <span className="text-sm font-bold">어떤 학과 이야기인가요?</span>
         {dept && !changingDept ? (
-          <div className="flex items-center justify-between gap-3 rounded-[14px] border border-edge bg-card px-4 py-3">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-edge bg-card px-4 py-3">
             <span className="text-[15px] font-semibold">{dept}</span>
             <button type="button" onClick={() => setChangingDept(true)} className="text-[13px] font-semibold text-accent-deep">
               바꾸기
