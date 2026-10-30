@@ -15,7 +15,8 @@ interface FakeUser {
 }
 
 /** Just enough of supabase-js for createSupabaseAuth: auth, the profiles table and one RPC. */
-function fakeSupabase(opts: { confirmEmail?: boolean; secureEmailChange?: boolean } = {}) {
+function fakeSupabase(opts: { confirmEmail?: boolean; secureEmailChange?: boolean; lag?: { select: number; insert: number; upsert: number } } = {}) {
+  const wait = (ms = 0) => (ms ? new Promise((r) => setTimeout(r, ms)) : Promise.resolve());
   const users: FakeUser[] = [];
   const rows = new Map<string, Record<string, unknown>>();
   let session: { user: FakeUser } | null = null;
@@ -68,17 +69,26 @@ function fakeSupabase(opts: { confirmEmail?: boolean; secureEmailChange?: boolea
         select() {
           return {
             eq(_col: string, id: string) {
-              return { maybeSingle: async () => ({ data: rows.get(id) ?? null, error: null }) };
+              return {
+                maybeSingle: async () => {
+                  const found = rows.get(id) ?? null; // what the server sees when the request arrives
+                  await wait(opts.lag?.select);
+                  return { data: found, error: null };
+                },
+              };
             },
           };
         },
         async insert(row: Record<string, unknown>) {
+          await wait(opts.lag?.insert);
           // RLS: only the signed-in user's own row
           if (row.id !== session?.user.id) return { error: err("rls", "42501") };
+          if (rows.has(row.id as string)) return { error: err("duplicate key", "23505") };
           rows.set(row.id as string, row);
           return { error: null };
         },
         async upsert(row: Record<string, unknown>) {
+          await wait(opts.lag?.upsert);
           if (row.id !== session?.user.id) return { error: err("rls", "42501") };
           rows.set(row.id as string, { ...rows.get(row.id as string), ...row });
           return { error: null };
@@ -173,6 +183,20 @@ describe("supabase auth", () => {
     expect(state().signedIn).toBe(false);
     expect(fake.users).toHaveLength(0);
     expect(fake.rows.size).toBe(0);
+  });
+});
+
+describe("supabase auth on a slow network", () => {
+  it("keeps the profile after sign-up even when the sign-in event's own load finishes last", async () => {
+    // the event's load reads before signUp saves the row, then its insert fails as a duplicate
+    const fake = fakeSupabase({ lag: { select: 10, insert: 30, upsert: 5 } });
+    const auth = createSupabaseAuth(fake.client);
+    auth.getSnapshot();
+    await tick();
+    expect(await auth.signUp("a@b.co", "password1", profile)).toEqual({ ok: true });
+    expect(auth.parse(auth.getSnapshot()).profile).toEqual(profile);
+    await new Promise((r) => setTimeout(r, 80));
+    expect(auth.parse(auth.getSnapshot())).toEqual({ signedIn: true, profile, email: "a@b.co" });
   });
 });
 

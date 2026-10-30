@@ -84,12 +84,29 @@ export function createSupabaseAuth(sb: SupabaseClient): AuthService {
     const pending = (u.user_metadata as { profile?: Profile } | undefined)?.profile;
     if (!pending?.primary) return null;
     const { error: insertError } = await sb.from("profiles").insert(toRow(u.id, pending));
-    return insertError ? null : pending;
+    if (!insertError) return pending;
+    // sign-up may have saved the row in the meantime (the insert then fails as a duplicate)
+    const { data: again } = await sb.from("profiles").select("*").eq("id", u.id).maybeSingle();
+    return again ? fromRow(again as ProfileRow) : null;
   }
 
+  // Each adopt gets a number; a slower, older one must not overwrite a newer result
+  // (right after sign-up the auth event loads the profile while signUp saves it).
+  let adoptions = 0;
   async function adopt(u: User | null) {
+    const mine = ++adoptions;
+    const next = u ? await loadProfile(u) : null;
+    if (mine !== adoptions) return;
     user = u;
-    profile = u ? await loadProfile(u) : null;
+    profile = next;
+    publish();
+  }
+
+  /** Use a profile already in hand (just saved) without reading it back. */
+  function adoptKnown(u: User, p: Profile) {
+    adoptions++;
+    user = u;
+    profile = p;
     publish();
   }
 
@@ -101,6 +118,8 @@ export function createSupabaseAuth(sb: SupabaseClient): AuthService {
     sb.auth.onAuthStateChange((event, session) => {
       // token refreshes keep the same user; avoid refetching the profile for them
       if (event === "TOKEN_REFRESHED" && session?.user?.id === user?.id) return;
+      // signing in again as the user already shown (e.g. right after sign-up): nothing new to load
+      if (event === "SIGNED_IN" && profile && session?.user?.id === user?.id) return;
       // Run outside the auth callback (Supabase recommends not awaiting inside it), and read the
       // session again then: the event's copy can be stale (e.g. verify() signs in right before updateUser).
       setTimeout(() => {
@@ -147,7 +166,7 @@ export function createSupabaseAuth(sb: SupabaseClient): AuthService {
       }
       const { error: rowError } = await sb.from("profiles").upsert(toRow(data.user.id, p));
       if (rowError) return fail("계정은 만들었지만 프로필을 저장하지 못했어요. MY에서 다시 저장해 주세요.");
-      await adopt(data.user);
+      adoptKnown(data.user, p);
       return { ok: true };
     },
     async signIn(email, password) {
