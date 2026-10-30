@@ -59,6 +59,7 @@ function fakeSupabase(opts: { confirmEmail?: boolean; secureEmailChange?: boolea
       async updateUser(attrs: { password?: string; email?: string }) {
         if (!session) return { data: { user: null }, error: err("no session", "session_missing") };
         if (attrs.password) session.user.password = attrs.password;
+        if ((attrs as { data?: Record<string, unknown> }).data) Object.assign(session.user.user_metadata, (attrs as { data: Record<string, unknown> }).data);
         if (attrs.email && !opts.secureEmailChange) session.user.email = attrs.email;
         return { data: { user: pub(session.user) }, error: null };
       },
@@ -96,9 +97,13 @@ function fakeSupabase(opts: { confirmEmail?: boolean; secureEmailChange?: boolea
       };
     },
     async rpc(name: string) {
-      expect(name).toBe("delete_own_account");
       if (!session) return { error: err("not signed in", "P0001") };
       const id = session.user.id;
+      if (name === "reset_own_data") {
+        rows.delete(id);
+        return { error: null };
+      }
+      expect(name).toBe("delete_own_account");
       users.splice(users.findIndex((u) => u.id === id), 1);
       rows.delete(id); // on delete cascade
       return { error: null };
@@ -174,6 +179,18 @@ describe("supabase auth", () => {
     expect(await auth.changeEmail("password1", "new@b.co")).toEqual({ ok: true });
     await tick();
     expect(state().email).toBe("new@b.co");
+  });
+
+  it("starts over: keeps the account, removes the profile, and it does not come back from sign-up data", async () => {
+    await auth.signUp("a@b.co", "password1", profile);
+    expect(await auth.resetData()).toEqual({ ok: true });
+    expect(state()).toEqual({ signedIn: true, profile: null, email: "a@b.co" });
+    expect(fake.rows.size).toBe(0);
+    await auth.signOut();
+    await auth.signIn("a@b.co", "password1");
+    await tick();
+    expect(state()).toEqual({ signedIn: true, profile: null, email: "a@b.co" });
+    expect(fake.users).toHaveLength(1);
   });
 
   it("deletes the account and the profile row", async () => {

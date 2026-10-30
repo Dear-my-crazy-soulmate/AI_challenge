@@ -19,7 +19,7 @@ import { useTaken } from "@/components/useTaken";
 import { useAuth } from "@/lib/auth";
 import { MAX_INTERESTS } from "@/lib/auth/types";
 import type { Profile } from "@/lib/auth/types";
-import { isDemoEmail } from "@/lib/demo";
+import { clearDeviceData, isDemoEmail } from "@/lib/demo";
 import type { DeptOption } from "@/lib/depts";
 import { MODE_NAME, clearGoal } from "@/lib/goal";
 import { topicLabel } from "@/lib/recommend/topics";
@@ -138,6 +138,7 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
   const goal = useGoal();
   const taken = useTaken();
   const [account, setAccount] = useState<AccountAction | null>(null);
+  const [resetNote, setResetNote] = useState("");
 
   if (editing) return <Editor profile={profile} depts={depts} onDone={() => setEditing(false)} />;
   // the shared 심사·체험용 account keeps its email and password, and cannot be deleted
@@ -218,9 +219,29 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
         {!demo && <Row label="회원 탈퇴" tone="text-mute" onClick={() => setAccount("delete")} />}
       </section>
       {demo && (
-        <p className="px-1 text-xs leading-normal text-mute">
-          심사·체험용 계정이라 이메일·비밀번호 변경과 탈퇴는 할 수 없어요. 여러 사람이 함께 쓰니 개인 정보는 적지 마세요.
-        </p>
+        <>
+          <section className="overflow-hidden rounded-3xl border border-edge bg-white">
+            <Row
+              label="처음부터 설정하기"
+              tone="text-accent-deep"
+              onClick={async () => {
+                if (!window.confirm("이 체험 계정의 본전공·관심 분야, 이수 과목, 체험 기록과 이 기기의 목표·시간표를 모두 지우고 처음부터 설정할까요?")) return;
+                const r = await auth.resetData();
+                if (!r.ok) return setResetNote(r.message);
+                clearDeviceData();
+                window.location.reload(); // every store loads again, empty
+              }}
+            />
+          </section>
+          {resetNote && (
+            <p className="px-1 text-xs font-semibold text-accent-deep" role="status">
+              {resetNote}
+            </p>
+          )}
+          <p className="px-1 text-xs leading-normal text-mute">
+            심사·체험용 계정이라 이메일·비밀번호 변경과 탈퇴는 할 수 없어요. 여러 사람이 함께 쓰니 개인 정보는 적지 마세요. 다른 사람이 쓰던 기록은 위에서 모두 지우고 처음부터 설정할 수 있어요.
+          </p>
+        </>
       )}
 
       <p className="px-1 text-xs leading-normal text-mute">

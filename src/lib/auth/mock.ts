@@ -157,5 +157,14 @@ export function createMockAuth(store: KeyValueStore): AuthService {
       emit();
       return { ok: true };
     },
+    async resetData() {
+      const user = currentUser();
+      if (!user) return fail("로그인이 필요해요.");
+      const profiles = read<Record<string, Profile>>(PROFILES, {});
+      delete profiles[user.id];
+      write(PROFILES, profiles);
+      emit();
+      return { ok: true };
+    },
   };
 }

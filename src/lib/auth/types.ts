@@ -46,4 +46,6 @@ export interface AuthService {
   changePassword(currentPassword: string, newPassword: string): Promise<AuthResult>;
   changeEmail(currentPassword: string, newEmail: string): Promise<AuthResult>;
   deleteAccount(currentPassword: string): Promise<AuthResult>;
+  /** Keep the account but remove its profile, 이수 과목 and 체험 stars (the shared demo account starts over). */
+  resetData(): Promise<AuthResult>;
 }

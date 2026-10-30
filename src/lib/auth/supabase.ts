@@ -103,7 +103,7 @@ export function createSupabaseAuth(sb: SupabaseClient): AuthService {
   }
 
   /** Use a profile already in hand (just saved) without reading it back. */
-  function adoptKnown(u: User, p: Profile) {
+  function adoptKnown(u: User, p: Profile | null) {
     adoptions++;
     user = u;
     profile = p;
@@ -212,6 +212,15 @@ export function createSupabaseAuth(sb: SupabaseClient): AuthService {
       if (error) return fail("계정을 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
       await sb.auth.signOut();
       await adopt(null);
+      return { ok: true };
+    },
+    async resetData() {
+      if (!user) return fail("로그인이 필요해요.");
+      const { error } = await sb.rpc("reset_own_data");
+      if (error) return fail("지우지 못했어요. 잠시 후 다시 시도해 주세요.");
+      // the sign-up copy of the profile would otherwise bring the row back at the next load
+      await sb.auth.updateUser({ data: { profile: null } });
+      adoptKnown(user, null);
       return { ok: true };
     },
   };
