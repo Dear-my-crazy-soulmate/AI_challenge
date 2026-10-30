@@ -56,6 +56,16 @@ describe("buildMicrodegreePlan", () => {
     expect(r.rules.map((x) => x.id)).toContain("md-same-code");
   });
 
+  it("uses the person-settled micro-degrees (data/extracted/2026/md_notes.json)", () => {
+    const game = find("게임공학");
+    expect([game.status, game.required_credits, game.problems]).toEqual(["choose", 9, []]);
+    const apparel = find("미래 의류소재 및 디자인기획");
+    expect([apparel.status, apparel.rule, apparel.required_credits]).toEqual(["verified", "all", 9]);
+    expect(apparel.courses.map((c) => c.code).sort()).toEqual(["TC207", "TC319", "WDT2001"]);
+    expect(find("글로벌미디어컬처").required_credits).toBe(12);
+    expect(list.filter((m) => m.status === "check")).toHaveLength(3);
+  });
+
   it("refuses bad input without throwing", () => {
     expect(plan("", find("메타버스").id).available).toBe(false);
     expect(plan("컴퓨터공학과", "nope").available).toBe(false);

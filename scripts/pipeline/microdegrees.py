@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from catalog import CODE, parse_catalog  # noqa: E402
 from ingest import load_pages  # noqa: E402
-from paths import CURATED_DIR, WORK_DIR, use_utf8_stdout  # noqa: E402
+from paths import CURATED_DIR, EXTRACTED_DIR, WORK_DIR, use_utf8_stdout  # noqa: E402
 from programs import default_depts  # noqa: E402
 
 NAME_LINE = re.compile(r"마이크로디그리\s*명\s*[:：]\s*(?P<name>[^\n]+)")
@@ -165,9 +165,31 @@ def build_md(block: dict, catalog: dict, dept: str, start_page: int) -> dict:
     }
 
 
+def apply_note(md: dict, note: dict) -> dict:
+    """A person's settlement of a 'check' micro-degree (data/extracted/<year>/md_notes.json)."""
+    courses = md["courses"] + [{k: c[k] for k in ("code", "name", "credits", "offered_by")} for c in note.get("add_courses", [])]
+    added = {c["code"] for c in note.get("add_courses", [])}
+    need = note.get("required_credits", md["required_credits"])
+    got = sum(c["credits"] for c in courses)
+    problems = [
+        p for p in md["problems"]
+        if not (p.split(":")[0] in added
+                or (note.get("ignore_table_total") and p.startswith("table total says"))
+                or p.startswith("listed courses add up to"))
+    ]
+    if got < need:
+        problems.append(f"listed courses add up to {got}, {need} credits are required")
+    rule = "unknown" if got < need else ("all" if got == need else "choose")
+    status = "check" if problems else ("verified" if rule == "all" else "choose")
+    return {**md, "required_credits": need, "rule": rule, "courses": courses, "course_credits": got,
+            "status": status, "problems": problems, "notes": md["notes"] + [f"사람 확인: {note['why']}"]}
+
+
 def main() -> int:
     use_utf8_stdout()
     manifest = json.loads((WORK_DIR / "sections.json").read_text(encoding="utf-8"))
+    notes_file = EXTRACTED_DIR / str(manifest["year"]) / "md_notes.json"
+    md_notes = json.loads(notes_file.read_text(encoding="utf-8")) if notes_file.exists() else {}
     sections = manifest["sections"]
     catalog: dict[str, dict] = {}
     for s in sections:
@@ -179,7 +201,9 @@ def main() -> int:
     for s in sections:
         layout = load_pages(s["name"])
         for block in md_blocks(load_pages(s["name"], "raw"), layout):
-            mds.append(build_md(block, catalog, default_depts(s["name"])[0], s["start"]))
+            md = build_md(block, catalog, default_depts(s["name"])[0], s["start"])
+            note = md_notes.get(f"{md['name']}|p{md['page']}")
+            mds.append(apply_note(md, note) if note else md)
 
     out = CURATED_DIR / str(manifest["year"]) / "microdegrees.json"
     payload = {"year": manifest["year"], "source_pdf": manifest["source_pdf"], "as_of": f"{manifest['year']}학년도 교육과정", "microdegrees": mds}

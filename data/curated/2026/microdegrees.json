@@ -105,7 +105,7 @@
      "code": "AI1001",
      "name": "인공지능개론",
      "credits": 3,
-     "offered_by": null
+     "offered_by": "인공지능학과"
     },
     {
      "code": "BME422",
@@ -1288,11 +1288,11 @@
    ],
    "course_credits": 12,
    "choice_note": null,
-   "status": "check",
-   "problems": [
-    "table total says 15, listed courses add up to 12: a course may be missing"
-   ],
-   "notes": []
+   "status": "verified",
+   "problems": [],
+   "notes": [
+    "사람 확인: 이수학점은 12학점 (사용자 확인)"
+   ]
   },
   {
    "name": "미디어와 영상문화콘텐츠",
@@ -1717,7 +1717,7 @@
    "dept": "의류디자인학과",
    "page": 1124,
    "required_credits": 9,
-   "rule": "unknown",
+   "rule": "all",
    "courses": [
     {
      "code": "TC319",
@@ -1730,16 +1730,21 @@
      "name": "컬쳐앤브랜딩",
      "credits": 3,
      "offered_by": "웨어러블디자인테크놀로지"
+    },
+    {
+     "code": "TC207",
+     "name": "써피스프린팅",
+     "credits": 3,
+     "offered_by": "의류디자인학과"
     }
    ],
-   "course_credits": 6,
+   "course_credits": 9,
    "choice_note": null,
-   "status": "check",
-   "problems": [
-    "TC207: not in any catalog and its line could not be read",
-    "listed courses add up to 6, 9 credits are required"
-   ],
-   "notes": []
+   "status": "verified",
+   "problems": [],
+   "notes": [
+    "사람 확인: 표에 있는 3과목(TC319, WDT2001, TC207)을 모두 이수 (사용자 확인). TC207 줄은 책에서 읽지 못해 이름·학점은 종합시간표에서 가져옴"
+   ]
   },
   {
    "name": "아트&인스톨레이션",
@@ -1930,11 +1935,11 @@
    ],
    "course_credits": 12,
    "choice_note": null,
-   "status": "check",
-   "problems": [
-    "table total says 15, listed courses add up to 12: a course may be missing"
-   ],
-   "notes": []
+   "status": "verified",
+   "problems": [],
+   "notes": [
+    "사람 확인: 이수학점은 12학점 (사용자 확인)"
+   ]
   },
   {
    "name": "영상음악",
@@ -2196,11 +2201,11 @@
    ],
    "course_credits": 24,
    "choice_note": "표에 '택1' 표시가 있습니다",
-   "status": "check",
-   "problems": [
-    "table total says 30, listed courses add up to 24: a course may be missing"
-   ],
-   "notes": []
+   "status": "choose",
+   "problems": [],
+   "notes": [
+    "사람 확인: 9학점을 이수하면 되고 나머지 과목은 들어도 되는 과목 (사용자 확인)"
+   ]
   },
   {
    "name": "체감기술",
