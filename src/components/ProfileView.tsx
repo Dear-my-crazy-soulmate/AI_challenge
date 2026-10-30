@@ -238,11 +238,12 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
               label="처음부터 설정하기"
               tone="text-accent-deep"
               onClick={async () => {
-                if (!window.confirm("이 체험 계정의 본전공·관심 분야, 이수 과목, 체험 기록과 이 기기의 목표·시간표를 모두 지우고 처음부터 설정할까요?")) return;
+                if (!window.confirm("이 체험 계정의 본전공·관심 분야, 이수 과목, 체험 기록과 이 기기의 목표·시간표를 모두 지우고 로그아웃할까요? 다음 사람은 로그인 화면부터 시작해요.")) return;
                 const r = await auth.resetData();
                 if (!r.ok) return setResetNote(r.message);
                 clearDeviceData();
-                window.location.reload(); // every store loads again, empty
+                await auth.signOut();
+                window.location.replace("/login"); // a full load, so every store starts empty
               }}
             />
           </section>
@@ -252,7 +253,7 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
             </p>
           )}
           <p className="px-1 text-xs leading-normal text-mute">
-            심사·체험용 계정이라 이메일·비밀번호 변경과 탈퇴는 할 수 없어요. 여러 사람이 함께 쓰니 개인 정보는 적지 마세요. 다른 사람이 쓰던 기록은 위에서 모두 지우고 처음부터 설정할 수 있어요.
+            심사·체험용 계정이라 이메일·비밀번호 변경과 탈퇴는 할 수 없어요. 여러 사람이 함께 쓰니 개인 정보는 적지 마세요. 다 쓰고 나면 위 버튼으로 기록을 모두 지우고 로그아웃해 주세요. 다음 사람이 처음부터 시작할 수 있어요.
           </p>
         </>
       )}
