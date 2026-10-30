@@ -53,7 +53,19 @@ function Row({ label, right, tone = "", href, onClick }: { label: string; right?
   );
 }
 
-function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profile: Profile; depts: DeptOption[]; onDone: () => void; title?: string }) {
+function Editor({
+  profile,
+  depts,
+  onDone,
+  title = "프로필 수정",
+  intro,
+}: {
+  profile: Profile;
+  depts: DeptOption[];
+  onDone: () => void;
+  title?: string;
+  intro?: ReactNode;
+}) {
   const { auth } = useAuth();
   const [primary, setPrimary] = useState<string[]>(profile.primary ? [profile.primary] : []);
   const [interests, setInterests] = useState<string[]>(profile.interests);
@@ -93,6 +105,7 @@ function Editor({ profile, depts, onDone, title = "프로필 수정" }: { profil
   return (
     <div className="flex flex-col gap-6">
       <ScreenHeader title={title} onBack={leave} />
+      {intro}
       <PersonalFields value={personal} onChange={setPersonal} />
       <DeptPicker
         label="내 본전공"
@@ -258,6 +271,7 @@ function Me({ profile, depts, editing, setEditing }: { profile: Profile; depts: 
 const EMPTY_PROFILE: Profile = { primary: "", interests: [], topics: [], avatar: null, grade: 1, name: "", studentId: "" };
 
 export default function ProfileView({ depts }: { depts: DeptOption[] }) {
+  const router = useRouter();
   const { ready, signedIn, profile } = useAuth();
   const [editing, setEditing] = useState(false);
   // the editor has its own header, so "MY" is not drawn twice
@@ -288,7 +302,19 @@ export default function ProfileView({ depts }: { depts: DeptOption[] }) {
       )}
       {ready && signedIn && profile && <Me profile={profile} depts={depts} editing={editing} setEditing={setEditing} />}
       {/* signed in without a profile (e.g. an account made in the Supabase dashboard): ask for the 본전공 first */}
-      {ready && signedIn && !profile && <Editor profile={EMPTY_PROFILE} depts={depts} onDone={() => {}} title="프로필 만들기" />}
+      {ready && signedIn && !profile && (
+        <Editor
+          profile={EMPTY_PROFILE}
+          depts={depts}
+          onDone={() => router.push("/")}
+          title="프로필 만들기"
+          intro={
+            <p className="rounded-2xl bg-sand-2 px-4 py-3 text-sm leading-normal text-ink-2">
+              먼저 <b className="font-semibold">내 본전공</b>을 골라 주세요. 관심 분야도 고르면 계산기에서 맞는 다전공 학과를 먼저 추천해 드려요. 이름·학번은 적지 않아도 돼요.
+            </p>
+          }
+        />
+      )}
     </main>
   );
 }

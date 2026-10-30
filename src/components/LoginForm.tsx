@@ -22,17 +22,24 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  async function signIn(address: string, pw: string) {
+    setError("");
+    setBusy(true);
+    const r = await auth.signIn(address, pw);
+    setBusy(false);
+    if (!r.ok) return setError(r.message);
+    // no profile yet (e.g. the 체험 계정 after it started over): set it up first
+    if (!auth.parse(auth.getSnapshot()).profile) return router.push("/profile");
+    // back to the page the student opened before the login screen (AuthGate's ?next=)
+    router.push(safeNext(new URLSearchParams(window.location.search).get("next")));
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault();
     const mail = checkEmail(email);
     if (!mail.ok) return setError(mail.message);
     if (!password) return setError("비밀번호를 입력해 주세요.");
-    setBusy(true);
-    const r = await auth.signIn(mail.value, password);
-    setBusy(false);
-    if (!r.ok) return setError(r.message);
-    // back to the page the student opened before the login screen (AuthGate's ?next=)
-    router.push(safeNext(new URLSearchParams(window.location.search).get("next")));
+    await signIn(mail.value, password);
   }
 
   return (
@@ -61,6 +68,21 @@ export default function LoginForm() {
               다전공·부전공·마이크로디그리를 내 학과 기준으로 계산하고, 목표를 저장해 두세요.
             </p>
           </div>
+          {demo && (
+            <div className="flex flex-col gap-2 rounded-2xl border border-edge bg-white p-4 text-sm">
+              <p className="font-bold">심사·체험용 계정</p>
+              <p className="text-mute">가입하지 않고 바로 시작할 수 있어요. 로그인한 뒤 본전공과 관심 분야를 직접 정해 보세요.</p>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                <dt className="text-mute">아이디</dt>
+                <dd className="select-all break-all font-semibold">{demo.email}</dd>
+                <dt className="text-mute">비밀번호</dt>
+                <dd className="select-all break-all font-semibold">{demo.password}</dd>
+              </dl>
+              <button type="button" disabled={busy} onClick={() => void signIn(demo.email, demo.password)} className={primaryButton}>
+                {busy ? "확인하는 중…" : "체험 계정으로 시작하기"}
+              </button>
+            </div>
+          )}
           <Field
             label="이메일"
             type="email"
@@ -78,29 +100,6 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <ErrorNote message={error} />
-          {demo && (
-            <div className="flex flex-col gap-2 rounded-2xl border border-edge bg-white p-4 text-sm">
-              <p className="font-bold">심사·체험용 계정</p>
-              <p className="text-mute">가입하지 않고 이 계정으로 둘러볼 수 있어요. 여러 사람이 함께 쓰는 계정이에요.</p>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-                <dt className="text-mute">아이디</dt>
-                <dd className="select-all break-all font-semibold">{demo.email}</dd>
-                <dt className="text-mute">비밀번호</dt>
-                <dd className="select-all break-all font-semibold">{demo.password}</dd>
-              </dl>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail(demo.email);
-                  setPassword(demo.password);
-                  setError("");
-                }}
-                className={secondaryButton}
-              >
-                이 계정으로 채우기
-              </button>
-            </div>
-          )}
           <button type="submit" disabled={busy} className={primaryButton}>
             {busy ? "확인하는 중…" : "로그인"}
           </button>
