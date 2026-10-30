@@ -9,7 +9,7 @@ import issues from "../../data/curated/credits_global_issues.json";
 import { fallbackGuide } from "../../src/lib/guide/fallback";
 import { factsFromMicrodegree, factsFromPlan, guideSources, termsFromSyllabus } from "../../src/lib/guide/facts";
 import { createGuideService } from "../../src/lib/guide/service";
-import type { GuideFacts, ProfileData } from "../../src/lib/guide/types";
+import type { GuideFacts, GuideResult, ProfileData } from "../../src/lib/guide/types";
 import { verifyGuide } from "../../src/lib/guide/verify";
 import { createChatKhu } from "../../src/lib/llm/chatkhu";
 import { createMockLlm } from "../../src/lib/llm/mock";
@@ -172,6 +172,17 @@ describe("createGuideService", () => {
     await visitor.get("a", f, "ip");
     expect(await visitor.get("b", f, "ip")).toMatchObject({ reason: "BUSY" });
     expect((await visitor.get("b", f, "someone else")).source).toBe("ai");
+  });
+});
+
+describe("pre-made answers", () => {
+  it("are served without calling ChatKHU or using the caps", async () => {
+    const f = cseSwconV2();
+    const made = { source: "ai", guide: JSON.parse(goodV2(f)), model: "m", promptVersion: "comboGuide.v2", ms: 1, sources: [] } as unknown as GuideResult;
+    const llm = createMockLlm(goodV2(f));
+    const s = createGuideService(llm, { perDay: 0, perVisitorHour: 0, cacheSize: 1 }, Date.now, () => {}, { k: made });
+    expect(await s.get("k", f, "ip")).toBe(made);
+    expect(llm.calls).toHaveLength(0);
   });
 });
 

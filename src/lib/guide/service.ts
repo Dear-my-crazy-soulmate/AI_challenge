@@ -29,7 +29,9 @@ export function createGuideService(
   limits: GuideLimits = DEFAULT_LIMITS,
   now: () => number = Date.now,
   log: (entry: GuideLog) => void = () => {},
+  made: Record<string, GuideResult> = {}, // answers made ahead of time: never evicted, never counted
 ) {
+  const ready = new Map(Object.entries(made));
   const cache = new Map<string, GuideResult>();
   const pending = new Map<string, Promise<GuideResult>>();
   let day = "";
@@ -92,7 +94,7 @@ export function createGuideService(
   return {
     /** key identifies the combination; visitor is a rough per-person id (e.g. IP). */
     async get(key: string, f: GuideFacts, visitor: string): Promise<GuideResult> {
-      const hit = cache.get(key);
+      const hit = ready.get(key) ?? cache.get(key);
       if (hit) return hit;
       const running = pending.get(key);
       if (running) return running;
