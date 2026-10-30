@@ -16,15 +16,20 @@ export default function Avatar({
   size = 40,
   variant = "head",
   onDark = false,
+  plainWhenEmpty = false,
 }: {
   dept: string | null;
   goal?: GoalLike | null;
   size?: number;
   variant?: Variant;
   onDark?: boolean; // the empty placeholder is drawn light on an ink-colored card
+  plainWhenEmpty?: boolean; // without a department, the undressed 쿠옹이 instead of "?"
 }) {
   const key = goal ? `${goal.mode}|${goal.second}|${goal.secondName}` : "";
-  const src = useMemo(() => (dept ? avatarUri(dept, goal, variant) : null), [dept, key, variant]); // eslint-disable-line react-hooks/exhaustive-deps -- goal is covered by key
+  const src = useMemo(
+    () => (dept || plainWhenEmpty ? avatarUri(dept, dept ? goal : null, variant) : null),
+    [dept, key, variant, plainWhenEmpty], // eslint-disable-line react-hooks/exhaustive-deps -- goal is covered by key
+  );
 
   if (!src) {
     return (
@@ -39,7 +44,7 @@ export default function Avatar({
   }
   const full = variant === "full";
   const style = full ? { height: size, width: (size * 742) / 1120 } : { width: size, height: size };
-  const alt = goal ? `${dept} 캐릭터 (${goal.secondName} 목표)` : `${dept} 캐릭터`;
+  const alt = !dept ? "쿠옹이" : goal ? `${dept} 캐릭터 (${goal.secondName} 목표)` : `${dept} 캐릭터`;
   // eslint-disable-next-line @next/next/no-img-element -- an inline SVG data URI, nothing for the image optimizer to do
   return <img src={src} alt={alt} style={style} className={full ? "flex-none" : "flex-none rounded-full bg-sand object-cover"} />;
 }

@@ -567,6 +567,23 @@ export default function MajorPlanner({ data, rules, microdegrees, initial, quizM
             <p className="text-sm text-mute" role="status">
               불러오는 중…
             </p>
+          ) : signedIn && !profile ? (
+            <>
+              <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">
+                내 본전공을
+                <br />
+                아직 불러오지 못했어요
+              </h2>
+              <p className="text-sm leading-normal text-ink-2">
+                방금 가입했다면 잠시 뒤 다시 불러와 보세요. 그래도 안 되면 MY에서 본전공을 정하면 바로 계산할 수 있어요.
+              </p>
+              <button type="button" onClick={() => window.location.reload()} className={primaryButton}>
+                다시 불러오기
+              </button>
+              <Link href="/profile" className="self-center text-sm font-semibold text-accent-deep underline">
+                MY에서 본전공 정하기
+              </Link>
+            </>
           ) : (
             <>
               <h2 className="text-2xl font-bold leading-[1.35] tracking-[-0.6px]">

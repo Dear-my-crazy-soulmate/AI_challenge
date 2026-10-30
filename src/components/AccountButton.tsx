@@ -14,7 +14,7 @@ export default function AccountButton() {
   if (signedIn) {
     return (
       <Link href="/profile" aria-label="내 정보" className="hit flex">
-        <Avatar dept={profile?.primary ?? null} goal={goal} size={32} />
+        <Avatar dept={profile?.primary ?? null} goal={goal} size={32} plainWhenEmpty />
       </Link>
     );
   }
