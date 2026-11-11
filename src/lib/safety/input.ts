@@ -23,14 +23,16 @@ export function checkPassword(password: string): Checked<string> {
 
 export function checkName(raw: string): Checked<string> {
   const name = raw.trim().replace(/\s+/g, " ");
+  if (name === "") return { ok: false, message: "이름을 적어 주세요." };
   if (name.length > MAX_NAME) return { ok: false, message: `이름은 ${MAX_NAME}자 이하로 적어 주세요.` };
   return { ok: true, value: name };
 }
 
-/** Empty is fine (optional). Otherwise exactly 10 digits, like 2026100123. */
+/** Required: exactly 10 digits, like 2026100123. */
 export function checkStudentId(raw: string): Checked<string> {
   const id = raw.trim();
-  if (id !== "" && !/^\d{10}$/.test(id)) return { ok: false, message: "학번은 숫자 10자리로 적어 주세요." };
+  if (id === "") return { ok: false, message: "학번을 적어 주세요." };
+  if (!/^\d{10}$/.test(id)) return { ok: false, message: "학번은 숫자 10자리로 적어 주세요." };
   return { ok: true, value: id };
 }
 

@@ -311,7 +311,7 @@ export default function ProfileView({ depts }: { depts: DeptOption[] }) {
           title="프로필 만들기"
           intro={
             <p className="rounded-2xl bg-sand-2 px-4 py-3 text-sm leading-normal text-ink-2">
-              먼저 <b className="font-semibold">내 본전공</b>을 골라 주세요. 관심 분야도 고르면 계산기에서 맞는 다전공 학과를 먼저 추천해 드려요. 이름·학번은 적지 않아도 돼요.
+              먼저 <b className="font-semibold">내 본전공</b>을 골라 주세요. 관심 분야도 고르면 계산기에서 맞는 다전공 학과를 먼저 추천해 드려요. 이름과 학번도 함께 적어 주세요.
             </p>
           }
         />

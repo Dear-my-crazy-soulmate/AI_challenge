@@ -42,8 +42,7 @@ export function SampleLoginNote() {
   if (auth.kind === "server") {
     return (
       <p className="text-xs leading-normal text-mute">
-        계정은 서버에 저장돼서 다른 기기에서도 로그인할 수 있어요. 이름·학번은 넣고 싶을 때만 적고, 본인만 볼 수 있으며 AI에는
-        보내지 않아요. 연락처는 받지 않아요.
+        계정은 서버에 저장돼서 다른 기기에서도 로그인할 수 있어요. 이름·학번은 본인만 볼 수 있으며 AI에는 보내지 않아요. 연락처는 받지 않아요.
       </p>
     );
   }
@@ -51,7 +50,7 @@ export function SampleLoginNote() {
     <p className="flex items-start gap-2 text-xs leading-normal text-mute">
       <span className="flex-none rounded-md bg-sand-2 px-[7px] py-0.5 font-semibold text-ink-2">예시 로그인</span>
       <span>
-        지금은 시연용이라 이 기기의 브라우저에만 저장돼요. 이름·학번은 넣고 싶을 때만 적고, AI에는 보내지 않아요. 연락처는 받지
+        지금은 시연용이라 이 기기의 브라우저에만 저장돼요. 이름·학번은 AI에는 보내지 않아요. 연락처는 받지
         않아요.
       </span>
     </p>

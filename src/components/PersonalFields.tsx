@@ -10,13 +10,13 @@ export interface Personal {
   grade: Grade;
 }
 
-/** 이름·학번 (both optional) and 학년. Shared by the sign-up form and the MY editor. */
+/** 이름·학번 (both required) and 학년. Shared by the sign-up form and the MY editor. */
 export default function PersonalFields({ value, onChange }: { value: Personal; onChange: (next: Personal) => void }) {
   return (
     <div className="flex flex-col gap-3.5">
       <div className="grid grid-cols-2 gap-2.5">
         <Field
-          label="이름 (선택)"
+          label="이름"
           autoComplete="off"
           maxLength={MAX_NAME}
           value={value.name}
@@ -47,7 +47,7 @@ export default function PersonalFields({ value, onChange }: { value: Personal; o
         </div>
       </div>
       <Field
-        label="학번 (선택)"
+        label="학번"
         inputMode="numeric"
         autoComplete="off"
         maxLength={10}

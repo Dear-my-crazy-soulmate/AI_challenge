@@ -24,17 +24,19 @@ describe("checkPassword", () => {
 });
 
 describe("checkName / checkStudentId", () => {
-  it("trims and squeezes spaces in a name, allows empty", () => {
+  it("trims and squeezes spaces in a name", () => {
     expect(checkName("  김  경희 ")).toEqual({ ok: true, value: "김 경희" });
-    expect(checkName("")).toEqual({ ok: true, value: "" });
+  });
+  it("requires a name", () => {
+    expect(checkName("").ok).toBe(false);
+    expect(checkName("   ").ok).toBe(false);
   });
   it("rejects a name over 20 characters", () => {
     expect(checkName("가".repeat(21)).ok).toBe(false);
   });
-  it("accepts an empty or 10-digit 학번 only", () => {
-    expect(checkStudentId("")).toEqual({ ok: true, value: "" });
+  it("accepts a 10-digit 학번 only, so it cannot be left empty", () => {
     expect(checkStudentId(" 2026100123 ")).toEqual({ ok: true, value: "2026100123" });
-    for (const bad of ["12345", "202610012", "20261001234", "abcdefghij", "2026-10012"]) {
+    for (const bad of ["", "   ", "12345", "202610012", "20261001234", "abcdefghij", "2026-10012"]) {
       expect(checkStudentId(bad).ok).toBe(false);
     }
   });
@@ -50,6 +52,10 @@ describe("checkProfile", () => {
     expect(checkProfile({ ...ok, grade: 5 as never }, DEPTS).ok).toBe(false);
     expect(checkProfile({ ...ok, studentId: "12" }, DEPTS).ok).toBe(false);
     expect(checkProfile({ ...ok, name: "가".repeat(21) }, DEPTS).ok).toBe(false);
+  });
+  it("rejects a profile without a name or 학번", () => {
+    expect(checkProfile({ ...ok, name: "" }, DEPTS).ok).toBe(false);
+    expect(checkProfile({ ...ok, studentId: "" }, DEPTS).ok).toBe(false);
   });
   it("never lets name or 학번 reach an LLM", () => {
     const sent = JSON.stringify(forLlm(ok));

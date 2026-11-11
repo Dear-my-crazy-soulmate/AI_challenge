@@ -2,7 +2,7 @@
 // replaced by Supabase Auth (PLAN Step 3) without touching any screen.
 
 /** What we keep about a user besides the login itself.
- * name and studentId are personal data: the user chose to enter them (an exception to CLAUDE.md rule 4),
+ * name and studentId are personal data the user enters at sign-up (an exception to CLAUDE.md rule 4),
  * so they stay in this profile only and never go to an LLM (see forLlm in safety/input.ts). */
 export interface Profile {
   primary: string; // 본전공 (department name from credits_global.json)
@@ -10,8 +10,8 @@ export interface Profile {
   topics?: string[]; // 관심 분야 ids (src/lib/recommend/topics.ts), at most MAX_TOPICS; used to suggest 다전공 학과
   avatar: string | null; // department the profile character belongs to; null = none chosen yet
   grade: Grade;
-  name: string; // "" when not given
-  studentId: string; // "" when not given, otherwise 10 digits
+  name: string; // required when saving (checkName); "" only in profiles saved before it was required
+  studentId: string; // 10 digits when saving (checkStudentId); "" only in profiles saved before it was required
 }
 
 export type Grade = 1 | 2 | 3 | 4;
